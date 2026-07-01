@@ -1,0 +1,149 @@
+/* ===== CONTAINER ===== */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* ===== FILTROS ===== */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+/* ===== STATUS ===== */
+.status-fechado {
+  color: #d32f2f;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+/* ===== TÍTULOS ===== */
+h2, h3 {
+  margin-bottom: 8px;
+}
+
+.section {
+  margin-top: 35px;
+}
+
+/* ===== CARDS ===== */
+.cards {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0 30px 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+
+}
+
+.card {
+  flex: 1;
+  padding: 16px;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  font-size: 15px;
+}
+
+.card.receita { background: #2196f3; }
+.card.despesa { background: #f44336; }
+.card.lucro { background: #4caf50; }
+.card.crescimento { background: #673ab7;}
+
+/* ===== GRID ===== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-top: 25px;
+}
+
+.dashboard-box {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  padding: 18px;
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* 🔥 novo ajuste */
+.dashboard-box > * {
+  margin-bottom: 8px;
+}
+
+/* ===== META INPUT ===== */
+.meta-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.meta-actions input {
+  width: 120px; /* 🔥 controla tamanho */
+  flex: unset;
+}
+
+/* ===== GRÁFICOS ===== */
+.grafico-box {
+  width: 100%;
+  height: 180px;
+  margin-top: 10px;
+}
+
+.grafico-box canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.grafico-container {
+  max-width: 600px;
+  height: 240px;
+  margin: 0 auto 30px auto;
+}
+
+.grafico-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ===== TABELA ===== */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 500px;
+  margin-top: 10px;
+}
+
+table th {
+  background: #f7f7f7;
+  font-weight: bold;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 6px;
+  text-align: left;
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cards {
+    flex-direction: column;
+  }
+}
