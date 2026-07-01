@@ -1,0 +1,33 @@
+# Dependências
+node_modules/
+
+# Arquivos de ambiente
+.env
+.env.*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Build
+dist/
+build/
+
+# Cache
+.cache/
+.vite/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Coverage
+coverage/
+
+# Uploads temporários
+temp/
+tmp/
