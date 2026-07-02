@@ -31,5 +31,11 @@ export const clienteService = {
         'Content-Type': 'multipart/form-data'
       }
     })
+  },
+
+  async listarAniversariantes() {
+    const response = await api.get('/clientes/aniversariantes')
+    return response.data
   }
+
 }

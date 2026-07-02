@@ -6,6 +6,8 @@ export function Servicos() {
   const [servicos, setServicos] = useState<Servico[]>([])
   const [loading, setLoading] = useState(true)
   const [erro, setErro] = useState<string | null>(null)
+  const [busca, setBusca] = useState('')
+  const [filtroStatus, setFiltroStatus] = useState<'todos' | 'ativos' | 'inativos'>('todos')
 
   async function carregar() {
     try {
@@ -45,12 +47,53 @@ export function Servicos() {
     }
   }
 
+    const servicosFiltrados = servicos.filter(servico => {
+
+    const matchBusca =
+      servico.titulo.toLowerCase().includes(busca.toLowerCase()) ||
+      (servico.descricao || '')
+         .toLowerCase()
+         .includes(busca.toLowerCase())
+
+    const matchStatus =
+      filtroStatus === 'todos' ||
+      (filtroStatus === 'ativos' &&
+        servico.status === 'Ativo') ||
+      (filtroStatus === 'inativos' &&
+        servico.status !== 'Ativo')
+      return matchBusca && matchStatus
+    })
+    
+
   if (loading) return <p>Carregando serviços...</p>
   if (erro) return <p>{erro}</p>
 
   return (
     <div>
       <h2>Serviços</h2>
+
+      <input
+       type="text"
+       placeholder="Buscar serviço..."
+       value={busca}
+       onChange={e => setBusca(e.target.value)}
+       style={{
+         marginBottom: 15,
+         width: 250
+        }}
+       />
+
+       <select
+         value={filtroStatus}
+         onChange={e =>
+           setFiltroStatus(e.target.value as any)
+         }
+         style={{ marginLeft: 10 }}
+       >
+         <option value="todos">Todos</option>
+         <option value="ativos">Ativos</option>
+         <option value="inativos">Inativos</option>
+       </select>
 
       {servicos.length === 0 && (
         <p>Nenhum serviço cadastrado.</p>
@@ -69,7 +112,7 @@ export function Servicos() {
           </thead>
 
           <tbody>
-            {servicos.map(servico => (
+            {servicosFiltrados.map(servico => (
               <tr key={servico.id}>
 
                 {/* ✅ TÍTULO + DESCRIÇÃO */}

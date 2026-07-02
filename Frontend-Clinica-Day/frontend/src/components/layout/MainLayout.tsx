@@ -59,14 +59,21 @@ export function MainLayout() {
               <div style={{ position: 'relative' }}>
                 <button onClick={() => toggleMenu('clientes')}>
                   Clientes ▾
-                </button>
-                {menuAberto === 'clientes' && (
-                  <div style={dropdownStyle}>
-                    <Link to="/clientes" onClick={fecharMenu}>Listar Clientes</Link>
-                    <Link to="/clientes/novo" onClick={fecharMenu}>Novo Cliente</Link>
+              </button>
+              {menuAberto === 'clientes' && (
+                 <div style={dropdownStyle}>
+                    <Link to="/clientes" onClick={fecharMenu}>
+                     Listar Clientes
+                   </Link>
+                   <Link to="/clientes/novo" onClick={fecharMenu}>
+                    Novo Cliente
+                   </Link>
+                   <Link to="/clientes/aniversariantes" onClick={fecharMenu}>
+                    🎂 Aniversariantes
+                   </Link>
                   </div>
-                )}
-              </div>
+                  )}
+                 </div>
 
               {/* SERVIÇOS */}
               <div style={{ position: 'relative' }}>

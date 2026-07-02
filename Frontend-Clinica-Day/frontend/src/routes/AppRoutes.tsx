@@ -7,6 +7,7 @@ import { Login } from '../pages/Login'
 import { Home } from '../pages/Home'
 import { Clientes } from '../pages/Clientes'
 import { NovoCliente } from '../pages/NovoCliente'
+import Aniversariantes from '../pages/Aniversariantes'
 import { Servicos } from '../pages/Servicos'
 import { NovoServico } from '../pages/NovoServico'
 import { EditarServico } from '../pages/EditarServico'
@@ -23,6 +24,7 @@ import ResetarSenha from '../pages/ResetarSenha'
 import AlterarSenha from '../pages/AlterarSenha'
 import { ListaEspera } from '../pages/ListaEspera'
 import DespesaPage from '../pages/Despesa'
+
 
 
 // Relatórios
@@ -80,6 +82,7 @@ export function AppRoutes() {
         <Route path="/clientes" element={<Clientes />} />
         <Route path="/clientes/novo" element={<NovoCliente />} />
         <Route path="/clientes/editar/:id" element={<NovoCliente />} />
+        <Route path="/clientes/aniversariantes" element={<Aniversariantes />} />
 
         {/* 👥 USUARIOS */}
         <Route path="/usuarios" element={<Usuarios />} />

@@ -4,9 +4,8 @@ export type Cliente = {
   telefone: string
   email?: string
   ativo: string
-
-  // ✅ NOVOS CAMPOS
   sexo?: string
   dataNascimento?: string
   foto?: string
+  observacao: string
 }

@@ -65,6 +65,7 @@ const clinicaConfiguracoesRoutes = require('./routes/clinicaConfiguracoes.routes
 const senhaRoutes = require('./routes/senha.routes');
 const listaEsperaRoutes = require('./routes/listaEspera.routes');
 const despesaRoutes = require('./routes/despesa.routes');
+const categoriaServicoRoutes = require('./routes/categoriaServico.routes');
 
 /**
  * =========================
@@ -75,6 +76,7 @@ app.use('/api/v1', authRoutes);
 app.use('/api/v1', relatoriosRoutes);
 app.use('/api/v1', clientesRoutes);
 app.use('/api/v1', servicosRoutes);
+app.use('/api/v1',categoriaServicoRoutes);
 app.use('/api/v1', profissionaisRoutes);
 app.use('/api/v1', usuariosRoutes);
 app.use('/api/v1', agendaBaseRoutes);

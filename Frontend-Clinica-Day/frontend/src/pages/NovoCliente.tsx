@@ -10,6 +10,7 @@ type ClienteForm = {
   sexo: string
   dataNascimento: string
   foto: string
+  observacao: string
 }
 
 export function NovoCliente() {
@@ -23,7 +24,8 @@ export function NovoCliente() {
     ativo: true,
     sexo: '',
     dataNascimento: '',
-    foto: ''
+    foto: '',
+    observacao: ''
   })
 
   const [arquivo, setArquivo] = useState<File | null>(null)
@@ -50,7 +52,8 @@ export function NovoCliente() {
           dataNascimento: c.dataNascimento
             ? c.dataNascimento.split('T')[0] // ✅ CORRIGIDO
             : '',
-          foto: c.foto || ''
+          foto: c.foto || '',
+          observacao: c.observacao || ''
         })
 
         // ✅ MOSTRAR FOTO EXISTENTE
@@ -114,6 +117,8 @@ export function NovoCliente() {
         formData.append('sexo', cliente.sexo)
         formData.append('dataNascimento', cliente.dataNascimento)
         formData.append('foto', arquivo)
+        formData.append('observacao', cliente.observacao)
+
 
         payload = formData
       } else {
@@ -124,7 +129,8 @@ export function NovoCliente() {
           ativo: cliente.ativo ? 'Ativo' : 'Inativo',
           sexo: cliente.sexo,
           dataNascimento: cliente.dataNascimento,
-          foto: cliente.foto
+          foto: cliente.foto,
+          observacao: cliente.observacao
         }
       }
 
@@ -183,6 +189,24 @@ export function NovoCliente() {
             name="dataNascimento"
             value={cliente.dataNascimento}
             onChange={handleChange}
+          />
+        </div>
+
+        <div>
+           <label>Observações</label><br />
+
+           <textarea
+             name="observacao"
+             value={cliente.observacao}
+             onChange={e =>
+             setCliente(prev => ({
+              ...prev,
+              observacao: e.target.value
+            }))
+           }
+           rows={4}
+           cols={50}
+           placeholder="Alergias, preferências, restrições, observações importantes..."
           />
         </div>
 

@@ -84,8 +84,8 @@ export default function RelatorioClientes() {
 
   return (
     <div style={{ maxWidth: 900 }}>
-      <button onClick={() => navigate('/relatorios')}>
-        ← Voltar ao Resumo Financeiro
+      <button onClick={() => navigate(-1)}>
+        ← Voltar
       </button>
 
       <h1>Relatório de Clientes</h1>

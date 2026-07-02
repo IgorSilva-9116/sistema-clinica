@@ -21,8 +21,9 @@ async function listarClientes(req, res) {
             c.Sexo      AS sexo,
             c.DataNascimento AS dataNascimento,
             c.Foto      AS foto,
+            c.Observacao AS observacao,
             cc.Status   AS ativo
-          FROM Cliente c
+                      FROM Cliente c
           INNER JOIN ClinicaCliente cc
             ON cc.ClienteId = c.Id
           WHERE cc.ClinicaId = @ClinicaId
@@ -55,7 +56,8 @@ async function criarCliente(req, res) {
       email,
       telefone,
       sexo,
-      dataNascimento
+      dataNascimento,
+      observacao
     } = req.body;
 
     const clinicaId = req.clinicaId;
@@ -81,6 +83,7 @@ async function criarCliente(req, res) {
         .input('Sexo', sql.VarChar(20), sexo || null)
         .input('DataNascimento', sql.Date, dataNascimento || null)
         .input('Foto', sql.VarChar(255), foto)
+        .input('Observacao', sql.VarChar(1000), observacao || null)
         .query(`
           INSERT INTO Cliente (
             Nome,
@@ -88,6 +91,7 @@ async function criarCliente(req, res) {
             Telefone,
             Sexo,
             DataNascimento,
+            Observacao,
             Foto
           )
           OUTPUT INSERTED.Id
@@ -97,6 +101,7 @@ async function criarCliente(req, res) {
             @Telefone,
             @Sexo,
             @DataNascimento,
+            @Observacao,
             @Foto
           )
         `)
@@ -162,6 +167,7 @@ async function buscarPorId(req, res) {
           c.Sexo      AS sexo,
           c.DataNascimento AS dataNascimento,
           c.Foto      AS foto,
+          c.Observacao AS observacao,
           cc.Status   AS ativo
         FROM Cliente c
         INNER JOIN ClinicaCliente cc
@@ -209,6 +215,7 @@ async function atualizarCliente(req, res) {
     const ativo = body.ativo;
     const sexo = body.sexo;
     const dataNascimento = body.dataNascimento;
+    const observacao = body.observacao;
 
     // ✅ AQUI ESTÁ A CORREÇÃO CRÍTICA
     const foto = req.file
@@ -225,6 +232,7 @@ async function atualizarCliente(req, res) {
       .input('Sexo', sql.VarChar(20), sexo || null)
       .input('DataNascimento', sql.Date, dataNascimento || null)
       .input('Foto', sql.VarChar(255), foto)
+      .input('Observacao', sql.VarChar(1000), observacao || null)
       .query(`
         UPDATE Cliente
         SET
@@ -233,7 +241,8 @@ async function atualizarCliente(req, res) {
           Email = @Email,
           Sexo = @Sexo,
           DataNascimento = @DataNascimento,
-          Foto = @Foto
+          Foto = @Foto,
+          Observacao = @Observacao 
         WHERE Id = @Id
       `);
 
@@ -263,9 +272,48 @@ async function atualizarCliente(req, res) {
   }
 }
 
+async function listarAniversariantes(req, res) {
+  try {
+    const clinicaId = req.clinicaId;
+
+    const pool = await sql.connect();
+
+    const result = await pool.request()
+      .input('ClinicaId', sql.Int, clinicaId)
+      .query(`
+        SELECT
+          c.Id AS id,
+          c.Nome AS nome,
+          c.Telefone AS telefone,
+          c.DataNascimento AS dataNascimento
+        FROM Cliente c
+        INNER JOIN ClinicaCliente cc
+          ON cc.ClienteId = c.Id
+        WHERE
+          cc.ClinicaId = @ClinicaId
+          AND MONTH(c.DataNascimento) = MONTH(GETDATE())
+        ORDER BY DAY(c.DataNascimento)
+      `);
+
+    return res.json({
+      sucesso: true,
+      aniversariantes: result.recordset
+    });
+
+  } catch (error) {
+    console.error('Erro ao listar aniversariantes:', error);
+
+    return res.status(500).json({
+      sucesso: false,
+      mensagem: 'Erro ao listar aniversariantes'
+    });
+  }
+}
+
 module.exports = {
   listarClientes,
   criarCliente,
   buscarPorId,
-  atualizarCliente
+  atualizarCliente,
+  listarAniversariantes
 };

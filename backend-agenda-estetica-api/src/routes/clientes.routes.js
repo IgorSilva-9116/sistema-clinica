@@ -23,6 +23,14 @@ router.post(
   clientesController.criarCliente
 );
 
+// ✅ LISTAR CLIENTE ANIVERSARIANTE
+router.get(
+  '/clientes/aniversariantes',
+  authMiddleware,
+  authorize('clinica'),
+  clientesController.listarAniversariantes
+);
+
 // ✅ Buscar cliente por ID (edição)
 router.get(
   '/clientes/:id',
@@ -39,5 +47,6 @@ router.put(
   upload.single('foto'),
   clientesController.atualizarCliente
 );
+
 
 module.exports = router;
