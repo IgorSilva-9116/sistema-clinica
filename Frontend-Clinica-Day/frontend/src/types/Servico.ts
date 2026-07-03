@@ -4,5 +4,9 @@ export interface Servico {
   descricao?: string
   preco: number
   duracaoMinutos: number
+
   status: 'Ativo' | 'Inativo'
+
+  categoria?: string
+  categoriaServicoId?: number
 }

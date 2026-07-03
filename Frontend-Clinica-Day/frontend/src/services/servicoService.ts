@@ -11,6 +11,7 @@ export interface ServicoPayload {
   descricao?: string
   preco: number
   duracaoMinutos: number
+  categoriaServicoId?: number | null
 }
 
 export const servicoService = {

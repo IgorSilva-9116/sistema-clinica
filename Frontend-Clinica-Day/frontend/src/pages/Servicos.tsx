@@ -103,6 +103,7 @@ export function Servicos() {
         <table border={1} cellPadding={8} style={{ marginTop: 15 }}>
           <thead>
             <tr>
+              <th>Categoria</th>
               <th>Serviço</th>
               <th>Preço</th>
               <th>Duração</th>
@@ -114,6 +115,9 @@ export function Servicos() {
           <tbody>
             {servicosFiltrados.map(servico => (
               <tr key={servico.id}>
+                <td> 
+                  {servico.categoria || '-'}
+                </td>
 
                 {/* ✅ TÍTULO + DESCRIÇÃO */}
                 <td>

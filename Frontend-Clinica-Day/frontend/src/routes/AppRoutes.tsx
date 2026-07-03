@@ -24,6 +24,7 @@ import ResetarSenha from '../pages/ResetarSenha'
 import AlterarSenha from '../pages/AlterarSenha'
 import { ListaEspera } from '../pages/ListaEspera'
 import DespesaPage from '../pages/Despesa'
+import { CategoriasServico } from '../pages/CategoriasServico'
 
 
 
@@ -93,6 +94,7 @@ export function AppRoutes() {
         <Route path="/servicos" element={<Servicos />} />
         <Route path="/servicos/novo" element={<NovoServico />} />
         <Route path="/servicos/editar/:id" element={<EditarServico />} />
+        <Route path="/categorias-servico" element={<CategoriasServico />} />
 
         {/* 📊 RELATÓRIOS (AGRUPADOS) */}
         <Route path="/relatorios">

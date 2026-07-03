@@ -68,15 +68,19 @@ async function listarServicosAdmin(req, res) {
         .input('ClinicaId', sql.Int, clinicaId)
         .query(`
           SELECT
-            Id              AS id,
-            Titulo          AS titulo,
-            Descricao       AS descricao,
-            Preco           AS preco,
-            DuracaoMinutos  AS duracaoMinutos,
-            Status          AS status,
-            DataCadastro    AS dataCadastro
-          FROM Servico
-          WHERE ClinicaId = @ClinicaId
+            s.Id AS id,
+            s.Titulo AS titulo,
+            s.Descricao AS descricao,
+            s.Preco AS preco,
+            s.DuracaoMinutos AS duracaoMinutos,
+            s.Status AS status,
+            s.DataCadastro AS dataCadastro,
+            cs.Id AS categoriaServicoId,
+            cs.Nome AS categoria
+          FROM Servico s
+          LEFT JOIN CategoriaServico cs
+            ON cs.Id = s.CategoriaServicoId
+          WHERE s.ClinicaId = @ClinicaId
         `)
     );
 
@@ -112,7 +116,7 @@ async function criarServico(req, res) {
       });
     }
 
-    const { titulo, descricao, preco, duracaoMinutos } = req.body;
+    const { titulo, descricao, preco, duracaoMinutos, categoriaServicoId } = req.body;
     const clinicaId = req.clinicaId;
 
     if (!titulo || !preco || !duracaoMinutos) {
@@ -129,6 +133,7 @@ async function criarServico(req, res) {
         .input('Descricao', sql.VarChar(255), descricao || null)
         .input('Preco', sql.Decimal(10, 2), preco)
         .input('DuracaoMinutos', sql.Int, duracaoMinutos)
+        .input('CategoriaServicoId', sql.Int, categoriaServicoId || null)
         .input('Status', sql.VarChar(20), 'Ativo')
         .query(`
           INSERT INTO Servico
@@ -138,6 +143,7 @@ async function criarServico(req, res) {
             Descricao,
             Preco,
             DuracaoMinutos,
+            CategoriaServicoId,
             Status,
             DataCadastro
           )
@@ -148,6 +154,7 @@ async function criarServico(req, res) {
             @Descricao,
             @Preco,
             @DuracaoMinutos,
+            @CategoriaServicoId,
             @Status,
             GETDATE()
           )
@@ -184,7 +191,7 @@ async function atualizarServico(req, res) {
     }
 
     const { id } = req.params;
-    const { titulo, descricao, preco, duracaoMinutos } = req.body;
+    const { titulo, descricao, preco, duracaoMinutos, categoriaServicoId } = req.body;
     const clinicaId = req.clinicaId;
 
     await sql.connect().then(pool =>
@@ -195,13 +202,15 @@ async function atualizarServico(req, res) {
         .input('Descricao', sql.VarChar(255), descricao || null)
         .input('Preco', sql.Decimal(10, 2), preco)
         .input('DuracaoMinutos', sql.Int, duracaoMinutos)
+        .input('CategoriaServicoId', sql.Int, categoriaServicoId || null)
         .query(`
           UPDATE Servico
           SET
             Titulo = ISNULL(@Titulo, Titulo),
             Descricao = ISNULL(@Descricao, Descricao),
             Preco = ISNULL(@Preco, Preco),
-            DuracaoMinutos = ISNULL(@DuracaoMinutos, DuracaoMinutos)
+            DuracaoMinutos = ISNULL(@DuracaoMinutos, DuracaoMinutos),
+            CategoriaServicoId = ISNULL(@CategoriaServicoId, CategoriaServicoId)
           WHERE Id = @Id
             AND ClinicaId = @ClinicaId
         `)

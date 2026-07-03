@@ -13,13 +13,13 @@ async function listarCategorias(req, res) {
       pool.request()
         .input('ClinicaId', sql.Int, clinicaId)
         .query(`
-          SELECT
-            Id,
-            Nome,
-            Status
-          FROM CategoriaServico
-          WHERE ClinicaId = @ClinicaId
-          ORDER BY Nome
+           SELECT
+           Id AS id,
+           Nome AS nome,
+           Status AS status
+         FROM CategoriaServico
+         WHERE ClinicaId = @ClinicaId
+         ORDER BY Nome
         `)
     )
 
@@ -88,7 +88,65 @@ async function criarCategoria(req, res) {
   }
 }
 
+async function desativarCategoria(req, res) {
+  try {
+    const { id } = req.params
+
+    await sql.connect().then(pool =>
+      pool.request()
+        .input('Id', sql.Int, Number(id))
+        .query(`
+          UPDATE CategoriaServico
+          SET Status = 'Inativo'
+          WHERE Id = @Id
+        `)
+    )
+
+    return res.json({
+      sucesso: true
+    })
+
+  } catch (error) {
+    console.error(error)
+
+    return res.status(500).json({
+      sucesso: false,
+      mensagem: 'Erro ao desativar categoria'
+    })
+  }
+}
+
+async function ativarCategoria(req, res) {
+  try {
+    const { id } = req.params
+
+    await sql.connect().then(pool =>
+      pool.request()
+        .input('Id', sql.Int, Number(id))
+        .query(`
+          UPDATE CategoriaServico
+          SET Status = 'Ativo'
+          WHERE Id = @Id
+        `)
+    )
+
+    return res.json({
+      sucesso: true
+    })
+
+  } catch (error) {
+    console.error(error)
+
+    return res.status(500).json({
+      sucesso: false,
+      mensagem: 'Erro ao ativar categoria'
+    })
+  }
+}
+
 module.exports = {
   listarCategorias,
-  criarCategoria
+  criarCategoria,
+  ativarCategoria,
+  desativarCategoria
 }

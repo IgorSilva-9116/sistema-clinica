@@ -84,10 +84,11 @@ export function MainLayout() {
                   <div style={dropdownStyle}>
                     <Link to="/servicos" onClick={fecharMenu}>Listar Serviços</Link>
                     <Link to="/servicos/novo" onClick={fecharMenu}>Novo Serviço</Link>
+                     <Link to="/categorias-servico" onClick={fecharMenu} >Categorias</Link>
                   </div>
                 )}
               </div>
-
+             
               {/* AGENDA */}
               <div style={{ position: 'relative' }}>
                 <button onClick={() => toggleMenu('agenda')}>
