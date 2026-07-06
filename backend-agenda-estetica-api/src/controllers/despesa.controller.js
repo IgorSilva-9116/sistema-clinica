@@ -14,7 +14,7 @@ async function criarDespesa(req, res) {
       Descricao,
       Valor,
       Data,
-      Categoria,
+      CategoriaFinanceiraId,
       FormaPagamento,
       Observacao,
       Status
@@ -35,15 +35,15 @@ async function criarDespesa(req, res) {
       .input('Descricao', sql.VarChar(255), Descricao)
       .input('Valor', sql.Decimal(10,2), Valor)
       .input('Data', sql.Date, Data)
-      .input('Categoria', sql.VarChar(100), Categoria || null)
+      .input('CategoriaFinanceiraId', sql.Int, CategoriaFinanceiraId || null)
       .input('FormaPagamento', sql.VarChar(50), FormaPagamento || null)
       .input('Observacao', sql.VarChar(500), Observacao || null)
       .input('Status', sql.VarChar(20), Status || 'PAGO')
       .query(`
         INSERT INTO Despesa
-        (ClinicaId, Descricao, Valor, Data, Categoria, FormaPagamento, Observacao, Status)
+        (ClinicaId, Descricao, Valor, Data, CategoriaFinanceiraId, FormaPagamento, Observacao, Status)
         VALUES
-        (@ClinicaId, @Descricao, @Valor, @Data, @Categoria, @FormaPagamento, @Observacao, @Status)
+        (@ClinicaId, @Descricao, @Valor, @Data, @CategoriaFinanceiraId, @FormaPagamento, @Observacao, @Status)
       `);
 
     return res.status(201).json({
@@ -68,36 +68,50 @@ async function criarDespesa(req, res) {
  */
 async function listarDespesas(req, res) {
   try {
-    const clinicaId = req.clinicaId;
-    const { dataInicio, dataFim } = req.query;
 
-    const pool = await sql.connect();
-    
+    const clinicaId = req.clinicaId
+    const { dataInicio, dataFim } = req.query
+
+    const pool = await sql.connect()
 
     const result = await pool.request()
       .input('ClinicaId', sql.Int, clinicaId)
       .input('DataInicio', sql.Date, dataInicio || null)
       .input('DataFim', sql.Date, dataFim || null)
       .query(`
-        SELECT *
-        FROM Despesa
-        WHERE ClinicaId = @ClinicaId
-          AND (@DataInicio IS NULL OR Data >= @DataInicio)
-          AND (@DataFim IS NULL OR Data < DATEADD(DAY, 1, @DataFim))
-        ORDER BY Data DESC
-      `);
+        SELECT
+          d.*,
+          cf.Id AS CategoriaFinanceiraId,
+          cf.Nome AS CategoriaFinanceira
+        FROM Despesa d
+        LEFT JOIN CategoriaFinanceira cf
+          ON cf.Id = d.CategoriaFinanceiraId
+        WHERE d.ClinicaId = @ClinicaId
+          AND (
+            @DataInicio IS NULL
+            OR d.Data >= @DataInicio
+          )
+          AND (
+            @DataFim IS NULL
+            OR d.Data < DATEADD(DAY, 1, @DataFim)
+          )
+        ORDER BY d.Data DESC
+      `)
 
     return res.json({
       sucesso: true,
       despesas: result.recordset
-    });
+    })
 
   } catch (err) {
-    console.error(err);
+
+    console.error(err)
+
     return res.status(500).json({
       sucesso: false,
       mensagem: 'Erro ao listar despesas'
-    });
+    })
+
   }
 }
 

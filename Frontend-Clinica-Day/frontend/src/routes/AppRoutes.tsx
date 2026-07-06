@@ -25,6 +25,7 @@ import AlterarSenha from '../pages/AlterarSenha'
 import { ListaEspera } from '../pages/ListaEspera'
 import DespesaPage from '../pages/Despesa'
 import { CategoriasServico } from '../pages/CategoriasServico'
+import { CategoriasFinanceiras} from '../pages/CategoriasFinanceiras'
 
 
 
@@ -71,6 +72,7 @@ export function AppRoutes() {
         
           {/* DESPESAS */} 
         <Route path="/despesas" element={<DespesaPage />} />
+        <Route path="/categorias-financeiras" element={<CategoriasFinanceiras />} />
 
 
         {/* ⚙️ CONFIGURAÇÕES */}

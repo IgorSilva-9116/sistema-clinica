@@ -24,4 +24,23 @@ router.get('/clientes', authMiddleware, relatorioClientes);
 // ✅ ✅ CORREÇÃO AQUI (ESSA É A LINHA QUE RESOLVE TUDO)
 router.get('/despesas', authMiddleware, despesaController.listarDespesas);
 
+router.post(
+  '/despesas',
+  authMiddleware,
+  despesaController.criarDespesa
+)
+
+router.delete(
+  '/despesas/:id',
+  authMiddleware,
+  despesaController.excluirDespesa
+)
+
+router.patch(
+  '/despesas/:id/pagar',
+  authMiddleware,
+  despesaController.marcarComoPago
+)
+
+
 module.exports = router;

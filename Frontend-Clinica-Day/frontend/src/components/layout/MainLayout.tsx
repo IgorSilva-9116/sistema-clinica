@@ -118,6 +118,9 @@ export function MainLayout() {
               <Link to="/despesas" onClick={fecharMenu}>
                Despesas
              </Link>
+             <Link to="/categorias-financeiras">
+               Categorias Financeiras
+             </Link>
 
              {/* futuro */}
              {/* <Link to="/financeiro/resumo">Resumo</Link> */}

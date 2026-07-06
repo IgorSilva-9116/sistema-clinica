@@ -4,6 +4,11 @@ import type { Despesa } from '../types/Despesa'
 import { listarDespesas, criarDespesa, excluirDespesa } from '../services/DespesaService'
 import { api } from '../services/api'
 
+import {
+  categoriaFinanceiraService,
+  type CategoriaFinanceira
+} from '../services/categoriaFinanceiraService'
+
 export default function DespesaPage() {
   const [despesas, setDespesas] = useState<Despesa[]>([])
 
@@ -16,6 +21,8 @@ export default function DespesaPage() {
   const [formaPagamento, setFormaPagamento] = useState('')
   const [status, setStatus] = useState('PENDENTE')
   const [valorTexto, setValorTexto] = useState('')
+  const [categorias, setCategorias] = useState<CategoriaFinanceira[]>([])
+  const [categoriaFinanceiraId, setCategoriaFinanceiraId] = useState('')
 
   // ✅ ✅ CORREÇÃO DEFINITIVA
   async function carregar() {
@@ -55,8 +62,14 @@ export default function DespesaPage() {
         Descricao: descricao,
         Valor: Number(valor.replace(',', '.')),
         Data: data,
+
+        CategoriaFinanceiraId:
+          categoriaFinanceiraId
+            ? Number(categoriaFinanceiraId)
+            : null,
+
         FormaPagamento: formaPagamento,
-        Status: status
+         Status: status
       })
 
       setDescricao('')
@@ -65,6 +78,7 @@ export default function DespesaPage() {
       setData('')
       setFormaPagamento('')
       setStatus('PENDENTE')
+      setCategoriaFinanceiraId('')
 
       await carregar()
 
@@ -94,13 +108,29 @@ export default function DespesaPage() {
     }
   }
 
+  async function carregarCategorias() {
+
+  const response =
+    await categoriaFinanceiraService.listar()
+
+  const categoriasAtivas =
+    (response.categorias || []).filter(
+      c => c.status === 'Ativo'
+    )
+
+  setCategorias(categoriasAtivas)
+  }
+
+  
   useEffect(() => {
-    // opcional: pode deixar vazio mesmo
-  }, [])
+  carregarCategorias()
+}, [])
 
   function formatarData(dataIso: string) {
-    const data = new Date(dataIso)
-    return data.toLocaleDateString('pt-BR')
+    return dataIso.substring(0, 10)
+      .split('-')
+      .reverse()
+      .join('/')
   }
 
   function formatarMoedaLista(valor: number) {
@@ -165,6 +195,33 @@ export default function DespesaPage() {
             onChange={(e) => setData(e.target.value)}
           />
 
+          
+         <select
+           value={categoriaFinanceiraId}
+           onChange={e =>
+           setCategoriaFinanceiraId(
+              e.target.value
+           )
+           }
+          >
+
+          <option value="">
+            Categoria Financeira
+          </option>
+
+          {categorias.map(c => (
+
+          <option
+            key={c.id}
+            value={c.id}
+           >
+            {c.nome}
+           </option>
+
+           ))}
+
+          </select>
+
           <select
             value={formaPagamento}
             onChange={(e) => setFormaPagamento(e.target.value)}
@@ -189,6 +246,7 @@ export default function DespesaPage() {
           </button>
         </div>
       </div>
+
 
       {/* LISTA */}
       <div>
@@ -215,13 +273,15 @@ export default function DespesaPage() {
 
             <p>📅 {formatarData(d.Data)}</p>
 
+            <p> 🏷 Categoria: {' '} {d.CategoriaFinanceira || '-'} </p>
+
             <p>💳 Forma: {d.FormaPagamento || '-'}</p>
 
             <p>
               Status:{' '}
               {d.Status === 'PAGO'
                 ? '🟢 Pago'
-                : '🔴 Pendente'}
+                : '🔴 Pendente'} 
             </p>
 
             {d.Status === 'PENDENTE' && (
