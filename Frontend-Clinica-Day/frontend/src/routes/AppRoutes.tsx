@@ -29,9 +29,13 @@ import { CategoriasFinanceiras} from '../pages/CategoriasFinanceiras'
 
 
 
+
 // Relatórios
 import Relatorios from '../pages/Relatorios'
-import RelatorioClientes from '../pages/RelatorioClientes'
+import DashboardRelatorios from '../pages/DashboardRelatorios'
+import FinanceiroRelatorios from '../pages/FinanceiroRelatorios'
+import ClientesRelatorios from '../pages/ClientesRelatorios'
+import ServicosRelatorios from '../pages/ServicosRelatorios'
 
 export function AppRoutes() {
   return (
@@ -98,14 +102,34 @@ export function AppRoutes() {
         <Route path="/servicos/editar/:id" element={<EditarServico />} />
         <Route path="/categorias-servico" element={<CategoriasServico />} />
 
-        {/* 📊 RELATÓRIOS (AGRUPADOS) */}
-        <Route path="/relatorios">
-          {/* Página principal de relatórios (Resumo financeiro) */}
-          <Route index element={<Relatorios />} />
+   {/* 📊 RELATÓRIOS */}
 
-          {/* Sub-relatórios */}
-          <Route path="clientes" element={<RelatorioClientes />} />
-        </Route>
+<Route
+  path="/relatorios"
+  element={<Relatorios />}
+>
+
+  <Route
+    index
+    element={<DashboardRelatorios />}
+  />
+
+  <Route
+    path="financeiro"
+    element={<FinanceiroRelatorios />}
+  />
+
+  <Route
+    path="clientes"
+    element={<ClientesRelatorios />}
+  />
+
+  <Route
+    path="servicos"
+    element={<ServicosRelatorios />}
+  />
+
+</Route>
 
         {/* 🚫 ACESSO NEGADO */}
         <Route path="/acesso-negado" element={<AcessoNegado />} />

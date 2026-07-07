@@ -147,3 +147,25 @@ table td {
     flex-direction: column;
   }
 }
+
+.relatorio-nav{
+  display:flex;
+  gap:20px;
+  margin-bottom:25px;
+  padding-bottom:12px;
+  border-bottom:1px solid #ddd;
+}
+
+.relatorio-nav a{
+  text-decoration:none;
+  color:#444;
+  font-weight:600;
+}
+
+.relatorio-nav a.active{
+  color:#1976d2;
+}
+
+.relatorio-nav a:hover{
+  color:#1976d2;
+}

@@ -517,6 +517,94 @@ async function comparacaoPeriodo(req, res) {
   }
 }
 
+/**
+ * =========================
+ * DESPESAS POR CATEGORIA
+ * =========================
+ */
+async function despesasPorCategoria(req, res) {
+  try {
+
+    if (req.userTipo !== 'clinica') {
+      return res.status(403).json({
+        mensagem: 'Acesso negado'
+      })
+    }
+
+    const { dataInicio, dataFim } = req.query
+
+    const clinicaId = req.clinicaId
+
+    if (!dataInicio || !dataFim) {
+      return res.status(400).json({
+        mensagem:
+          'dataInicio e dataFim são obrigatórios'
+      })
+    }
+
+    const pool = await sql.connect()
+
+    const result = await pool.request()
+      .input(
+        'ClinicaId',
+        sql.Int,
+        clinicaId
+      )
+      .input(
+        'DataInicio',
+        sql.Date,
+        dataInicio
+      )
+      .input(
+        'DataFim',
+        sql.Date,
+        dataFim
+      )
+      .query(`
+        SELECT
+
+          ISNULL(
+            cf.Nome,
+            'Sem Categoria'
+          ) AS Categoria,
+
+          SUM(d.Valor) AS Total
+
+        FROM Despesa d
+
+        LEFT JOIN CategoriaFinanceira cf
+          ON cf.Id =
+          d.CategoriaFinanceiraId
+
+        WHERE
+          d.ClinicaId = @ClinicaId
+
+          AND d.Data BETWEEN
+            @DataInicio
+            AND
+            @DataFim
+
+        GROUP BY cf.Nome
+
+        ORDER BY Total DESC
+      `)
+
+    return res.json(
+      result.recordset
+    )
+
+  } catch (err) {
+
+    console.error(err)
+
+    return res.status(500).json({
+      mensagem:
+        'Erro ao gerar relatório'
+    })
+
+  }
+}
+
 
 module.exports = {
   resumo,
@@ -524,6 +612,7 @@ module.exports = {
   multas,
   relatorioClientes,
   resumoDespesas,
+  despesasPorCategoria,
   obterMeta,
   salvarMeta,
   fecharMes,
