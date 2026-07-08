@@ -1,16 +1,22 @@
+import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import '../styles/relatorios.css'
+
 import {
-  RelatoriosProvider
+  RelatoriosProvider,
+  useRelatoriosContext
 } from '../contexts/RelatoriosContext'
 
-export default function Relatorios() {
- return (
+function RelatoriosContent() {
+  const [dataInicio, setDataInicio] = useState('')
+  const [dataFim, setDataFim] = useState('')
 
-  <RelatoriosProvider>
+  const {
+    gerarRelatorio
+  } = useRelatoriosContext()
 
+  return (
     <div className="container">
-
 
       <h1>Relatórios</h1>
 
@@ -33,11 +39,60 @@ export default function Relatorios() {
         </NavLink>
 
       </nav>
+
+      <div className="filtros">
+
+        <label>
+          Data início:
+
+          <input
+            type="date"
+            value={dataInicio}
+            onChange={(e) =>
+              setDataInicio(e.target.value)
+            }
+          />
+
+        </label>
+
+        <label>
+          Data fim:
+
+          <input
+            type="date"
+            value={dataFim}
+            onChange={(e) =>
+              setDataFim(e.target.value)
+            }
+          />
+
+        </label>
+
+        <button
+          onClick={() =>
+            gerarRelatorio(
+              dataInicio,
+              dataFim
+            )
+          }
+        >
+          Gerar Relatório
+        </button>
+
+      </div>
+
       <Outlet />
 
-  </div>
+    </div>
+  )
+}
 
-  </RelatoriosProvider>
+export default function Relatorios() {
+  return (
+    <RelatoriosProvider>
 
-)
+      <RelatoriosContent />
+
+    </RelatoriosProvider>
+  )
 }

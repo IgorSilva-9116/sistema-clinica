@@ -18,6 +18,12 @@ export type FaturamentoServico = {
 export function useRelatorios() {
   const [loading, setLoading] = useState(false)
 
+  const [dataInicio, setDataInicio] =
+  useState('')
+
+  const [dataFim, setDataFim] =
+  useState('')
+
   const [resumo, setResumo] =
     useState<Resumo | null>(null)
 
@@ -33,6 +39,15 @@ export function useRelatorios() {
         ? Number(salva)
         : 0
     })
+
+    function atualizarMeta(valor: number) {
+     setMetaMensal(valor)
+
+    localStorage.setItem(
+     'metaMensal',
+     valor.toString()
+    )
+  }
 
   const [comparacao, setComparacao] =
     useState({
@@ -193,8 +208,35 @@ export function useRelatorios() {
     }
   }
 
+  async function salvarMetaBackend() {
+  try {
+
+    await api.post(
+      '/relatorios/meta',
+      {
+        valor: metaMensal
+      }
+    )
+
+    alert(
+      'Meta salva com sucesso!'
+    )
+
+  } catch {
+
+    alert(
+      'Erro ao salvar meta'
+    )
+
+  }
+}
+
   return {
     loading,
+    dataInicio,
+    dataFim,
+    setDataInicio,
+    setDataFim,
     resumo,
     comparacao,
     metaMensal,
@@ -204,6 +246,9 @@ export function useRelatorios() {
     mesFechado,
 
     setMetaMensal,
+    atualizarMeta,
+    salvarMetaBackend,
+
 
     gerarRelatorio
   }
