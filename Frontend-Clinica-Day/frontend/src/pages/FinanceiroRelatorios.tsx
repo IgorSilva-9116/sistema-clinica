@@ -18,15 +18,9 @@ import { useRelatoriosContext }
 
 import {
   gerarCSV,
-  baixarCSV
-} from '../utils/relatorios'  
-
-function formatarMoeda(valor: number) {
-  return valor.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  })
-}
+  baixarCSV,
+  formatarMoeda
+} from '../utils/relatorios'
 
 export default function FinanceiroRelatorios() {
 

@@ -15,8 +15,10 @@ import {
 
 import {
   gerarCSV,
-  baixarCSV
+  baixarCSV,
+  formatarMoeda
 } from '../utils/relatorios'
+
 
 ChartJS.register(
   CategoryScale,
@@ -25,13 +27,6 @@ ChartJS.register(
   Tooltip,
   Legend
 )
-
-function formatarMoeda(valor: number) {
-  return valor.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  })
-}
 
 export default function ServicosRelatorios() {
 

@@ -2,19 +2,16 @@ import { useState, useEffect } from 'react'
 import { api } from '../services/api'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
+import {
+  formatarMoeda
+} from '../utils/relatorios'
+
 type ClienteRelatorio = {
   clienteId: number
   cliente: string
   totalProcedimentos: number
   valorGasto: number
   frequenciaMedia: number
-}
-
-function formatarMoeda(valor: number) {
-  return valor.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  })
 }
 
 function obterPeriodoMesAtual() {

@@ -1,15 +1,34 @@
-export function gerarCSV(dados: any[]) {
+export function formatarMoeda(
+  valor: number
+) {
+  return valor.toLocaleString(
+    'pt-BR',
+    {
+      style: 'currency',
+      currency: 'BRL'
+    }
+  )
+}
+
+export function gerarCSV(
+  dados: any[]
+) {
   if (!dados || dados.length === 0) {
     return ''
   }
 
-  const colunas = Object.keys(dados[0])
+  const colunas =
+    Object.keys(dados[0])
 
-  const linhas = dados.map(item =>
-    colunas
-      .map(col => `"${item[col] ?? ''}"`)
-      .join(';')
-  )
+  const linhas =
+    dados.map(item =>
+      colunas
+        .map(
+          col =>
+            `"${item[col] ?? ''}"`
+        )
+        .join(';')
+    )
 
   return [
     colunas.join(';'),
@@ -21,13 +40,14 @@ export function baixarCSV(
   conteudo: string,
   nomeArquivo: string
 ) {
-  const blob = new Blob(
-    [conteudo],
-    {
-      type:
-        'text/csv;charset=utf-8;'
-    }
-  )
+  const blob =
+    new Blob(
+      [conteudo],
+      {
+        type:
+          'text/csv;charset=utf-8;'
+      }
+    )
 
   const url =
     URL.createObjectURL(blob)
