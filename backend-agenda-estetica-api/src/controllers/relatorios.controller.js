@@ -390,6 +390,61 @@ async function fecharMes(req, res) {
 
 /**
  * =========================
+ * REABRIR MÊS
+ * =========================
+ */
+async function reabrirMes(req, res) {
+  try {
+
+    if (req.userTipo !== 'clinica') {
+      return res.status(403).json({
+        mensagem: 'Acesso negado'
+      });
+    }
+
+    const { id } = req.params;
+    const clinicaId = req.clinicaId;
+
+    const pool = await sql.connect();
+
+    const result = await pool.request()
+      .input('Id', sql.Int, Number(id))
+      .input('ClinicaId', sql.Int, clinicaId)
+      .query(`
+        DELETE FROM FechamentoMensal
+        WHERE
+          Id = @Id
+          AND ClinicaId = @ClinicaId
+      `);
+
+    if (result.rowsAffected[0] === 0) {
+      return res.status(404).json({
+        mensagem: 'Fechamento não encontrado'
+      });
+    }
+
+    return res.json({
+      sucesso: true,
+      mensagem: 'Período reaberto com sucesso'
+    });
+
+  } catch (err) {
+
+    console.error(
+      'Erro ao reabrir período:',
+      err
+    );
+
+    return res.status(500).json({
+      mensagem: 'Erro ao reabrir período'
+    });
+
+  }
+}
+
+
+/**
+ * =========================
  * STATUS DO MÊS
  * =========================
  */
@@ -605,6 +660,60 @@ async function despesasPorCategoria(req, res) {
   }
 }
 
+/**
+ * =========================
+ * HISTÓRICO DE FECHAMENTOS
+ * =========================
+ */
+async function listarFechamentos(req, res) {
+  try {
+
+    if (req.userTipo !== 'clinica') {
+      return res.status(403).json({
+        mensagem: 'Acesso negado'
+      });
+    }
+
+    const clinicaId = req.clinicaId;
+
+    const pool = await sql.connect();
+
+    const result = await pool.request()
+      .input(
+        'ClinicaId',
+        sql.Int,
+        clinicaId
+      )
+      .query(`
+        SELECT
+          Id,
+          DataInicio,
+          DataFim,
+          CriadoEm
+        FROM FechamentoMensal
+        WHERE ClinicaId = @ClinicaId
+        ORDER BY CriadoEm DESC
+      `);
+
+    return res.json(
+      result.recordset
+    );
+
+  } catch (err) {
+
+    console.error(
+      'Erro ao listar fechamentos:',
+      err
+    );
+
+    return res.status(500).json({
+      mensagem:
+        'Erro ao listar fechamentos'
+    });
+
+  }
+}
+
 
 module.exports = {
   resumo,
@@ -616,6 +725,8 @@ module.exports = {
   obterMeta,
   salvarMeta,
   fecharMes,
+  reabrirMes,
   statusMes,
+  listarFechamentos,
   comparacaoPeriodo
 };

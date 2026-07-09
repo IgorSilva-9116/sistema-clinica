@@ -68,6 +68,10 @@ export function useRelatorios() {
   const [mesFechado, setMesFechado] =
     useState(false)
 
+  
+  const [fechamentos, setFechamentos] =
+    useState<any[]>([])  
+
   async function gerarRelatorio(
     dataInicio: string,
     dataFim: string
@@ -147,9 +151,19 @@ export function useRelatorios() {
           }
         )
 
-      setMesFechado(
-        statusResp.data.fechado
-      )
+      const fechamentosResp =
+        await api.get(
+          '/relatorios/fechamentos'
+         )
+
+          setMesFechado(
+           statusResp.data.fechado
+          )
+
+          setFechamentos(
+           fechamentosResp.data || []
+          )
+
 
       const r = resumoResp.data
 
@@ -269,6 +283,37 @@ async function fecharMes(
 
 }
 
+/**
+ * =========================
+ * REABRIR MÊS
+ * =========================
+ */
+async function reabrirMes(
+  id: number
+) {
+
+  try {
+
+    await api.delete(
+      `/relatorios/fechamentos/${id}`
+    )
+
+    alert(
+      'Período reaberto com sucesso!'
+    )
+
+  } catch (err) {
+
+    console.error(err)
+
+    alert(
+      'Erro ao reabrir período'
+    )
+
+  }
+
+}
+
   return {
     loading,
     dataInicio,
@@ -282,12 +327,12 @@ async function fecharMes(
     despesasCategoria,
     faturamentoServico,
     mesFechado,
+    fechamentos,
     fecharMes,
+    reabrirMes,
     setMetaMensal,
     atualizarMeta,
     salvarMetaBackend,
-
-
     gerarRelatorio
   }
 }

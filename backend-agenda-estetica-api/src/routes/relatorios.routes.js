@@ -16,9 +16,12 @@ router.get('/relatorios/meta', auth, controller.obterMeta);
 router.post('/relatorios/meta', auth, controller.salvarMeta);
 
 router.post('/relatorios/fechar-mes', auth, controller.fecharMes);
+router.delete('/relatorios/fechamentos/:id', auth, controller.reabrirMes);
 router.get('/relatorios/status-mes', auth, controller.statusMes);
+router.get('/relatorios/fechamentos', auth, controller.listarFechamentos);
 router.get('/relatorios/comparacao', auth, controller.comparacaoPeriodo);
 router.get('/relatorios/despesas-categoria', auth, controller.despesasPorCategoria);
+
 
 
 module.exports = router;

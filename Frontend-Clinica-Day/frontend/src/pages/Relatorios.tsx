@@ -14,7 +14,9 @@ function RelatoriosContent() {
   const {
   gerarRelatorio,
   mesFechado,
-  fecharMes
+  fechamentos,
+  fecharMes,
+  reabrirMes
  } = useRelatoriosContext()
 
   return (
@@ -148,6 +150,93 @@ function RelatoriosContent() {
 
      )
     }
+
+    {
+  fechamentos.length > 0 && (
+
+    <div
+      style={{
+        marginTop: 20,
+        marginBottom: 25
+      }}
+    >
+
+      <h3>
+        🔒 Histórico de Fechamentos
+      </h3>
+
+      {fechamentos.map(
+        (f: any) => (
+
+          <div
+            key={f.Id}
+            style={{
+              border: '1px solid #ddd',
+              borderRadius: 8,
+              padding: 12,
+              marginBottom: 10,
+              background: '#fafafa'
+            }}
+          >
+
+            <strong>
+              🔒 Período
+            </strong>
+
+            <br />
+
+            {new Date(
+              f.DataInicio
+            ).toLocaleDateString('pt-BR')}
+
+            {' até '}
+
+            {new Date(
+              f.DataFim
+            ).toLocaleDateString('pt-BR')}
+
+            <br />
+
+            <small>
+
+              Fechado em:
+
+              {' '}
+
+              {new Date(
+                f.CriadoEm
+              ).toLocaleString('pt-BR')}
+
+            </small>
+
+            <br />
+            <br />
+            <button
+              onClick={() => {
+
+               const confirmar =
+                 window.confirm(
+                   'Deseja realmente reabrir este período?'
+                  )
+
+                if (!confirmar) return
+
+                reabrirMes(f.Id)
+
+              }}
+            >
+              🔓 Reabrir
+            </button>
+
+          </div>
+
+        )
+      )}
+
+    </div>
+
+  )
+}
 
       <Outlet />
 
