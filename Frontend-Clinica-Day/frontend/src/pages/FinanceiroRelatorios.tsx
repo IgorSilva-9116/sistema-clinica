@@ -81,10 +81,8 @@ export default function FinanceiroRelatorios() {
       <h2>💰 Financeiro</h2>
 
       <button
+        className="export-button"
         onClick={exportarFinanceiro}
-        style={{
-         marginBottom: 20
-        }}
       >
        📥 Exportar Financeiro
       </button>
@@ -115,119 +113,58 @@ export default function FinanceiroRelatorios() {
 
       </div>
 
-      <h3
-        style={{
-          marginTop: 30
-        }}
-      >
+      <h3 className="financeiro-section">
         🏷️ Despesas por Categoria
       </h3>
 
-      <div
-        style={{
-          background: '#fff',
-          padding: 20,
-          borderRadius: 8,
-          marginTop: 10
-        }}
-      >
+       <div className="financeiro-box">
+
+  <div className="financeiro-grid">
+
+    <div className="financeiro-total-card">
+
+      <div>
+        📊 Total das Categorias
+      </div>
+
+      <div className="financeiro-total-value">
+        {formatarMoeda(totalCategorias)}
+      </div>
+
+    </div>
+
+    {despesasCategoria.map(
+      (item: any) => (
 
         <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns:
-              'repeat(auto-fill,minmax(220px,1fr))',
-            gap: 15
-          }}
+          key={item.Categoria}
+          className="financeiro-categoria-card"
         >
 
-          <div
-            style={{
-              background: '#1976d2',
-              color: '#fff',
-              borderRadius: 10,
-              padding: 18
-            }}
-          >
-            <div>
-              📊 Total das Categorias
-            </div>
-
-            <div
-              style={{
-                fontSize: 24,
-                fontWeight: 'bold'
-              }}
-            >
-              {formatarMoeda(
-                totalCategorias
-              )}
-            </div>
-
+          <div className="financeiro-categoria-titulo">
+            🏷️ {item.Categoria}
           </div>
 
-          {despesasCategoria.map(
-            (item: any) => (
-
-              <div
-                key={item.Categoria}
-                style={{
-                  background: '#fff',
-                  border:
-                    '1px solid #e5e7eb',
-                  borderRadius: 10,
-                  padding: 18,
-                  boxShadow:
-                    '0 1px 3px rgba(0,0,0,.1)'
-                }}
-              >
-
-                <div
-                  style={{
-                    fontWeight: 'bold',
-                    marginBottom: 10
-                  }}
-                >
-                  🏷️ {item.Categoria}
-                </div>
-
-                <div
-                  style={{
-                    color: '#1976d2',
-                    fontSize: 22,
-                    fontWeight: 'bold'
-                  }}
-                >
-                  {formatarMoeda(
-                    Number(item.Total)
-                  )}
-                </div>
-
-              </div>
-
-            )
-          )}
+          <div className="financeiro-categoria-valor">
+            {formatarMoeda(
+              Number(item.Total)
+            )}
+          </div>
 
         </div>
 
-      </div>
+      )
+    )}
 
-      <h3
-        style={{
-          marginTop: 30
-        }}
-      >
+  </div>
+
+</div>
+
+      <h3 className="financeiro-section">
         🥧 Participação por Categoria
       </h3>
 
-      <div
-        className="grafico-container"
-        style={{
-         width: 320,
-         height: 320,
-         margin: '0 auto'
-        }}
-      >
+      <div className="financeiro-pizza">
 
   {despesasCategoria.length > 1 ? (
 

@@ -88,10 +88,8 @@ export default function DashboardRelatorios() {
       <h2>📊 Indicadores Principais</h2>
 
       <button
+        className="export-button"
         onClick={exportarResumo}
-        style={{
-         marginBottom: 20
-        }}
       >
        📥 Exportar Resumo
       </button>
@@ -142,21 +140,13 @@ export default function DashboardRelatorios() {
 
           <h3>🎯 Meta Mensal</h3>
 
-        <div
-          style={{
-            display: 'flex',
-            gap: 10,
-            marginBottom: 15
-          }}
-        >
+        <div className="meta-controls">
 
           <input
-            type="number"    
+            className="meta-input"
+            type="number"
             min={0}
             step={100}
-            style={{
-             width: 180
-            }}
             value={metaMensal}
             onChange={(e) =>
               atualizarMeta(
@@ -193,35 +183,20 @@ export default function DashboardRelatorios() {
         {percentualMeta.toFixed(1)}%
       </p>
 
-      <div
-        style={{
-          width: '100%',
-          height: 12,
-          background: '#eee',
-          borderRadius: 10,
-          overflow: 'hidden'
-        }}
-      >
+      <div className="meta-progress">
 
       <div
-        style={{
-          width:
-           `${Math.min(
-            percentualMeta,
-            100
-           )}%`,
-
-           height: '100%',
-
-           background:
-               percentualMeta >= 100
-             ? '#2e7d32'
-             : percentualMeta >= 50
-              ? '#f9a825'
-              : '#d32f2f'
-        }}
-       />
-
+          className="meta-progress-bar"
+          style={{
+            width: `${Math.min(percentualMeta,100)}%`,
+            background:
+              percentualMeta >= 100
+                ? '#2e7d32'
+                : percentualMeta >= 50
+                ? '#f9a825'
+                : '#d32f2f'
+          }}
+        />
       </div>
 
         </div>
@@ -230,11 +205,7 @@ export default function DashboardRelatorios() {
 
           <h3>📊 Faturamento</h3>
 
-          <div
-            style={{
-              height: '300px'
-            }}
-          >
+           <div className="dashboard-chart">
 
             <Bar
               data={{

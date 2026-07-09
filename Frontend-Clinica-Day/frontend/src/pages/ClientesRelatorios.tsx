@@ -33,17 +33,35 @@ export default function ClientesRelatorios() {
     try {
 
       setLoading(true)
+     const dataInicio =
+  sessionStorage.getItem(
+    'relatorioDataInicio'
+  )
 
-      const resp =
-        await api.get(
-          '/relatorios/clientes',
-          {
-            params: {
-              dataInicio: '2026-05-01',
-              dataFim: '2026-07-08'
-            }
-          }
-        )
+const dataFim =
+  sessionStorage.getItem(
+    'relatorioDataFim'
+  )
+
+if (!dataInicio || !dataFim) {
+
+  alert(
+    'Selecione um período e clique em Gerar Relatório.'
+  )
+
+  return
+}
+
+const resp =
+  await api.get(
+    '/relatorios/clientes',
+    {
+      params: {
+        dataInicio,
+        dataFim
+      }
+    }
+  )
 
       setClientes(resp.data)
 

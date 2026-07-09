@@ -58,10 +58,8 @@ export default function ServicosRelatorios() {
       <h2>🧴 Serviços</h2>
 
       <button
+        className="export-button"
         onClick={exportarServicos}
-        style={{
-         marginBottom: 20
-        }}
       >
        📥 Exportar Serviços
       </button>
@@ -123,14 +121,7 @@ export default function ServicosRelatorios() {
         📊 Faturamento por Serviço
       </h3>
 
-      <div
-        className="grafico-container"
-        style={{
-          maxWidth: '800px',
-          margin: '0 auto',
-          height: '300px'
-        }}
-      >
+      <div className="servicos-chart">
 
         {faturamentoServico.length > 0 ? (
 

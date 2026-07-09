@@ -69,12 +69,24 @@ function RelatoriosContent() {
         </label>
 
         <button
-          onClick={() =>
-            gerarRelatorio(
-              dataInicio,
-              dataFim
-            )
-          }
+          onClick={() => {
+
+           sessionStorage.setItem(
+             'relatorioDataInicio',
+             dataInicio
+           )
+
+           sessionStorage.setItem(
+             'relatorioDataFim',
+             dataFim
+           )
+
+           gerarRelatorio(
+             dataInicio,
+             dataFim
+           )
+          }}
+
         >
           Gerar Relatório
         </button>

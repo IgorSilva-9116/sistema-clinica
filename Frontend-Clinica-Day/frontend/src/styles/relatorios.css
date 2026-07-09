@@ -169,3 +169,173 @@ table td {
 .relatorio-nav a:hover{
   color:#1976d2;
 }
+
+/* ========================
+   BOTÕES EXPORTAÇÃO
+======================== */
+
+.export-button {
+  margin-bottom: 20px;
+}
+
+/* ========================
+   META MENSAL
+======================== */
+
+.meta-input {
+  width: 180px;
+}
+
+.meta-progress {
+  width: 100%;
+  height: 12px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.meta-progress-bar {
+  height: 100%;
+}
+
+/* ========================
+   GRÁFICOS
+======================== */
+
+.dashboard-chart {
+  height: 300px;
+}
+
+.servicos-chart {
+  max-width: 800px;
+  margin: 0 auto;
+  height: 300px;
+}
+
+.financeiro-pizza {
+  width: 320px;
+  height: 320px;
+  margin: 0 auto;
+}
+
+/* ========================
+   DASHBOARD
+======================== */
+
+/* Área dos controles da meta */
+.meta-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+/* Espaço do gráfico de faturamento */
+.dashboard-chart {
+  height: 300px;
+}
+
+/* ========================
+   FINANCEIRO
+======================== */
+
+/* Espaçamento do título das categorias */
+.financeiro-section {
+  margin-top: 30px;
+}
+
+/* Container principal das categorias */
+.financeiro-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+/* Grid de categorias */
+.financeiro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+/* Card azul com total geral */
+.financeiro-total-card {
+  background: #1976d2;
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+/* Valor do total das categorias */
+.financeiro-total-value {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Card individual de categoria */
+.financeiro-categoria-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+/* Título da categoria */
+.financeiro-categoria-titulo {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Valor da categoria */
+.financeiro-categoria-valor {
+  color: #1976d2;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Área do gráfico de pizza */
+.financeiro-pizza {
+  width: 320px;
+  height: 320px;
+  margin: 0 auto;
+}
+
+.financeiro-grid {
+  display: grid !important;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(220px, 1fr)
+  ) !important;
+  gap: 15px;
+  width: 100%;
+}
+
+.financeiro-box {
+  display: block;
+  width: 100%;
+}
+
+/* ========================
+   SERVIÇOS
+======================== */
+
+/* Área do gráfico de serviços */
+.servicos-chart {
+  max-width: 800px;
+  margin: 0 auto;
+  height: 300px;
+}
+
+/* ========================
+   CLIENTES
+======================== */
+
+/* Container principal do relatório */
+.clientes-container {
+  max-width: 900px;
+}
+
+/* Espaço acima da tabela */
+.clientes-tabela {
+  margin-top: 20px;
+}
