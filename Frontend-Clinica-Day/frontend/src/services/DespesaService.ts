@@ -21,6 +21,18 @@ export async function criarDespesa(data: Partial<Despesa>) {
   await api.post('/despesas', data)
 }
 
+export async function editarDespesa(
+  id: number,
+  data: Partial<Despesa>
+) {
+
+  await api.put(
+    `/despesas/${id}`,
+    data
+  )
+
+}
+
 export async function excluirDespesa(id: number) {
   await api.delete(`/despesas/${id}`)
 }

@@ -231,6 +231,44 @@ export function useRelatorios() {
   }
 }
 
+/**
+ * =========================
+ * FECHAR MÊS
+ * =========================
+ */
+async function fecharMes(
+  dataInicio: string,
+  dataFim: string
+) {
+
+  try {
+
+    await api.post(
+      '/relatorios/fechar-mes',
+      {
+        dataInicio,
+        dataFim
+      }
+    )
+
+    setMesFechado(true)
+
+    alert(
+      'Período fechado com sucesso!'
+    )
+
+  } catch (err) {
+
+    console.error(err)
+
+    alert(
+      'Erro ao fechar período'
+    )
+
+  }
+
+}
+
   return {
     loading,
     dataInicio,
@@ -244,7 +282,7 @@ export function useRelatorios() {
     despesasCategoria,
     faturamentoServico,
     mesFechado,
-
+    fecharMes,
     setMetaMensal,
     atualizarMeta,
     salvarMetaBackend,

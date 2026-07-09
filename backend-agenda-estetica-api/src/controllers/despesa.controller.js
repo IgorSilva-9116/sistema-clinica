@@ -2,6 +2,45 @@ const { sql } = require('../config/database');
 
 /**
  * =========================
+ * VERIFICA SE O PERÍODO ESTÁ FECHADO
+ * =========================
+ */
+async function verificarPeriodoFechado(
+  clinicaId,
+  data
+) {
+
+  const pool = await sql.connect()
+
+  const result =
+    await pool.request()
+      .input(
+        'ClinicaId',
+        sql.Int,
+        clinicaId
+      )
+      .input(
+        'Data',
+        sql.Date,
+        data
+      )
+      .query(`
+        SELECT 1
+        FROM FechamentoMensal
+        WHERE
+          ClinicaId = @ClinicaId
+          AND @Data BETWEEN
+            DataInicio
+            AND DataFim
+      `)
+
+  return (
+    result.recordset.length > 0
+  )
+}
+
+/**
+ * =========================
  * CRIAR DESPESA
  * =========================
  */
@@ -29,6 +68,22 @@ async function criarDespesa(req, res) {
     }
 
     const pool = await sql.connect();
+
+    const periodoFechado =
+       await verificarPeriodoFechado(
+         clinicaId,
+         Data
+        )
+
+      if (periodoFechado) {
+
+      return res.status(400).json({
+        sucesso: false,
+        mensagem:
+         'Não é possível cadastrar despesas em um período fechado'
+      })
+
+    }
 
     await pool.request()
       .input('ClinicaId', sql.Int, clinicaId)
@@ -115,6 +170,122 @@ async function listarDespesas(req, res) {
   }
 }
 
+/**
+ * =========================
+ * EDITAR DESPESA
+ * =========================
+ */
+async function editarDespesa(req, res) {
+  try {
+
+    const { id } = req.params
+    const clinicaId = req.clinicaId
+
+    const {
+      Descricao,
+      Valor,
+      Data,
+      CategoriaFinanceiraId,
+      FormaPagamento,
+      Observacao,
+      Status
+    } = req.body
+
+    const periodoFechado =
+      await verificarPeriodoFechado(
+        clinicaId,
+        Data
+      )
+
+      if (periodoFechado) {
+
+      return res.status(400).json({
+        sucesso: false,
+        mensagem:
+          'Não é possível editar despesas de um período fechado'
+      })
+
+    }
+
+    const pool = await sql.connect()
+
+    const result = await pool.request()
+      .input('Id', sql.Int, Number(id))
+      .input('ClinicaId', sql.Int, clinicaId)
+
+      .input('Descricao', sql.VarChar(255), Descricao)
+      .input('Valor', sql.Decimal(10, 2), Valor)
+      .input('Data', sql.Date, Data)
+
+      .input(
+        'CategoriaFinanceiraId',
+        sql.Int,
+        CategoriaFinanceiraId || null
+      )
+
+      .input(
+        'FormaPagamento',
+        sql.VarChar(50),
+        FormaPagamento || null
+      )
+
+      .input(
+        'Observacao',
+        sql.VarChar(500),
+        Observacao || null
+      )
+
+      .input(
+        'Status',
+        sql.VarChar(20),
+        Status || 'PENDENTE'
+      )
+
+      .query(`
+        UPDATE Despesa
+        SET
+          Descricao = @Descricao,
+          Valor = @Valor,
+          Data = @Data,
+          CategoriaFinanceiraId =
+            @CategoriaFinanceiraId,
+          FormaPagamento =
+            @FormaPagamento,
+          Observacao = @Observacao,
+          Status = @Status
+
+        WHERE
+          Id = @Id
+          AND ClinicaId = @ClinicaId
+      `)
+
+    if (result.rowsAffected[0] === 0) {
+      return res.status(404).json({
+        sucesso: false,
+        mensagem:
+          'Despesa não encontrada'
+      })
+    }
+
+    return res.json({
+      sucesso: true,
+      mensagem:
+        'Despesa atualizada com sucesso'
+    })
+
+  } catch (err) {
+
+    console.error(err)
+
+    return res.status(500).json({
+      sucesso: false,
+      mensagem:
+        'Erro ao atualizar despesa'
+    })
+
+  }
+}
+
 
 /**
  * =========================
@@ -127,6 +298,43 @@ async function excluirDespesa(req, res) {
     const clinicaId = req.clinicaId;
 
     const pool = await sql.connect();
+
+      // Busca a despesa para descobrir a data
+    const despesa = await pool.request()
+      .input('Id', sql.Int, Number(id))
+      .input('ClinicaId', sql.Int, clinicaId)
+      .query(`
+        SELECT Data
+        FROM Despesa
+        WHERE
+          Id = @Id
+          AND ClinicaId = @ClinicaId
+     `)
+
+     if (despesa.recordset.length === 0) {
+
+       return res.status(404).json({
+         sucesso: false,
+         mensagem: 'Despesa não encontrada'
+        })
+
+      }
+
+     const periodoFechado =
+       await verificarPeriodoFechado(
+         clinicaId,
+         despesa.recordset[0].Data
+        )
+
+      if (periodoFechado) {
+
+      return res.status(400).json({
+        sucesso: false,
+        mensagem:
+          'Não é possível excluir despesas de um período fechado'
+      })
+
+    } 
 
     const result = await pool.request()
       .input('Id', sql.Int, Number(id))
@@ -169,6 +377,42 @@ async function marcarComoPago(req, res) {
 
     const pool = await sql.connect();
 
+      // Busca a data da despesa
+    const despesa = await pool.request()
+      .input('Id', sql.Int, id)
+      .input('ClinicaId', sql.Int, clinicaId)
+      .query(`
+        SELECT Data
+        FROM Despesa
+        WHERE
+         Id = @Id
+         AND ClinicaId = @ClinicaId
+     `)
+     
+    if (despesa.recordset.length === 0) {
+
+      return res.status(404).json({
+         sucesso: false,
+         mensagem: 'Despesa não encontrada'
+        })
+    }
+
+    const periodoFechado =
+      await verificarPeriodoFechado(
+        clinicaId,
+        despesa.recordset[0].Data
+      )
+
+    if (periodoFechado) {
+
+      return res.status(400).json({
+        sucesso: false,
+        mensagem:
+          'Não é possível alterar despesas de um período fechado'
+      })
+
+    }
+
     await pool.request()
       .input('Id', sql.Int, id)
       .input('ClinicaId', sql.Int, clinicaId)
@@ -189,6 +433,7 @@ async function marcarComoPago(req, res) {
 module.exports = {
   criarDespesa,
   listarDespesas,
+  editarDespesa,
   excluirDespesa,
   marcarComoPago
 };

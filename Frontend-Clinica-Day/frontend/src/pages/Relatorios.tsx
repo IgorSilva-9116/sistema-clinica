@@ -12,8 +12,10 @@ function RelatoriosContent() {
   const [dataFim, setDataFim] = useState('')
 
   const {
-    gerarRelatorio
-  } = useRelatoriosContext()
+  gerarRelatorio,
+  mesFechado,
+  fecharMes
+ } = useRelatoriosContext()
 
   return (
     <div className="container">
@@ -92,6 +94,60 @@ function RelatoriosContent() {
         </button>
 
       </div>
+
+      <div
+         style={{
+         marginBottom: 20
+        }}
+      >
+
+        {mesFechado ? (
+
+      <div
+         style={{
+         color: '#d32f2f',
+         fontWeight: 'bold'
+        }}
+      >
+        🔒 PERÍODO FECHADO
+      </div>
+
+       ) : (
+
+      <div
+        style={{
+        color: '#2e7d32',
+        fontWeight: 'bold'
+       }}
+      >
+        🟢 PERÍODO ABERTO
+      </div>
+
+      )}
+
+    </div>
+
+    {
+      !mesFechado &&
+      dataInicio &&
+      dataFim && (
+
+     <button
+        onClick={() =>
+          fecharMes(
+            dataInicio,
+            dataFim
+          )
+        }
+        style={{
+          marginBottom: 25
+        }}
+      >
+       🔒 Fechar Mês
+     </button>
+
+     )
+    }
 
       <Outlet />
 

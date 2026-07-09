@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Despesa } from '../types/Despesa'
 
-import { listarDespesas, criarDespesa, excluirDespesa } from '../services/DespesaService'
+import { listarDespesas, criarDespesa, editarDespesa, excluirDespesa } from '../services/DespesaService'
 import { api } from '../services/api'
 
 import {
@@ -23,6 +23,7 @@ export default function DespesaPage() {
   const [valorTexto, setValorTexto] = useState('')
   const [categorias, setCategorias] = useState<CategoriaFinanceira[]>([])
   const [categoriaFinanceiraId, setCategoriaFinanceiraId] = useState('')
+  const [editandoId, setEditandoId] = useState<number | null>(null)
 
   // ✅ ✅ CORREÇÃO DEFINITIVA
   async function carregar() {
@@ -82,19 +83,132 @@ export default function DespesaPage() {
 
       await carregar()
 
-    } catch (err) {
-      console.error('Erro ao salvar despesa', err)
-      alert('Erro ao salvar despesa')
+    } catch (err: any) {
+
+      console.error(
+      'Erro ao salvar despesa',
+       err
+      )
+
+      alert(
+       err?.response?.data?.mensagem ||
+       'Erro ao salvar despesa'
+      )
+
     }
+
   }
+
+  function editar(d: Despesa) {
+
+  setEditandoId(d.Id)
+
+  setDescricao(d.Descricao)
+
+  setValor(
+    Number(d.Valor).toString()
+  )
+
+  setValorTexto(
+    formatarMoeda(
+      String(
+        Number(d.Valor) * 100
+      )
+    )
+  )
+
+  setData(
+    d.Data.substring(0, 10)
+  )
+
+  setCategoriaFinanceiraId(
+    d.CategoriaFinanceiraId
+      ? String(
+          d.CategoriaFinanceiraId
+        )
+      : ''
+  )
+
+  setFormaPagamento(
+    d.FormaPagamento || ''
+  )
+
+  setStatus(
+    d.Status || 'PENDENTE'
+  )
+}
+
+  async function atualizar() {
+
+  if (!editandoId) return
+
+  try {
+
+    await editarDespesa(
+      editandoId,
+      {
+        Descricao: descricao,
+
+        Valor: Number(
+          valor.replace(',', '.')
+        ),
+
+        Data: data,
+
+        CategoriaFinanceiraId:
+          categoriaFinanceiraId
+            ? Number(
+                categoriaFinanceiraId
+              )
+            : null,
+
+        FormaPagamento:
+          formaPagamento,
+
+        Status: status
+      }
+    )
+
+    setEditandoId(null)
+
+    setDescricao('')
+    setValor('')
+    setValorTexto('')
+    setData('')
+    setFormaPagamento('')
+    setStatus('PENDENTE')
+    setCategoriaFinanceiraId('')
+
+    await carregar()
+
+  } catch (err: any) {
+
+    console.error(err)
+
+     alert(
+      err?.response?.data?.mensagem ||
+      'Erro ao atualizar despesa'
+    )
+
+  }
+}
 
   async function remover(id: number) {
     try {
       await excluirDespesa(id)
       await carregar()
-    } catch (err) {
-      console.error('Erro ao excluir despesa', err)
-      alert('Erro ao excluir despesa')
+    } catch (err: any) {
+
+      console.error(
+       'Erro ao excluir despesa',
+       err
+      )
+
+      alert(
+       err?.response?.data?.mensagem ||
+       'Erro ao excluir despesa'
+      )
+
     }
   }
 
@@ -102,9 +216,18 @@ export default function DespesaPage() {
     try {
       await api.patch(`/despesas/${id}/pagar`)
       await carregar()
-    } catch (err) {
-      console.error('Erro ao marcar como pago', err)
-      alert('Erro ao atualizar status')
+    } catch (err: any) {
+
+       console.error(
+        'Erro ao marcar como pago',
+         err
+         )
+
+       alert(
+        err?.response?.data?.mensagem ||
+        'Erro ao atualizar status'
+        )
+
     }
   }
 
@@ -241,8 +364,14 @@ export default function DespesaPage() {
             <option value="PAGO">Pago</option>
           </select>
 
-          <button onClick={salvar} style={{ marginTop: 10 }}>
-            Salvar
+          <button onClick={ editandoId ? atualizar : salvar }
+                style={{ marginTop: 10 }}
+          >
+              {
+               editandoId
+               ? '💾 Atualizar'
+               : 'Salvar'
+              }
           </button>
         </div>
       </div>
@@ -291,6 +420,10 @@ export default function DespesaPage() {
             )}
 
             <br />
+            <button onClick={() => editar(d) }>
+               ✏️ Editar
+            </button>
+             <br />
 
             <button onClick={() => remover(d.Id)} style={{ marginTop: 5 }}>
               ❌ Excluir

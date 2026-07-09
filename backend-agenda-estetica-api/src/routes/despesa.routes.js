@@ -30,6 +30,12 @@ router.post(
   despesaController.criarDespesa
 )
 
+router.put(
+  '/despesas/:id',
+  authMiddleware,
+  despesaController.editarDespesa
+)
+
 router.delete(
   '/despesas/:id',
   authMiddleware,
