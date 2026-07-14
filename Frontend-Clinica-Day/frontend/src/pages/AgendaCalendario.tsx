@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { api } from '../services/api'
+import '../styles/agenda.css'
 
 /* =======================
    TIPOS
@@ -45,6 +46,22 @@ type SlotAgenda =
       tipo: 'ABRIR' | 'FECHAR'
       observacao?: string
     }
+
+type BlocoTimeline = {
+  inicio: string
+  fim: string
+
+  tipo:
+    | 'LIVRE'
+    | 'AGENDADO'
+    | 'EXCECAO'
+
+  agendamento?: Agendamento
+
+  observacao?: string
+
+  tipoExcecao?: string
+}
 
 /* =======================
    TYPE GUARD
@@ -93,6 +110,23 @@ function horaParaMinutos(hora: string) {
   return h * 60 + m
 }
 
+function minutosParaTexto(minutos: number) {
+
+  const horas = Math.floor(minutos / 60)
+  const mins = minutos % 60
+
+  if (horas > 0 && mins > 0) {
+    return `${horas}h ${mins}min`
+  }
+
+  if (horas > 0) {
+    return `${horas}h`
+  }
+
+  return `${mins} min`
+}
+
+
 function normalizarStatus(status: StatusAgendamento): StatusAgendamento {
   return status === 'AGENDADO' ? 'CRIADO' : status
 }
@@ -116,10 +150,12 @@ export default function AgendaCalendario() {
 
   const [agendaBase, setAgendaBase] = useState<DiaAgendaBase[]>([])
   const [slots, setSlots] = useState<SlotAgenda[]>([])
+  const [mostrarLivres, setMostrarLivres] = useState(false)
   const [diaAberto, setDiaAberto] = useState<boolean | null>(null)
   const [loadingAgenda, setLoadingAgenda] = useState(false)
   const [diasComExcecao, setDiasComExcecao] = useState<string[]>([])
-  const [agendaFechada, setAgendaFechada] = useState(false)
+  const [excecoesDia, setExcecoesDia] =useState<ExcecaoAgenda[]>([])
+  const [agendaFechada, setAgendaFechada] = useState(false)      
   const [dataLimiteAgenda, setDataLimiteAgenda] = useState<string | null>(null)
   const [dataFechamentoAgenda, setDataFechamentoAgenda] = useState<string | null>(null)
 
@@ -200,6 +236,7 @@ export default function AgendaCalendario() {
 
       const excecoes: ExcecaoAgenda[] =
         excResp.data?.excecoes ?? excResp.data ?? []
+        setExcecoesDia(excecoes)
 
       setSlots(
         horarios.map(h => {
@@ -349,15 +386,157 @@ if (!dias && !data) {
     year: 'numeric'
   })
 
+  // const slotsFiltrados =
+  // mostrarLivres
+  //   ? slots
+  //   : slots.filter(
+  //       s => s.status !== 'LIVRE'
+  //     )
+
+  
+  // const slotsExibicao =
+  // slotsFiltrados.filter(
+  //   (slot, index, array) => {
+
+  //     const anterior =
+  //       array[index - 1]
+
+  //     // AGRUPA AGENDAMENTOS
+  //     if (
+  //       isSlotAgendado(slot) &&
+  //       anterior &&
+  //       isSlotAgendado(anterior) &&
+  //       anterior.agendamento.Id ===
+  //         slot.agendamento.Id
+  //     ) {
+  //       return false
+  //     }
+
+  //     // AGRUPA EXCEÇÕES
+  //     if (
+  //       slot.status === 'EXCECAO' &&
+  //       anterior &&
+  //       anterior.status === 'EXCECAO' &&
+  //       anterior.observacao ===
+  //         slot.observacao
+  //     ) {
+  //       return false
+  //     }
+
+  //     return true
+
+  //   }
+  // )
+
+  // const slotsAgenda =
+  // slotsExibicao.filter((slot) => {
+
+  //   if (slot.status !== 'LIVRE') {
+  //     return true
+  //   }
+
+  //   return slot.hora.endsWith(':00')
+
+  // })
+
+const agendaDia = obterAgendaBaseDia(
+  dataSelecionada
+)
+
+const horaInicioDia =
+  agendaDia?.horaInicio || '08:00'
+
+const horaFimDia =
+  agendaDia?.horaFim || '18:00'
+
+const timeline: BlocoTimeline[] = []
+
+const agendamentosUnicos = slots
+  .filter(isSlotAgendado)
+  .map(s => s.agendamento)
+  .filter(
+    (ag, index, array) =>
+      array.findIndex(
+        x => x.Id === ag.Id
+      ) === index
+  )
+timeline.sort(
+  (a, b) =>
+    horaParaMinutos(a.inicio) -
+    horaParaMinutos(b.inicio)
+)
+
+
+let ultimoFim = horaInicioDia
+
+agendamentosUnicos.forEach(ag => {
+
+  excecoesDia.forEach(exc => {
+
+  timeline.push({
+    inicio: exc.HoraInicio,
+    fim: exc.HoraFim,
+    tipo: 'EXCECAO',
+    observacao: exc.Observacao,
+    tipoExcecao: exc.TipoExcecao
+  })
+
+})
+
+  if (
+    horaParaMinutos(ag.HoraInicio) >
+    horaParaMinutos(ultimoFim)
+  ) {
+
+    timeline.push({
+      inicio: ultimoFim,
+      fim: ag.HoraInicio,
+      tipo: 'LIVRE'
+    })
+
+  }
+
+  timeline.push({
+    inicio: ag.HoraInicio,
+    fim: ag.HoraFim,
+    tipo: 'AGENDADO',
+    agendamento: ag
+  })
+
+  ultimoFim = ag.HoraFim
+
+})
+
+if (
+  horaParaMinutos(ultimoFim) <
+horaParaMinutos(horaFimDia)
+) {
+
+  timeline.push({
+    inicio: ultimoFim,
+  fim: horaFimDia,
+    tipo: 'LIVRE'
+  })
+
+}
+
+const timelineExibicao =
+  mostrarLivres
+    ? timeline
+    : timeline.filter(
+        item => item.tipo !== 'LIVRE'
+      )
+
+
   /* =======================
      RENDER
   ======================= */
-
+  
   return (
-    <div style={{ maxWidth: 700 }}>
+    <div className="agenda-container">
       <h1>Agenda</h1>
 
-    <p style={{ marginTop: 10, fontWeight: 'bold' }}>
+    <p className="agenda-status">
       {agendaFechada
       ? '🔒 Agenda fechada'
       : dataFechamentoAgenda
@@ -368,39 +547,26 @@ if (!dias && !data) {
     </p>
 
 
-      <div style={{ display: 'flex', gap: 10 }}>
+      <div className="agenda-header">
         <button onClick={mesAnterior}>◀</button>
         <h2>{nomeMes}</h2>
         <button onClick={mesSeguinte}>▶</button>
       </div>
 
       {/* ✅ DIAS DA SEMANA */}
-<div
-  style={{
-    display: 'grid',
-    gridTemplateColumns: 'repeat(7, 1fr)',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    marginTop: 20
-  }}
->
-  <div>Dom</div>
-  <div>Seg</div>
-  <div>Ter</div>
-  <div>Qua</div>
-  <div>Qui</div>
-  <div>Sex</div>
-  <div>Sáb</div>
-</div>
+    <div className="calendario-semana">
 
-<div
-  style={{
-    display: 'grid',
-    gridTemplateColumns: 'repeat(7, 1fr)',
-    gap: 6,
-    marginTop: 5
-  }}
->
+      <div>Dom</div>
+      <div>Seg</div>
+      <div>Ter</div>
+      <div>Qua</div>
+      <div>Qui</div>
+      <div>Sex</div>
+      <div>Sáb</div>
+    </div>
+
+   <div className="calendario-grid">
+
   {Array.from({ length: primeiroDiaSemana }).map((_, i) => (
     <div key={i} />
   ))}
@@ -433,19 +599,23 @@ if (!dias && !data) {
     
     return (
       <button
-        key={dia.toISOString()}
-        onClick={() => {
-          if (bloqueado) return
+         key={dia.toISOString()}
+         onClick={() => {
+
+         if (bloqueado) return
+
           setDataSelecionada(dia)
-        }}
-        style={{
-          padding: 8,
-          border: '1px solid #999',
-          background: cor,
-          position: 'relative',
-          cursor: bloqueado ? 'not-allowed' : 'pointer'
-        }}
-      >
+         }}
+           className={
+             bloqueado
+               ? 'calendario-dia calendario-dia-bloqueado'
+               : 'calendario-dia'
+            }
+            style={{
+              background: cor
+            }}
+      > 
+    
         {dia.getDate()}
 
         {bloqueado && (
@@ -458,52 +628,152 @@ if (!dias && !data) {
   })}
 </div>
 
-      <h3 style={{ marginTop: 30 }}>Agenda do Dia</h3>
+      <h3 className="agenda-titulo-dia">Agenda do Dia</h3>
 
       {loadingAgenda && <p>Carregando...</p>}
       {!loadingAgenda && diaAberto === false && <p>Clínica fechada</p>}
 
       {!loadingAgenda && diaAberto === true && (
         <>
-          <button onClick={finalizarDia}>
-            Finalizar atendimentos do dia
-          </button>
+  <div className="agenda-toolbar">
 
-          <ul>
-            {slots.map(s => (
-              <li key={s.hora}>
-                <strong>{s.hora}</strong> — {s.status}
+    <button onClick={finalizarDia}>
+      ✅ Finalizar atendimentos do dia
+    </button>
 
-                {isSlotAgendado(s) && (
-                  <div>
-                    {s.agendamento.Servico} — {s.agendamento.Cliente}
-                    <br />
-                    Status: {s.agendamento.Status}
+    <label>
 
-                    {s.agendamento.Status === 'CRIADO' && (
-                      <button onClick={() => confirmar(s.agendamento.Id)}>
-                        Confirmar
-                      </button>
-                    )}
+      <input
+        type="checkbox"
+        checked={mostrarLivres}
+        onChange={() =>
+          setMostrarLivres(
+            !mostrarLivres
+          )
+        }
+      />
 
-                    {['CRIADO', 'CONFIRMADO'].includes(
-                      s.agendamento.Status
-                    ) && (
-                      <button onClick={() => cancelar(s.agendamento.Id)}>
-                        Cancelar
-                      </button>
-                    )}
-                  </div>
-                )}
+      Mostrar horários livres
 
-                {s.status === 'EXCECAO' && (
-                  <div style={{ color: '#856404' }}>
-                    ⛔ {s.observacao}
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
+    </label>
+
+  </div>
+
+  <div className="agenda-lista">
+      {timelineExibicao.map((item, index) => (
+
+    <div
+  key={index}
+ className={
+  item.tipo === 'AGENDADO'
+    ? 'agenda-card agenda-card-agendado'
+    : 'agenda-card agenda-card-livre'
+}
+>
+
+  <div className="agenda-hora">
+    {item.inicio}
+    {' às '}
+    {item.fim}
+  </div>
+
+{item.tipo === 'LIVRE' && (
+  <>
+    <div className="agenda-cliente">
+      🟢 Disponível
+    </div>
+
+    <div className="agenda-servico">
+  Nenhum atendimento agendado neste período
+</div>
+  </>
+)}
+
+{item.tipo === 'AGENDADO' && (
+  <>
+    <div className="agenda-cliente">
+      👤 {item.agendamento?.Cliente}
+    </div>
+
+    <div className="agenda-servico">
+      🧴 {item.agendamento?.Servico}
+    </div>
+
+    <div
+      className={`agenda-status-badge ${
+        item.agendamento?.Status === 'CONFIRMADO'
+          ? 'status-confirmado'
+          : item.agendamento?.Status === 'FINALIZADO'
+          ? 'status-finalizado'
+          : 'status-criado'
+      }`}
+    >
+      {item.agendamento?.Status}
+    </div>
+
+    <div className="agenda-acoes-card">
+
+      {item.agendamento?.Status === 'CRIADO' && (
+        <button
+          onClick={() =>
+            confirmar(item.agendamento!.Id)
+          }
+        >
+          ✅ Confirmar
+        </button>
+      )}
+
+      {['CRIADO', 'CONFIRMADO'].includes(
+        item.agendamento?.Status || ''
+      ) && (
+        <button
+          onClick={() =>
+            cancelar(item.agendamento!.Id)
+          }
+        >
+          ❌ Cancelar
+        </button>
+      )}
+
+    </div>
+  </>
+)}
+
+{item.tipo === 'EXCECAO' && (
+  <>
+    <div className="agenda-cliente">
+      ⛔ {item.observacao || 'Horário bloqueado'}
+    </div>
+
+    <div className="agenda-servico">
+      Período indisponível
+    </div>
+  </>
+)}
+
+  <div className="agenda-acoes-card">
+
+
+</div>
+
+<div className="agenda-duracao">
+  {item.tipo === 'LIVRE'
+    ? `${minutosParaTexto(
+        horaParaMinutos(item.fim) -
+        horaParaMinutos(item.inicio)
+      )} disponíveis`
+    : minutosParaTexto(
+        horaParaMinutos(item.fim) -
+        horaParaMinutos(item.inicio)
+      )
+  }
+</div>
+
+</div>
+
+  ))}
+
+</div>
         </>
       )}
     </div>
