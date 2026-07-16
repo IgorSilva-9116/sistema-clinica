@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { api } from '../services/api'
+import '../styles/configurarAgenda.css'
 
 type DiaAgendaBase = {
   id: number
@@ -38,6 +39,23 @@ export default function AgendaBase() {
   const [salvandoConfig, setSalvandoConfig] = useState(false)
   const [dataFechamento, setDataFechamento] = useState<string | null>(null)
 
+  const horariosDisponiveis = Array.from(
+    { length: 96 },
+    (_, i) => {
+
+      const hora = Math.floor(i / 4)
+        .toString()
+        .padStart(2, '0')
+
+      const minuto = ((i % 4) * 15)
+        .toString()
+        .padStart(2, '0')
+
+      return `${hora}:${minuto}`
+
+    }
+  )
+
   const carregarAgendaBase = useCallback(async () => {
     setLoading(true)
     setErro(null)
@@ -71,7 +89,7 @@ export default function AgendaBase() {
       setDiasLiberacao(resp.data?.DiasLiberacaoAgenda || 0)
       const data = resp.data?.DataLimiteAgenda
       if (data) {
-       setDataLimite(data.split('T')[0])
+        setDataLimite(data.split('T')[0])
       } else {
         setDataLimite(null)
       }
@@ -86,11 +104,11 @@ export default function AgendaBase() {
     try {
       setSalvandoConfig(true)
 
-    await api.put('/clinica/configuracoes', {
-           DiasLiberacaoAgenda: diasLiberacao,
-           DataLimiteAgenda: dataLimite,
-           DataFechamentoAgenda: null // ✅ limpa bloqueio ao reabrir
-          })
+      await api.put('/clinica/configuracoes', {
+        DiasLiberacaoAgenda: diasLiberacao,
+        DataLimiteAgenda: dataLimite,
+        DataFechamentoAgenda: null // ✅ limpa bloqueio ao reabrir
+      })
 
       setMensagem('✅ Liberação da agenda atualizada com sucesso.')
 
@@ -112,9 +130,9 @@ export default function AgendaBase() {
   }
 
   function formatarDataBR(data: string) {
-  const [ano, mes, dia] = data.split('-')
-  return `${dia}/${mes}/${ano}`
-}
+    const [ano, mes, dia] = data.split('-')
+    return `${dia}/${mes}/${ano}`
+  }
 
   function alterarHorario(
     id: number,
@@ -147,85 +165,92 @@ export default function AgendaBase() {
   }
 
   useEffect(() => {
-   carregarAgendaBase()
-   carregarConfiguracao()
+    carregarAgendaBase()
+    carregarConfiguracao()
   }, [])
 
+
   return (
-    <div style={{ maxWidth: 600 }}>
-      <h1>Horário semanal da clínica</h1>
+    <div className="config-agenda-container">
+      <h1>Configurar Agenda</h1>
+
+      <p className="config-agenda-subtitulo">
+        Configure os horários de funcionamento
+        e a disponibilidade da agenda.
+      </p>
 
       {/* ✅ 🔥 NOVA SEÇÃO */}
-      <div style={{ marginBottom: 30, padding: 15, border: '1px solid #ddd' }}>
+      <div className="config-card">
         <h3>Liberação da Agenda</h3>
-        
+
         <h3>Status da Agenda</h3>
 
         <p>
           {dataLimite
-           ? `✅ Aberta até ${dataLimite}`
-           : diasLiberacao > 0
-           ? `✅ Aberta por ${diasLiberacao} dias`
-           : '🔒 Agenda fechada'}
-          </p>
+            ? `✅ Aberta até ${dataLimite}`
+            : diasLiberacao > 0
+              ? `✅ Aberta por ${diasLiberacao} dias`
+              : '🔒 Agenda fechada'}
+        </p>
 
-      <p>🔒 Fechar agenda até uma data:</p>
+        <p>🔒 Fechar agenda até uma data:</p>
 
-<input
-  type="date"
-  value={dataFechamento || ''}
-  onChange={(e) => setDataFechamento(e.target.value)}
-/>
+        <input
+          type="date"
+          value={dataFechamento || ''}
+          onChange={(e) => setDataFechamento(e.target.value)}
+        />
 
-<button
-  style={{ marginTop: 8 }}
-  onClick={async () => {
-    if (!dataFechamento) return;
+        <button
+          className="btn-config"
+          style={{ marginTop: 8 }}
+          onClick={async () => {
+            if (!dataFechamento) return;
 
-    await api.put('/clinica/configuracoes', {
-      DiasLiberacaoAgenda: diasLiberacao,
-      DataLimiteAgenda: dataLimite,
-      DataFechamentoAgenda: dataFechamento
-    });
+            await api.put('/clinica/configuracoes', {
+              DiasLiberacaoAgenda: diasLiberacao,
+              DataLimiteAgenda: dataLimite,
+              DataFechamentoAgenda: dataFechamento
+            });
 
-    setMensagem(`🔒 Agenda bloqueada até ${formatarDataBR(dataFechamento)}`)
-  }}
->
-  Bloquear agenda
-</button>
-      <hr />
+            setMensagem(`🔒 Agenda bloqueada até ${formatarDataBR(dataFechamento)}`)
+          }}
+        >
+          Bloquear agenda
+        </button>
+        <hr />
 
         <p>📅 Abrir agenda para os próximos dias:</p>
 
-       <select
-         value={diasLiberacao}
-         onChange={(e) => {
-          setDiasLiberacao(Number(e.target.value))
-          setDataLimite(null)
-        }}
-      >
-        <option value={0}>Selecione</option>
-        <option value={7}>1 semana</option>
-        <option value={14}>2 semanas</option>
-        <option value={30}>1 mês</option>
-       </select>
+        <select
+          value={diasLiberacao}
+          onChange={(e) => {
+            setDiasLiberacao(Number(e.target.value))
+            setDataLimite(null)
+          }}
+        >
+          <option value={0}>Selecione</option>
+          <option value={7}>1 semana</option>
+          <option value={14}>2 semanas</option>
+          <option value={30}>1 mês</option>
+        </select>
 
-       <hr />
+        <hr />
 
-       <p>📆 Ou abrir até uma data específica:</p>
+        <p>📆 Ou abrir até uma data específica:</p>
 
         <input
-         type="date"
-         value={dataLimite || ''}
-         onChange={(e) => {
-          setDataLimite(e.target.value)
-          setDiasLiberacao(0)
-         }}
-       />
-        
-      
+          type="date"
+          value={dataLimite || ''}
+          onChange={(e) => {
+            setDataLimite(e.target.value)
+            setDiasLiberacao(0)
+          }}
+        />
+
+
         <div style={{ marginTop: 10 }}>
-          <button onClick={salvarConfiguracao} disabled={salvandoConfig}>
+          <button className="btn-config" onClick={salvarConfiguracao} disabled={salvandoConfig} >
             {salvandoConfig ? 'Salvando...' : 'Salvar configuração'}
           </button>
         </div>
@@ -237,7 +262,11 @@ export default function AgendaBase() {
         )}
       </div>
 
-      <p>
+      <h2 className="config-secao">
+        Horários Semanais
+      </h2>
+
+      <p className="config-secao-texto">
         Defina os dias e horários em que a clínica normalmente funciona.
       </p>
 
@@ -246,72 +275,118 @@ export default function AgendaBase() {
       </p>
 
       {loading && <p>Carregando...</p>}
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
-      {mensagem && <p style={{ color: 'green' }}>{mensagem}</p>}
+      {erro && (<div className="config-erro">⚠️ {erro} </div>)}
+      {mensagem && (<div className="config-sucesso"> {mensagem} </div>)}
 
-      {!loading &&
-        agendaBase.map(dia => {
-          const ed = edicao[dia.id]
-          const nomeDia = diasSemana[dia.diaSemana].toLowerCase()
+      <div className="dias-semana-grid">
 
-          return (
-            <div key={dia.id} style={{ marginBottom: 28 }}>
-              <h3>{diasSemana[dia.diaSemana]}</h3>
+        {!loading &&
+          agendaBase.map(dia => {
+            const ed = edicao[dia.id]
+            const nomeDia = diasSemana[dia.diaSemana].toLowerCase()
 
-              {!dia.ativo && (
-                <>
-                  <p>❌ A clínica não funciona neste dia.</p>
-                  <button onClick={() => ativarDia(dia.id, nomeDia)}>
-                    Definir funcionamento
-                  </button>
-                </>
-              )}
+            return (
+              <div key={dia.id} className="dia-semana-card" >
+                <h3>{diasSemana[dia.diaSemana]}</h3>
 
-              {dia.ativo && ed && (
-                <>
-                  <p>✅ Funcionamento normal neste dia.</p>
+                {!dia.ativo && (
+                  <>
+                    <div className="status-dia-fechado">
+                      FECHADO
+                    </div>
+                    <button className="btn-config" onClick={() => ativarDia(dia.id, nomeDia)}>
+                      Definir funcionamento
+                    </button>
+                  </>
+                )}
 
-                  <label>
-                    Início:{' '}
-                    <input
-                      type="time"
-                      value={ed.inicio}
-                      onChange={e =>
-                        alterarHorario(dia.id, 'inicio', e.target.value)
-                      }
-                    />
-                  </label>
+                {dia.ativo && ed && (
+                  <>
+                    <div className="status-dia-aberto">
+                      FUNCIONANDO
+                    </div>
 
-                  <br />
+                    <div className="linha-horarios">
 
-                  <label>
-                    Fim:{' '}
-                    <input
-                      type="time"
-                      value={ed.fim}
-                      onChange={e =>
-                        alterarHorario(dia.id, 'fim', e.target.value)
-                      }
-                    />
-                  </label>
+                      <div className="campo-horario">
 
-                  {ed.alterado && (
-                    <p style={{ color: 'orange' }}>
-                      ⚠️ Clique em salvar para confirmar alteração.
-                    </p>
-                  )}
+                        <label>Início</label>
 
-                  <button
-                    disabled={!ed.alterado}
-                    onClick={() => salvarHorario(dia.id, nomeDia)}
-                  >
-                    Salvar horário
-                  </button>
-                </>
-              )}
-            </div>
-          )
-        })}
+                        <select
+                          value={ed.inicio}
+                          onChange={e =>
+                            alterarHorario(
+                              dia.id,
+                              'inicio',
+                              e.target.value
+                            )
+                          }
+                        >
+
+                          {horariosDisponiveis.map(h => (
+                            <option
+                              key={h}
+                              value={h}
+                            >
+                              {h}
+                            </option>
+                          ))}
+
+                        </select>
+
+                      </div>
+
+                      <br />
+
+                      <div className="campo-horario">
+
+                        <label>Fim</label>
+
+                        <select
+                          value={ed.fim}
+                          onChange={e =>
+                            alterarHorario(
+                              dia.id,
+                              'fim',
+                              e.target.value
+                            )
+                          }
+                        >
+
+                          {horariosDisponiveis.map(h => (
+                            <option
+                              key={h}
+                              value={h}
+                            >
+                              {h}
+                            </option>
+                          ))}
+
+                        </select>
+
+                      </div>
+                    </div>
+
+                    {ed.alterado && (
+                      <div className="aviso-alteracao">
+                        ⚠️ Clique em salvar para confirmar a alteração.
+                      </div>
+                    )}
+
+                    <button
+                      className="btn-config"
+                      disabled={!ed.alterado}
+                      onClick={() => salvarHorario(dia.id, nomeDia)}
+                    >
+                      Salvar horário
+                    </button>
+                  </>
+                )}
+
+              </div>
+            )
+          })}
+      </div>
     </div>
   )
 }

@@ -1,0 +1,278 @@
+.acoes-excecao {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  align-items: center;
+}
+.excecoes-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.excecoes-container h1 {
+  margin: 0;
+
+  font-size: 44px;
+
+  font-weight: 700;
+
+  color: #111827;
+}
+
+.excecoes-subtitulo {
+  margin-top: 4px;
+  margin-bottom: 24px;
+
+  color: #6b7280;
+
+  font-size: 15px;
+}
+
+.excecao-card {
+  background: #fff;
+
+  border-radius: 16px;
+
+  padding: 24px;
+
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+
+  margin-bottom: 24px;
+}
+
+.card-titulo {
+  font-size: 22px;
+
+  font-weight: 700;
+
+  margin-bottom: 4px;
+}
+
+.card-subtitulo {
+  margin-bottom: 24px;
+
+  color: #6b7280;
+
+  font-size: 14px;
+}
+
+.excecoes-erro {
+  margin-bottom: 20px;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  background: #fef2f2;
+
+  color: #991b1b;
+}
+
+.excecoes-sucesso {
+  margin-bottom: 20px;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  background: #ecfdf5;
+
+  color: #166534;
+}
+
+.lista-titulo {
+  margin-bottom: 20px;
+}
+
+.form-excecao {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.linha-dupla {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.texto-ajuda {
+  margin-bottom: 12px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.campo label {
+  font-size: 14px;
+  font-weight: 600;
+  
+display: block;
+  margin-bottom: 4px;
+
+  color: #374151;
+
+  margin-left: 2px;
+}
+.campo input,
+.campo select {
+  padding: 12px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 10px;
+}
+
+.campo input:focus,
+.campo select:focus {
+  outline: none;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37,99,235,.15);
+}
+
+.acoes-formulario {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: 10px;
+}
+
+.btn-criar-excecao {
+  background: #2563eb;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 12px 18px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.btn-criar-excecao:hover {
+  background: #1d4ed8;
+}
+
+.tabela-excecoes {
+  
+width: 100%;
+  min-width: 870px;
+
+
+  border-collapse: collapse;
+
+  background: white;
+
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+
+.tabela-excecoes thead {
+  background: #f8fafc;
+}
+
+.tabela-excecoes th,
+.tabela-excecoes td {
+  padding: 14px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  text-align: left;
+}
+
+.status-ativa {
+  background: #dcfce7;
+
+  color: #166534;
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.status-inativa {
+  background: #f3f4f6;
+
+  color: #6b7280;
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.btn-acao {
+  background: #fff;
+  width: 80px;
+  text-align: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: .2s;
+}
+
+.btn-acao:hover {
+  background: #f8fafc;
+}
+
+.btn-remover:hover {
+  background: #fef2f2;
+}
+
+.btn-remover {
+  color: #b91c1c;
+
+  border-color: #fecaca;
+
+  margin-left: 8px;
+}
+
+.tabela-scroll {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+.lista-excecoes-card {
+  background: #fff;
+
+  border-radius: 16px;
+
+  padding: 24px;
+  width: 100%;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+
+  margin-bottom: 20px;
+}
+
+.coluna-periodo {
+  white-space: nowrap;
+}
+.coluna-horario {
+  white-space: nowrap;
+  min-width: 100px;
+}
+

@@ -1,0 +1,233 @@
+.config-agenda-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.config-agenda-container h1 {
+  margin: 0;
+
+  font-size: 44px;
+
+  font-weight: 700;
+
+  color: #111827;
+}
+
+.config-agenda-subtitulo {
+  margin-top: 4px;
+  margin-bottom: 24px;
+
+  color: #6b7280;
+
+  font-size: 15px;
+}
+
+.config-card {
+  background: #fff;
+
+  border-radius: 16px;
+
+  padding: 24px;
+
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+
+  margin-bottom: 24px;
+}
+
+.config-erro {
+  background: #fef2f2;
+
+  color: #991b1b;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  margin-bottom: 20px;
+}
+
+.config-sucesso {
+  background: #ecfdf5;
+
+  color: #166534;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  margin-bottom: 20px;
+}
+
+.config-secao {
+  margin-top: 20px;
+  margin-bottom: 8px;
+
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.config-secao-texto {
+  color: #6b7280;
+
+  margin-bottom: 24px;
+}
+
+.dias-semana-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 20px;
+}
+
+.dia-semana-card {
+  background: #fff;
+
+  border-radius: 16px;
+
+  padding: 20px;
+
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+
+.linha-horarios {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 14px;
+
+  margin-top: 10px;
+}
+
+.campo-horario {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.campo-horario label {
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #374151;
+}
+
+.campo-horario select {
+  padding: 10px 12px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 10px;
+}
+
+.campo-horario select:focus {
+  outline: none;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37,99,235,.15);
+}
+
+.btn-config {
+  background: #2563eb;
+  color: white;
+
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 10px 16px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.btn-config:hover {
+  background: #1d4ed8;
+}
+
+.btn-config:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.status-dia-aberto {
+  display: inline-block;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  background: #dcfce7;
+
+  color: #166534;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  margin-bottom: 12px;
+}
+
+.status-dia-fechado {
+  display: inline-block;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  background: #fee2e2;
+
+  color: #991b1b;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  margin-bottom: 12px;
+}
+
+.aviso-alteracao {
+  margin-top: 12px;
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  background: #fff7ed;
+
+  color: #92400e;
+
+  font-size: 13px;
+}
+
+.status-agenda-card {
+  background: #ecfdf5;
+
+  color: #166534;
+
+  border-radius: 12px;
+
+  padding: 16px;
+
+  margin-bottom: 20px;
+
+  font-weight: 600;
+}
+
+.status-agenda-card strong {
+  display: block;
+
+  margin-top: 6px;
+
+  font-size: 20px;
+}

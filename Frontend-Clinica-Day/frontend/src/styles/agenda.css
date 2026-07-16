@@ -46,9 +46,11 @@
 }
 
 .calendario-dia-bloqueado {
-  background: #f3f4f6 !important;
+  background: #f8fafc !important;
 
-  color: #9ca3af;
+  color: #94a3b8;
+
+  border-color: #e2e8f0;
 
   cursor: not-allowed;
 }
@@ -61,6 +63,19 @@
   height: 5px;
   border-radius: 999px;
   background: #f5a824;
+}
+
+.dia-bloqueado-indicador {
+  position: absolute;
+
+  top: 3px;
+  left: 3px;
+
+  font-size: 9px;
+
+  opacity: .65;
+
+  pointer-events: none;
 }
 
 /* =======================

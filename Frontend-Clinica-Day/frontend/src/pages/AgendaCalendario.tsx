@@ -646,12 +646,18 @@ export default function AgendaCalendario() {
                   // style={{
                   //   background: cor
                   // }}
-                  >
-                    {dia.getDate()}
+                  >{dia.getDate()}
+
+                    {bloqueado && (
+                      <span className="dia-bloqueado-indicador">
+                        🔒
+                      </span>
+                    )}
 
                     {diasComExcecao.includes(dataStr) && (
                       <span className="dia-indicador" />
                     )}
+
 
                   </button>
                 )
@@ -744,7 +750,7 @@ export default function AgendaCalendario() {
                       }
                     />
 
-                    Mostrar livres
+                    Mostrar horários disponiveis
 
                   </label>
 
