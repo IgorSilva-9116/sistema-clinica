@@ -45,11 +45,3 @@ Sistema-Clinica-Estetica
 ├── Frontend-Clinica-Day
 └── backend-agenda-estetica-api
 
-## Como executar
-
-### Backend
-
-```bash
-cd backend-agenda-estetica-api
-npm install
-npm start
