@@ -18,10 +18,12 @@ async function listarRegraAtiva(req, res) {
         .input('ClinicaId', sql.Int, clinicaId)
         .query(`
           SELECT
-            Id,
-            TipoRegra,
-            DataInicio,
-            Ativa
+           Id,
+           TipoRegra,
+           DataInicio,
+           HoraInicio,
+           HoraFim,
+           Ativa
           FROM RegraRecorrenteAgenda
           WHERE ClinicaId = @ClinicaId
             AND Ativa = 1
@@ -53,8 +55,8 @@ async function criarRegra(req, res) {
       return res.status(403).json({ sucesso: false, mensagem: 'Acesso negado' });
     }
 
-    const { tipoRegra, dataInicio } = req.body;
-    const clinicaId = req.clinicaId;
+    const { tipoRegra, dataInicio, horaInicio, horaFim } = req.body;
+      const clinicaId = req.clinicaId;
 
     if (!tipoRegra || !dataInicio) {
       return res.status(400).json({
@@ -62,17 +64,19 @@ async function criarRegra(req, res) {
         mensagem: 'Tipo de regra e data inicial são obrigatórios'
       });
     }
-
+   
     await sql.connect().then(pool =>
       pool.request()
         .input('ClinicaId', sql.Int, clinicaId)
         .input('TipoRegra', sql.VarChar(50), tipoRegra)
         .input('DataInicio', sql.Date, dataInicio)
+        .input('HoraInicio', sql.VarChar(8), `${horaInicio}:00`)
+        .input('HoraFim', sql.VarChar(8), `${horaFim}:00`)
         .query(`
           INSERT INTO RegraRecorrenteAgenda
-            (ClinicaId, TipoRegra, DataInicio)
+            (ClinicaId, TipoRegra, DataInicio, HoraInicio, HoraFim)
           VALUES
-            (@ClinicaId, @TipoRegra, @DataInicio)
+            (@ClinicaId, @TipoRegra, @DataInicio, CAST(@HoraInicio AS TIME), CAST(@HoraFim AS TIME) )
         `)
     );
 
@@ -136,8 +140,60 @@ async function desativarRegra(req, res) {
   }
 }
 
+async function atualizarRegra(req, res) {
+  try {
+
+    if (req.userTipo !== 'clinica') {
+      return res.status(403).json({
+        sucesso: false,
+        mensagem: 'Acesso negado'
+      });
+    }
+
+    const { id } = req.params;
+
+    const {
+      dataInicio,
+      horaInicio,
+      horaFim
+    } = req.body;
+
+    await sql.connect().then(pool =>
+      pool.request()
+        .input('Id', sql.Int, Number(id))
+        .input('DataInicio', sql.Date, dataInicio)
+        .input('HoraInicio', sql.VarChar(8), `${horaInicio}:00`)
+        .input('HoraFim', sql.VarChar(8), `${horaFim}:00`)
+        .query(`
+          UPDATE RegraRecorrenteAgenda
+          SET
+            DataInicio = @DataInicio,
+            HoraInicio = CAST(@HoraInicio AS TIME),
+            HoraFim = CAST(@HoraFim AS TIME)
+          WHERE Id = @Id
+        `)
+    );
+
+    return res.json({
+      sucesso: true,
+      mensagem: 'Regra atualizada com sucesso'
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      sucesso: false,
+      mensagem: 'Erro ao atualizar regra'
+    });
+
+  }
+}
+
 module.exports = {
   listarRegraAtiva,
   criarRegra,
+  atualizarRegra,
   desativarRegra
 };

@@ -11,10 +11,8 @@ async function listarDisponibilidade(req, res) {
   try {
     const clinicaId = req.clinicaId;
     const { data, servicoId } = req.query;
-    console.log('DATA RECEBIDA:', data);
 
     const jsDate = new Date(data + 'T00:00:00');
-    console.log('DIA DA SEMANA (JS):', jsDate.getDay());
 
     if (!data || !servicoId) {
       return res.status(400).json({
@@ -65,6 +63,7 @@ async function listarDisponibilidade(req, res) {
       const fechamento = new Date(config.DataFechamentoAgenda + 'T00:00:00');
 
       if (dataAtual <= fechamento) {
+
         return res
           .set('Cache-Control', 'no-store')
           .json({
@@ -72,8 +71,11 @@ async function listarDisponibilidade(req, res) {
             data,
             servicoId,
             duracaoMinutos,
-            aberto: false,
-            horariosDisponiveis: []
+            aberto: true,
+            horariosDisponiveis,
+            blocos: resultadoDia.blocos,
+            intervalosRecorrentes:
+              resultadoDia.intervalosRecorrentes
           });
       }
     }
@@ -98,7 +100,11 @@ async function listarDisponibilidade(req, res) {
 
     // 2️⃣ Agenda base + exceções
     const resultadoDia = await obterBlocosEfetivosDia(clinicaId, data);
-    console.log('RESULTADO DIA:', JSON.stringify(resultadoDia, null, 2));
+
+    console.log(
+      'RESULTADO DIA:',
+      resultadoDia
+    );
 
     if (!resultadoDia.aberto) {
       return res
@@ -119,6 +125,13 @@ async function listarDisponibilidade(req, res) {
       duracaoMinutos
     );
 
+
+    console.log(
+      'RESULTADO DIA FINAL:',
+      resultadoDia
+    );
+
+
     // ✅ ✅ CORREÇÃO PRINCIPAL
     return res
       .set('Cache-Control', 'no-store')
@@ -128,7 +141,8 @@ async function listarDisponibilidade(req, res) {
         servicoId,
         duracaoMinutos,
         aberto: true, // ✅ AGORA SEMPRE VEM
-        horariosDisponiveis
+        horariosDisponiveis,
+        blocos: resultadoDia.blocos
       });
 
   } catch (error) {

@@ -157,7 +157,7 @@ export function NovoAgendamento() {
   }
 
   // ✅ SUBMIT CORRIGIDO (FLUXO DA CLÍNICA)
-  async function handleSubmit( e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
     setLoading(true)
@@ -191,8 +191,7 @@ export function NovoAgendamento() {
       if (err.response?.status === 409) {
 
         const entrar = confirm(
-          err.response?.data?.mensagem ||
-          'Horário indisponível. Deseja entrar na lista de espera?'
+          'Este horário já possui um agendamento.\n\nDeseja adicionar o cliente à lista de espera para esta data e horário?'
         )
 
         if (entrar) {
@@ -206,7 +205,9 @@ export function NovoAgendamento() {
               horaDesejada: form.horaInicio
             })
 
-            setSucesso(true)
+            alert(
+              'Cliente adicionado à lista de espera com sucesso.'
+            )
 
             setForm({
               clienteId: 0,

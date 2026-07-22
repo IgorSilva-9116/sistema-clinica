@@ -26,4 +26,10 @@ router.patch(
   controller.desativarRegra
 );
 
+router.put(
+  '/agenda/regra-recorrente/:id',
+  authMiddleware,
+  controller.atualizarRegra
+);
+
 module.exports = router;

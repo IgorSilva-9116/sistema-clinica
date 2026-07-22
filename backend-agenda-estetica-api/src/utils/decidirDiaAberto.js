@@ -10,7 +10,7 @@ const { isSabadoAtivo } = require('./regraSabadoAlternado');
  *
  * @param {number} clinicaId
  * @param {string} dataISO - YYYY-MM-DD
- * @returns {Promise<{ aberto: boolean, origem: string }>}
+ * @returns {Promise<{  aberto: boolean, origem: string, horaInicio?: string, horaFim?: string  }>}
  */
 async function decidirDiaAberto(clinicaId, dataISO) {
   const pool = await sql.connect();
@@ -40,23 +40,31 @@ async function decidirDiaAberto(clinicaId, dataISO) {
   const regra = await pool.request()
     .input('ClinicaId', sql.Int, clinicaId)
     .query(`
-      SELECT TipoRegra, DataInicio
+      SELECT TipoRegra, DataInicio, HoraInicio, HoraFim
       FROM RegraRecorrenteAgenda
       WHERE ClinicaId = @ClinicaId
         AND Ativa = 1
     `);
 
+
   if (regra.recordset.length > 0) {
-    const { TipoRegra, DataInicio } = regra.recordset[0];
+
+    const { TipoRegra, DataInicio, HoraInicio, HoraFim } = regra.recordset[0];
 
     const data = new Date(dataISO);
-
     if (TipoRegra === 'SABADO_ALTERNADO' && data.getDay() === 6) {
-      const ativo = isSabadoAtivo(new Date(DataInicio), data);
+    
+      const ativo = isSabadoAtivo(
+        new Date(DataInicio),
+        data
+      );
 
+     
       return {
         aberto: ativo,
-        origem: 'REGRA_RECORRENTE'
+        origem: 'REGRA_RECORRENTE',
+        horaInicio: HoraInicio,
+        horaFim: HoraFim
       };
     }
   }

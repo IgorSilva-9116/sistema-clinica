@@ -152,12 +152,16 @@ export default function AgendaCalendario() {
   const [slots, setSlots] = useState<SlotAgenda[]>([])
   const [mostrarLivres, setMostrarLivres] = useState(false)
   const [diaAberto, setDiaAberto] = useState<boolean | null>(null)
+  const [blocosDia, setBlocosDia] = useState<{ inicio: string; fim: string }[]>([])
   const [loadingAgenda, setLoadingAgenda] = useState(false)
   const [diasComExcecao, setDiasComExcecao] = useState<string[]>([])
   const [excecoesDia, setExcecoesDia] = useState<ExcecaoAgenda[]>([])
   const [agendaFechada, setAgendaFechada] = useState(false)
   const [dataLimiteAgenda, setDataLimiteAgenda] = useState<string | null>(null)
   const [dataFechamentoAgenda, setDataFechamentoAgenda] = useState<string | null>(null)
+  const [regraSabado, setRegraSabado] = useState<any>(null)
+  const [intervalosRecorrentes, setIntervalosRecorrentes] = useState<any[]>([])
+  const [intervalosDia, setIntervalosDia] = useState<any[]>([])
 
 
   const diasMes = gerarDiasDoMes(ano, mes)
@@ -173,8 +177,63 @@ export default function AgendaCalendario() {
     })
   }, [])
 
+  useEffect(() => {
+
+    api
+      .get('/agenda/regra-recorrente')
+      .then(resp => {
+
+        setRegraSabado(
+          resp.data?.regra || null
+        )
+
+      })
+      .catch(() => { })
+
+  }, [])
+
   function obterAgendaBaseDia(date: Date) {
     return agendaBase.find(d => d.diaSemana === date.getDay())
+  }
+
+  function sabadoAlternadoAtivo(
+    data: Date
+  ) {
+
+    if (!regraSabado)
+      return false
+
+    if (data.getDay() !== 6)
+      return false
+
+    const inicio =
+      new Date(
+        regraSabado.DataInicio
+      )
+
+    inicio.setHours(0, 0, 0, 0)
+
+    const consulta =
+      new Date(data)
+
+    consulta.setHours(0, 0, 0, 0)
+
+    const diffDias =
+      Math.floor(
+        (
+          consulta.getTime() -
+          inicio.getTime()
+        ) /
+        (1000 * 60 * 60 * 24)
+      )
+
+    if (diffDias < 0)
+      return false
+
+    const semanas =
+      Math.floor(diffDias / 7)
+
+    return semanas % 2 === 0
   }
 
   /* =======================
@@ -211,6 +270,18 @@ export default function AgendaCalendario() {
         signal: abortController.signal
       })
 
+
+
+
+
+      setBlocosDia(
+        dispResp.data?.blocos ?? []
+      )
+      setIntervalosRecorrentes(
+        dispResp.data?.intervalosRecorrentes ?? []
+      )
+
+
       const horarios: string[] =
         dispResp.data?.horariosDisponiveis ?? []
 
@@ -237,6 +308,39 @@ export default function AgendaCalendario() {
       const excecoes: ExcecaoAgenda[] =
         excResp.data?.excecoes ?? excResp.data ?? []
       setExcecoesDia(excecoes)
+      const intervaloResp =
+        await api.get(
+          '/agenda/intervalo-recorrente',
+          {
+            signal: abortController.signal
+          }
+        )
+
+
+
+      const diaSemana =
+        new Date(
+          data + 'T00:00:00'
+        ).getDay()
+
+      const intervalosFiltrados =
+        (intervaloResp.data?.intervalos || [])
+          .filter((i: any) => {
+
+
+
+            return (
+              Number(i.DiaSemana) ===
+              Number(diaSemana)
+            )
+
+          })
+
+
+
+      setIntervalosDia(
+        intervalosFiltrados
+      )
 
       setSlots(
         horarios.map(h => {
@@ -386,17 +490,8 @@ export default function AgendaCalendario() {
     year: 'numeric'
   })
 
-  const agendaDia = obterAgendaBaseDia(
-    dataSelecionada
-  )
 
-  const horaInicioDia =
-    agendaDia?.horaInicio?.substring(0, 5)
-    || '08:00'
 
-  const horaFimDia =
-    agendaDia?.horaFim?.substring(0, 5)
-    || '18:00'
 
   const timeline: BlocoTimeline[] = []
 
@@ -435,6 +530,24 @@ export default function AgendaCalendario() {
   })
 
 
+
+  intervalosRecorrentes.forEach(intervalo => {
+
+    timeline.push({
+      inicio: intervalo.inicio,
+      fim: intervalo.fim,
+      tipo: 'EXCECAO',
+      observacao:
+        intervalo.descricao ||
+        'Intervalo Recorrente',
+      tipoExcecao: 'INTERVALO_RECORRENTE'
+    })
+
+  })
+
+
+
+
   timeline.sort(
     (a, b) =>
       horaParaMinutos(a.inicio) -
@@ -443,47 +556,88 @@ export default function AgendaCalendario() {
 
   const timelineFinal: BlocoTimeline[] = []
 
-  let cursor = horaInicioDia
+  blocosDia.forEach(blocoAgenda => {
 
-  timeline.forEach(bloco => {
+    let cursor = blocoAgenda.inicio
+
+    const eventosNoBloco = timeline
+      .filter(item =>
+        horaParaMinutos(item.inicio) <
+        horaParaMinutos(blocoAgenda.fim)
+        &&
+        horaParaMinutos(item.fim) >
+        horaParaMinutos(blocoAgenda.inicio)
+      )
+      .sort(
+        (a, b) =>
+          horaParaMinutos(a.inicio)
+          -
+          horaParaMinutos(b.inicio)
+      )
+
+    eventosNoBloco.forEach(evento => {
+
+      if (
+        horaParaMinutos(evento.inicio)
+        >
+        horaParaMinutos(cursor)
+      ) {
+
+        timelineFinal.push({
+          inicio: cursor,
+          fim: evento.inicio,
+          tipo: 'LIVRE'
+        })
+
+      }
+
+      timelineFinal.push(evento)
+
+      if (
+        horaParaMinutos(evento.fim)
+        >
+        horaParaMinutos(cursor)
+      ) {
+
+        cursor = evento.fim
+
+      }
+
+    })
 
     if (
-      horaParaMinutos(bloco.inicio) >
       horaParaMinutos(cursor)
+      <
+      horaParaMinutos(blocoAgenda.fim)
     ) {
 
       timelineFinal.push({
         inicio: cursor,
-        fim: bloco.inicio,
+        fim: blocoAgenda.fim,
         tipo: 'LIVRE'
       })
 
     }
 
-    timelineFinal.push(bloco)
+  })
 
-    if (
-      horaParaMinutos(bloco.fim) >
-      horaParaMinutos(cursor)
-    ) {
-      cursor = bloco.fim
-    }
+  intervalosDia.forEach(intervalo => {
+
+    timelineFinal.push({
+      inicio: intervalo.HoraInicio,
+      fim: intervalo.HoraFim,
+      tipo: 'EXCECAO',
+      observacao: intervalo.Descricao,
+      tipoExcecao: 'INTERVALO_RECORRENTE'
+    })
 
   })
 
-  if (
-    horaParaMinutos(cursor) <
-    horaParaMinutos(horaFimDia)
-  ) {
-
-    timelineFinal.push({
-      inicio: cursor,
-      fim: horaFimDia,
-      tipo: 'LIVRE'
-    })
-
-  }
-
+  timelineFinal.sort(
+    (a, b) =>
+      horaParaMinutos(a.inicio) -
+      horaParaMinutos(b.inicio)
+  )
 
   const timelineExibicao =
     mostrarLivres
@@ -518,8 +672,16 @@ export default function AgendaCalendario() {
       }, 0)
 
   const cargaDia =
-    horaParaMinutos(horaFimDia) -
-    horaParaMinutos(horaInicioDia)
+    blocosDia.reduce(
+      (acc, bloco) =>
+        acc +
+        (
+          horaParaMinutos(bloco.fim)
+          -
+          horaParaMinutos(bloco.inicio)
+        ),
+      0
+    )
 
   const tituloDia =
     dataSelecionada.toLocaleDateString(
@@ -592,6 +754,19 @@ export default function AgendaCalendario() {
                 const dataObj =
                   new Date(dataStr + 'T00:00:00')
 
+                let aberto =
+                  obterAgendaBaseDia(dia)?.ativo ?? false
+
+                if (dia.getDay() === 6) {
+
+                  aberto =
+                    sabadoAlternadoAtivo(dia)
+
+                }
+                if (dia.getDay() === 6) {
+
+
+                }
                 const fechamentoObj =
                   dataFechamentoAgenda
                     ? new Date(
@@ -613,12 +788,13 @@ export default function AgendaCalendario() {
                   (limiteObj &&
                     dataObj > limiteObj)
 
+
                 // let cor =
                 //   aberto
                 //     ? '#d4edda'
                 //     : '#f8d7da'
 
-                // if (temExcecao) cor = '#fff3cd'
+                // // if (temExcecao) cor = '#fff3cd'
                 // if (bloqueado) cor = '#d3d3d3'
                 // if (mesmaData(dia, dataSelecionada))
                 //   cor = '#cce5ff'
@@ -633,20 +809,24 @@ export default function AgendaCalendario() {
                       setDataSelecionada(dia)
 
                     }}
-                    className={
-                      `
-  ${bloqueado
+                    className={`
+                      ${bloqueado
                         ? 'calendario-dia calendario-dia-bloqueado'
                         : 'calendario-dia'}
-  ${mesmaData(dia, dataSelecionada)
+                      ${mesmaData(dia, dataSelecionada)
                         ? 'calendario-dia-selecionado'
                         : ''}
-  `
-                    }
-                  // style={{
-                  //   background: cor
-                  // }}
-                  >{dia.getDate()}
+                    `}
+                    style={{
+                      backgroundColor:
+                        bloqueado
+                          ? '#d3d3d3'
+                          : aberto
+                            ? '#d4edda'
+                            : '#f8d7da'
+                    }}
+                  >
+                    {dia.getDate()}
 
                     {bloqueado && (
                       <span className="dia-bloqueado-indicador">
@@ -657,7 +837,6 @@ export default function AgendaCalendario() {
                     {diasComExcecao.includes(dataStr) && (
                       <span className="dia-indicador" />
                     )}
-
 
                   </button>
                 )

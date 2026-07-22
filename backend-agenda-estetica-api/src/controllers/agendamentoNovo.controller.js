@@ -36,18 +36,24 @@ async function criarAgendamento(req, res) {
     const configResult = await pool.request()
       .input('ClinicaId', sql.Int, clinicaId)
       .query(`
-        SELECT DiasLiberacaoAgenda
+        SELECT
+          DiasLiberacaoAgenda,
+          DataLimiteAgenda
         FROM ConfiguracaoClinica
         WHERE ClinicaId = @ClinicaId
       `);
 
+
     const diasLiberacao =
       configResult.recordset[0] &&
-      configResult.recordset[0].DiasLiberacaoAgenda
+        configResult.recordset[0].DiasLiberacaoAgenda
         ? configResult.recordset[0].DiasLiberacaoAgenda
         : 0;
 
-    if (diasLiberacao === 0) {
+    if (
+      diasLiberacao === 0 &&
+      !configResult.recordset[0]?.DataLimiteAgenda
+    ) {
       return res.status(400).json({
         sucesso: false,
         mensagem: 'Agenda indisponível. Aguarde liberação da clínica.'
@@ -64,18 +70,56 @@ async function criarAgendamento(req, res) {
     const [ano, mes, dia] = dataFinal.split('-');
     const dataSelecionada = new Date(ano, mes - 1, dia);
 
-    const hoje = new Date();
-    const limite = new Date();
-    limite.setDate(hoje.getDate() + diasLiberacao);
+    const dataLimiteAgenda =
+      configResult.recordset[0]?.DataLimiteAgenda;
 
-    dataSelecionada.setHours(0,0,0,0);
-    limite.setHours(0,0,0,0);
+    if (
+      diasLiberacao > 0 &&
+      !dataLimiteAgenda
+    ) {
 
-    if (dataSelecionada > limite) {
-      return res.status(400).json({
-        sucesso: false,
-        mensagem: `Agenda disponível até ${limite.toLocaleDateString('pt-BR')}`
-      });
+      const hoje = new Date();
+      const limite = new Date();
+
+      limite.setDate(
+        hoje.getDate() + diasLiberacao
+      );
+
+      dataSelecionada.setHours(0, 0, 0, 0);
+      limite.setHours(0, 0, 0, 0);
+
+      if (dataSelecionada > limite) {
+
+        return res.status(400).json({
+          sucesso: false,
+          mensagem:
+            `Agenda disponível até ${limite.toLocaleDateString('pt-BR')}`
+        });
+
+      }
+
+    }
+
+    if (dataLimiteAgenda) {
+
+      const limite =
+        new Date(
+          dataLimiteAgenda +
+          'T00:00:00'
+        );
+
+      limite.setHours(0, 0, 0, 0);
+
+      if (dataSelecionada > limite) {
+
+        return res.status(400).json({
+          sucesso: false,
+          mensagem:
+            `Agenda disponível até ${limite.toLocaleDateString('pt-BR')}`
+        });
+
+      }
+
     }
 
     // ✅ CLIENTE
@@ -99,11 +143,11 @@ async function criarAgendamento(req, res) {
       });
     }
 
-  // ✅ SERVIÇO
-const servicoResult = await pool.request()
-  .input('ServicoId', sql.Int, servicoId)
-  .input('ClinicaId', sql.Int, clinicaId)
-  .query(`
+    // ✅ SERVIÇO
+    const servicoResult = await pool.request()
+      .input('ServicoId', sql.Int, servicoId)
+      .input('ClinicaId', sql.Int, clinicaId)
+      .query(`
     SELECT DuracaoMinutos, Preco
     FROM Servico
     WHERE Id = @ServicoId
@@ -111,67 +155,67 @@ const servicoResult = await pool.request()
       AND Status = 'Ativo'
   `);
 
-if (servicoResult.recordset.length === 0) {
-  return res.status(404).json({
-    sucesso: false,
-    mensagem: 'Serviço não encontrado'
-  });
-}
+    if (servicoResult.recordset.length === 0) {
+      return res.status(404).json({
+        sucesso: false,
+        mensagem: 'Serviço não encontrado'
+      });
+    }
 
-const { DuracaoMinutos, Preco } = servicoResult.recordset[0];
+    const { DuracaoMinutos, Preco } = servicoResult.recordset[0];
 
-const [h, m] = horaInicio.split(':').map(Number);
-const totalMin = h * 60 + m + DuracaoMinutos;
+    const [h, m] = horaInicio.split(':').map(Number);
+    const totalMin = h * 60 + m + DuracaoMinutos;
 
-const horaFim =
-  String(Math.floor(totalMin / 60)).padStart(2, '0') + ':' +
-  String(totalMin % 60).padStart(2, '0');
+    const horaFim =
+      String(Math.floor(totalMin / 60)).padStart(2, '0') + ':' +
+      String(totalMin % 60).padStart(2, '0');
 
-const diaDisponivel = await obterBlocosEfetivosDia(clinicaId, dataFinal);
-const slots = gerarSlots(diaDisponivel.blocos, DuracaoMinutos);
+    const diaDisponivel = await obterBlocosEfetivosDia(clinicaId, dataFinal);
+    const slots = gerarSlots(diaDisponivel.blocos, DuracaoMinutos);
 
-if (!slots.includes(horaInicio)) {
-  return res.status(409).json({
-    sucesso: false,
-    mensagem: 'Horário indisponível'
-  });
-}
+    if (!slots.includes(horaInicio)) {
+      return res.status(409).json({
+        sucesso: false,
+        mensagem: 'Horário indisponível'
+      });
+    }
 
-// 🔒 ✅ TRANSAÇÃO (CORREÇÃO PRINCIPAL)
-const transaction = new sql.Transaction(pool);
+    // 🔒 ✅ TRANSAÇÃO (CORREÇÃO PRINCIPAL)
+    const transaction = new sql.Transaction(pool);
 
-await transaction.begin();
+    await transaction.begin();
 
-try {
-  const request = new sql.Request(transaction);
+    try {
+      const request = new sql.Request(transaction);
 
-  // 🔒 REVALIDAÇÃO DENTRO DA TRANSAÇÃO
-  const conflito = await existeConflitoAgendamento(
-    clinicaId,
-    dataFinal,
-    horaInicio,
-    horaFim,
-    request // ✅ importante
-  );
+      // 🔒 REVALIDAÇÃO DENTRO DA TRANSAÇÃO
+      const conflito = await existeConflitoAgendamento(
+        clinicaId,
+        dataFinal,
+        horaInicio,
+        horaFim,
+        request // ✅ importante
+      );
 
-  if (conflito) {
-    await transaction.rollback();
-    return res.status(409).json({
-      sucesso: false,
-      mensagem: 'Conflito com outro agendamento'
-    });
-  }
+      if (conflito) {
+        await transaction.rollback();
+        return res.status(409).json({
+          sucesso: false,
+          mensagem: 'Conflito com outro agendamento'
+        });
+      }
 
-  // ✅ INSERT SEGURO
-  await request
-    .input('ClinicaId', sql.Int, clinicaId)
-    .input('ServicoId', sql.Int, servicoId)
-    .input('ClienteId', sql.Int, clienteId)
-    .input('DataAgendamento', sql.Date, dataFinal)
-    .input('HoraInicio', sql.VarChar(8), horaInicio + ':00')
-    .input('HoraFim', sql.VarChar(8), horaFim + ':00')
-    .input('ValorServico', sql.Decimal(10, 2), Preco)
-    .query(`
+      // ✅ INSERT SEGURO
+      await request
+        .input('ClinicaId', sql.Int, clinicaId)
+        .input('ServicoId', sql.Int, servicoId)
+        .input('ClienteId', sql.Int, clienteId)
+        .input('DataAgendamento', sql.Date, dataFinal)
+        .input('HoraInicio', sql.VarChar(8), horaInicio + ':00')
+        .input('HoraFim', sql.VarChar(8), horaFim + ':00')
+        .input('ValorServico', sql.Decimal(10, 2), Preco)
+        .query(`
       INSERT INTO Agendamento
       (ClinicaId, ServicoId, ClienteId, DataAgendamento, HoraInicio, HoraFim, Status, ValorServico)
       VALUES
@@ -180,32 +224,32 @@ try {
        'CRIADO', @ValorServico)
     `);
 
-  await transaction.commit();
+      await transaction.commit();
 
-} catch (err) {
-  await transaction.rollback();
-  throw err;
-}
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
+    }
 
-// ✅ NOTIFICAÇÃO (fora da transação)
-const clienteResult = await pool.request()
-  .input('ClienteId', sql.Int, clienteId)
-  .query(`SELECT Nome, Email FROM Cliente WHERE Id = @ClienteId`);
+    // ✅ NOTIFICAÇÃO (fora da transação)
+    const clienteResult = await pool.request()
+      .input('ClienteId', sql.Int, clienteId)
+      .query(`SELECT Nome, Email FROM Cliente WHERE Id = @ClienteId`);
 
-if (clienteResult.recordset.length > 0) {
-  try {
-    await notificarAgendamentoCriado({
-      cliente: clienteResult.recordset[0]
+    if (clienteResult.recordset.length > 0) {
+      try {
+        await notificarAgendamentoCriado({
+          cliente: clienteResult.recordset[0]
+        });
+      } catch (err) {
+        console.warn('Erro ao enviar email:', err.message);
+      }
+    }
+
+    return res.status(201).json({
+      sucesso: true,
+      mensagem: 'Agendamento criado com sucesso'
     });
-  } catch (err) {
-    console.warn('Erro ao enviar email:', err.message);
-  }
-}
-
-return res.status(201).json({
-  sucesso: true,
-  mensagem: 'Agendamento criado com sucesso'
-});
 
 
   } catch (err) {
@@ -458,10 +502,10 @@ async function cancelarAgendamento(req, res) {
           data: ag.DataAgendamento,
           hora: horaFormatada
         });
-        
-         await pool.request()
-           .input('Id', sql.Int, item.Id)
-           .query(`
+
+        await pool.request()
+          .input('Id', sql.Int, item.Id)
+          .query(`
              UPDATE ListaEspera
              SET Notificado = 1
              WHERE Id = @Id
