@@ -37,20 +37,35 @@ async function listarCategorias(req, res) {
 }
 
 async function criarCategoria(req, res) {
-
   try {
-
+   
     const clinicaId = req.clinicaId
-
     const { nome } = req.body
-
+   
     if (!nome) {
-
       return res.status(400).json({
         sucesso: false,
         mensagem: 'Nome obrigatório'
       })
+    }
 
+    const existente = await sql.connect().then(pool =>
+      pool.request()
+        .input('ClinicaId', sql.Int, clinicaId)
+        .input('Nome', sql.VarChar(100), nome)
+        .query(`
+      SELECT Id
+      FROM CategoriaFinanceira
+      WHERE ClinicaId = @ClinicaId
+        AND Nome = @Nome
+    `)
+    )
+
+    if (existente.recordset.length > 0) {
+      return res.status(409).json({
+        sucesso: false,
+        mensagem: 'Já existe uma categoria com este nome'
+      })
     }
 
     await sql.connect().then(pool =>
@@ -76,9 +91,7 @@ async function criarCategoria(req, res) {
     })
 
   } catch (error) {
-
     console.error(error)
-
     return res.status(500).json({
       sucesso: false
     })

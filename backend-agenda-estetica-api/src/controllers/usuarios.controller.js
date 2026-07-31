@@ -161,42 +161,128 @@ async function listarUsuarios(req, res) {
 }
 
 async function criarUsuarioClinica(req, res) {
-  const { nome, email, senha, role } = req.body;
-  const senhaHash = await bcrypt.hash(senha, 10);
+  try {
 
-  await sql.connect().then(pool =>
-    pool.request()
-      .input('Nome', sql.VarChar(150), nome)
-      .input('Email', sql.VarChar(150), email)
-      .input('SenhaHash', sql.VarChar(255), senhaHash)
-      .input('Role', sql.VarChar(20), role)
-      .input('ClinicaId', sql.Int, req.clinicaId)
-      .query(`
-        INSERT INTO Usuario
-        (Nome, Email, SenhaHash, UserTipo, Role, ClinicaId, Ativo, PrecisaTrocarSenha)
-        VALUES
-        (@Nome, @Email, @SenhaHash, 'clinica', @Role, @ClinicaId, 1, 1)
-      `)
-  );
+    const { nome, email, senha, role } = req.body;
 
-  res.status(201).json({ mensagem: 'Usuário criado com sucesso' });
+    const existente = await sql.connect().then(pool =>
+      pool.request()
+        .input('Email', sql.VarChar(150), email)
+        .query(`
+          SELECT Id
+          FROM Usuario
+          WHERE Email = @Email
+        `)
+    );
+
+    if (existente.recordset.length > 0) {
+      return res.status(409).json({
+        mensagem: 'Email já cadastrado'
+      });
+    }
+
+    const senhaHash = await bcrypt.hash(senha, 10);
+
+    await sql.connect().then(pool =>
+      pool.request()
+        .input('Nome', sql.VarChar(150), nome)
+        .input('Email', sql.VarChar(150), email)
+        .input('SenhaHash', sql.VarChar(255), senhaHash)
+        .input('Role', sql.VarChar(20), role)
+        .input('ClinicaId', sql.Int, req.clinicaId)
+        .query(`
+          INSERT INTO Usuario
+          (
+            Nome,
+            Email,
+            SenhaHash,
+            UserTipo,
+            Role,
+            ClinicaId,
+            Ativo,
+            PrecisaTrocarSenha
+          )
+          VALUES
+          (
+            @Nome,
+            @Email,
+            @SenhaHash,
+            'clinica',
+            @Role,
+            @ClinicaId,
+            1,
+            1
+          )
+        `)
+    );
+
+    return res.status(201).json({
+      mensagem: 'Usuário criado com sucesso'
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      mensagem: 'Erro ao criar usuário'
+    });
+
+  }
 }
 
 async function editarUsuario(req, res) {
-  const { nome, email, role } = req.body;
-  await sql.connect().then(pool =>
-    pool.request()
-      .input('Id', sql.Int, req.params.id)
-      .input('Nome', sql.VarChar(150), nome)
-      .input('Email', sql.VarChar(150), email)
-      .input('Role', sql.VarChar(20), role)
-      .query(`
-        UPDATE Usuario
-        SET Nome=@Nome, Email=@Email, Role=@Role
-        WHERE Id=@Id
-      `)
-  );
-  res.json({ mensagem: 'Usuário atualizado' });
+  try {
+
+    const { nome, email, role } = req.body;
+
+    const existente = await sql.connect().then(pool =>
+      pool.request()
+        .input('Id', sql.Int, Number(req.params.id))
+        .input('Email', sql.VarChar(150), email)
+        .query(`
+          SELECT Id
+          FROM Usuario
+          WHERE Email = @Email
+            AND Id <> @Id
+        `)
+    );
+
+    if (existente.recordset.length > 0) {
+      return res.status(409).json({
+        mensagem: 'Email já cadastrado por outro usuário'
+      });
+    }
+
+    await sql.connect().then(pool =>
+      pool.request()
+        .input('Id', sql.Int, Number(req.params.id))
+        .input('Nome', sql.VarChar(150), nome)
+        .input('Email', sql.VarChar(150), email)
+        .input('Role', sql.VarChar(20), role)
+        .query(`
+          UPDATE Usuario
+          SET
+            Nome = @Nome,
+            Email = @Email,
+            Role = @Role
+          WHERE Id = @Id
+        `)
+    );
+
+    return res.json({
+      mensagem: 'Usuário atualizado'
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      mensagem: 'Erro ao atualizar usuário'
+    });
+
+  }
 }
 
 async function alterarStatusUsuario(req, res) {

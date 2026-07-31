@@ -426,6 +426,70 @@ async function cancelarAgendamento(req, res) {
 
     const ag = agendamentoResult.recordset[0];
 
+    // ✅ MULTA SOMENTE PARA CANCELAMENTO PELO CLIENTE
+    let multaPercentual = null;
+    let valorMulta = null;
+
+    if (origem === 'CLIENTE') {
+
+      const configResult = await pool.request()
+        .input('ClinicaId', sql.Int, clinicaId)
+        .query(`
+      SELECT
+        JanelaCancelamentoHoras,
+        MultaPercentual
+      FROM ConfiguracaoClinica
+      WHERE ClinicaId = @ClinicaId
+    `);
+
+      const config = configResult.recordset[0];
+
+      if (config) {
+
+        const dataAgendamento =
+          ag.DataAgendamento
+            .toISOString()
+            .split('T')[0];
+
+        const horaAgendamento =
+          ag.HoraInicio.toISOString
+            ? ag.HoraInicio.toISOString().substring(11, 16)
+            : String(ag.HoraInicio).substring(0, 5);
+
+        const dataHoraAtendimento =
+          new Date(
+            `${dataAgendamento}T${horaAgendamento}:00`
+          );
+
+        const agora = new Date();
+
+        const horasAntecedencia =
+          (dataHoraAtendimento.getTime() - agora.getTime()) /
+          (1000 * 60 * 60);
+
+        if (
+          horasAntecedencia <
+          Number(config.JanelaCancelamentoHoras || 0)
+        ) {
+
+          multaPercentual =
+            Number(config.MultaPercentual || 0);
+
+          valorMulta =
+            Number(
+              (
+                Number(ag.ValorServico || 0) *
+                multaPercentual /
+                100
+              ).toFixed(2)
+            );
+
+        }
+
+      }
+
+    }
+
     if (!['CRIADO', 'CONFIRMADO'].includes(ag.Status)) {
       return res.status(400).json({ sucesso: false });
     }
@@ -440,8 +504,13 @@ async function cancelarAgendamento(req, res) {
       .input('Id', sql.Int, Number(id))
       .query(`
         UPDATE Agendamento
-        SET Status = 'CANCELADO'
-        WHERE Id = @Id
+        SET
+          Status = 'CANCELADO',
+          CanceladoEm = GETDATE(),
+          MotivoCancelamento = @Motivo,
+          MultaPercentual = @MultaPercentual,
+          ValorMulta = @ValorMulta
+          WHERE Id = @Id
       `);
 
     // ✅ EXCEÇÃO (mantida como você pediu)
@@ -451,6 +520,9 @@ async function cancelarAgendamento(req, res) {
         .input('Data', sql.Date, ag.DataAgendamento)
         .input('HoraInicio', sql.Time, ag.HoraInicio)
         .input('HoraFim', sql.Time, ag.HoraFim)
+        .input('Motivo', sql.VarChar(500), motivo || null)
+        .input('MultaPercentual', sql.Decimal(5, 2), multaPercentua)
+        .input('ValorMulta', sql.Decimal(10, 2), valorMult)
         .query(`
           INSERT INTO ExcecaoAgenda
           (ClinicaId, TipoExcecao, Data, HoraInicio, HoraFim, Ativa)
@@ -462,7 +534,7 @@ async function cancelarAgendamento(req, res) {
     try {
       await notificarAgendamentoCancelado({
         cliente: { Nome: ag.Nome, Email: ag.Email },
-        multa: null
+        multa: valorMulta
       });
     } catch (e) {
       console.warn('Erro email cancelamento');

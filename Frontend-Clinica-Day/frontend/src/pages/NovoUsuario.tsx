@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
+import '../styles/novoUsuario.css'
 
 type UsuarioForm = {
   nome: string
@@ -24,24 +25,24 @@ export function NovoUsuario() {
 
   const [loading, setLoading] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
+  const [mostrarSenha, setMostrarSenha] = useState(false)
 
-  const [mostrarSenha, setMostrarSenha] = useState(false) // ✅ NOVO
-
-  // 🔒 Proteção frontend
   useEffect(() => {
     if (usuario && usuario.role !== 'MASTER') {
       navigate('/')
     }
   }, [usuario, navigate])
 
-  // 🔁 Carregar usuário (edição)
   useEffect(() => {
     if (!id) return
 
     async function carregarUsuario() {
       try {
         const resp = await api.get('/usuarios')
-        const usuarioEditar = resp.data.find((u: any) => u.Id === Number(id))
+
+        const usuarioEditar = resp.data.find(
+          (u: any) => u.Id === Number(id)
+        )
 
         if (!usuarioEditar) {
           setErro('Usuário não encontrado')
@@ -54,6 +55,7 @@ export function NovoUsuario() {
           role: usuarioEditar.Role,
           senha: ''
         })
+
       } catch {
         setErro('Erro ao carregar usuário')
       }
@@ -62,32 +64,40 @@ export function NovoUsuario() {
     carregarUsuario()
   }, [id])
 
-  function handleChange(
+   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) {
     const { name, value } = e.target
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(
+    e: React.FormEvent
+  ) {
     e.preventDefault()
+
     setLoading(true)
     setErro(null)
 
     try {
+
       if (id) {
+
         await api.put(`/usuarios/${id}`, {
           nome: form.nome,
           email: form.email,
           role: form.role
         })
+
       } else {
+
         await api.post('/usuarios/clinica', {
           nome: form.nome,
           email: form.email,
           senha: form.senha,
           role: form.role
         })
+
       }
 
       navigate('/usuarios')
@@ -100,14 +110,51 @@ export function NovoUsuario() {
   }
 
   return (
-    <div>
-      <h2>{id ? 'Editar Usuário' : 'Novo Usuário'}</h2>
+    <div className="novo-usuario-container">
 
-      {erro && <p>{erro}</p>}
+      <div className="novo-usuario-header">
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Nome</label><br />
+        <div className="novo-usuario-title">
+
+          <h1>
+            {id
+              ? 'Editar Usuário'
+              : 'Novo Usuário'}
+          </h1>
+
+          <p>
+            Preencha os dados do usuário.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          className="btn-voltar"
+          onClick={() => navigate('/usuarios')}
+        >
+          Voltar
+        </button>
+
+      </div>
+
+      {erro && (
+        <div className="erro-card">
+          {erro}
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSubmit}
+        className="form-card"
+      >
+
+        <div className="form-group">
+
+          <label>
+            Nome
+          </label>
+
           <input
             type="text"
             name="nome"
@@ -115,10 +162,15 @@ export function NovoUsuario() {
             onChange={handleChange}
             required
           />
+
         </div>
 
-        <div>
-          <label>Email</label><br />
+        <div className="form-group">
+
+          <label>
+            Email
+          </label>
+
           <input
             type="email"
             name="email"
@@ -127,68 +179,108 @@ export function NovoUsuario() {
             required
             disabled={!!id}
           />
+
         </div>
 
-        <div>
-          <label>Perfil</label><br />
+        <div className="form-group">
+
+          <label>
+            Perfil
+          </label>
+
           <select
             name="role"
             value={form.role}
             onChange={handleChange}
             required
           >
-            <option value="ADMIN">Admin</option>
-            <option value="SECRETARIA">Secretária</option>
-            <option value="FUNCIONARIO">Funcionário</option>
+            <option value="ADMIN">
+              Admin
+            </option>
+
+            <option value="SECRETARIA">
+              Secretária
+            </option>
+
+            <option value="FUNCIONARIO">
+              Funcionário
+            </option>
+
           </select>
+
         </div>
 
-        {/* ✅ SENHA COM ÍCONE */}
         {!id && (
-          <div>
-            <label>Senha</label><br />
 
-            <div style={{ position: 'relative', display: 'inline-block' }}>
+          <div className="form-group">
+
+            <label>
+              Senha
+            </label>
+
+            <div className="senha-wrapper">
+
               <input
-                type={mostrarSenha ? 'text' : 'password'}
+                type={
+                  mostrarSenha
+                    ? 'text'
+                    : 'password'
+                }
                 value={form.senha}
                 onChange={(e) =>
-                  setForm(prev => ({ ...prev, senha: e.target.value }))
+                  setForm(prev => ({
+                    ...prev,
+                    senha: e.target.value
+                  }))
                 }
-                placeholder="Senha"
+                placeholder="Digite a senha"
                 required
-                style={{ paddingRight: 30 }}
               />
 
               <span
-                onClick={() => setMostrarSenha(prev => !prev)}
-                style={{
-                  position: 'absolute',
-                  right: 8,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  cursor: 'pointer',
-                  userSelect: 'none'
-                }}
+                onClick={() =>
+                  setMostrarSenha(
+                    prev => !prev
+                  )
+                }
               >
                 {mostrarSenha ? '🙈' : '👁'}
               </span>
+
             </div>
+
           </div>
+
         )}
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Salvando...' : 'Salvar'}
-        </button>
+        <div className="form-actions">
 
-        <button
-          type="button"
-          style={{ marginLeft: 10 }}
-          onClick={() => navigate('/usuarios')}
-        >
-          Cancelar
-        </button>
+          <button
+            type="submit"
+            className="btn-salvar"
+            disabled={loading}
+          >
+            {
+              loading
+                ? 'Salvando...'
+                : 'Salvar'
+            }
+          </button>
+
+          <button
+            type="button"
+            className="btn-cancelar"
+            onClick={() =>
+              navigate('/usuarios')
+            }
+          >
+            Cancelar
+          </button>
+
+        </div>
+
       </form>
+
     </div>
   )
 }

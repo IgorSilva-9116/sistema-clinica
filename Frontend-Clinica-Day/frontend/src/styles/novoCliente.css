@@ -1,0 +1,198 @@
+.novo-cliente-container {
+    padding: 24px;
+}
+
+.novo-cliente-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.novo-cliente-title h1 {
+    margin: 0;
+
+    color: #7a5b45;
+
+    font-size: 32px;
+}
+
+.novo-cliente-title p {
+    margin-top: 6px;
+
+    color: #9c8776;
+}
+
+.btn-voltar {
+    background: #e8ddd3;
+
+    color: #7a5b45;
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 12px 18px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+.form-card {
+    background: #fffdfb;
+
+    border-radius: 24px;
+
+    padding: 24px;
+
+    max-width: 700px;
+
+    margin: 0 auto;
+
+    box-shadow: 0 4px 18px rgba(0,0,0,.05);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    color: #7a5b45;
+
+    font-weight: 600;
+
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    border: 1px solid #e2d8cf;
+
+    border-radius: 12px;
+
+    padding: 12px 14px;
+
+    font-size: 15px;
+
+    background: white;
+
+    box-sizing: border-box;
+}
+
+.form-group input {
+    height: 48px;
+}
+
+.form-group select {
+    height: 48px;
+}
+
+.form-group textarea {
+    resize: vertical;
+
+    min-height: 90px;
+    max-height: 150px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+
+    border-color: #c57f5f;
+}
+
+.preview-container {
+    margin-top: 12px;
+}
+
+.preview-container img {
+    width: 90px;
+    height: 90px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    border: 2px solid #e5dbd2;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.form-actions {
+    display: flex;
+
+    gap: 12px;
+}
+
+.btn-salvar {
+    background: #c57f5f;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 12px 22px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.btn-salvar:hover {
+    background: #b66f4d;
+}
+
+.btn-cancelar {
+    background: #ece7e2;
+
+    color: #7a5b45;
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 12px 22px;
+
+    cursor: pointer;
+}
+
+.erro-card {
+    background: #ffe5e5;
+
+    color: #c35c5c;
+
+    padding: 12px 14px;
+
+    border-radius: 12px;
+
+    margin-bottom: 16px;
+}
+
+.sucesso-card {
+    background: #e8f7ec;
+
+    color: #4f8a5b;
+
+    padding: 12px 14px;
+
+    border-radius: 12px;
+
+    margin-bottom: 16px;
+}

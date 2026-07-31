@@ -69,6 +69,23 @@ async function criarCliente(req, res) {
       });
     }
 
+    const clienteExistente = await sql.connect().then(pool =>
+      pool.request()
+        .input('Email', sql.VarChar(150), email)
+        .query(`
+      SELECT Id
+      FROM Cliente
+      WHERE Email = @Email
+    `)
+    );
+
+    if (clienteExistente.recordset.length > 0) {
+      return res.status(409).json({
+        sucesso: false,
+        mensagem: 'Email já cadastrado'
+      });
+    }
+
     // ✅ PEGA FOTO (UPLOAD REAL OU FALLBACK)
     const foto = req.file
       ? req.file.filename
@@ -160,15 +177,15 @@ async function buscarPorId(req, res) {
       .input('ClinicaId', sql.Int, clinicaId)
       .query(`
         SELECT
-          c.Id        AS id,
-          c.Nome      AS nome,
-          c.Telefone  AS telefone,
-          c.Email     AS email,
-          c.Sexo      AS sexo,
+          c.Id AS id,
+          c.Nome AS nome,
+          c.Telefone AS telefone,
+          c.Email AS email,
+          c.Sexo AS sexo,
           c.DataNascimento AS dataNascimento,
-          c.Foto      AS foto,
+          c.Foto AS foto,
           c.Observacao AS observacao,
-          cc.Status   AS ativo
+          cc.Status AS ativo
         FROM Cliente c
         INNER JOIN ClinicaCliente cc
           ON cc.ClienteId = c.Id

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
+import '../styles/usuarios.css'
 
 type Usuario = {
   Id: number
@@ -53,108 +54,166 @@ export function Usuarios() {
   }
 
   async function redefinirSenha(id: number) {
-  const novaSenha = prompt('Digite a nova senha do usuário:')
+    const novaSenha = prompt('Digite a nova senha do usuário:')
 
-  if (!novaSenha) return
+    if (!novaSenha) return
 
-  try {
-     await api.patch(`/usuarios/${id}/senha`, {
-      novaSenha
-     })
-     alert('Senha redefinida com sucesso')
-   }  catch {
-     alert('Erro ao redefinir senha')
-   }
- }
- 
-async function excluirUsuario(id: number) {
-  const confirmar = confirm('Deseja realmente excluir este usuário?')
-
-  if (!confirmar) return
-
-  try {
-    await api.delete(`/usuarios/${id}`)
-
-    // ✅ remove da lista local imediatamente (melhor UX)
-    setUsuarios(prev => prev.filter(u => u.Id !== id))
-
-    alert('Usuário excluído com sucesso')
-
-  } catch (error: any) {
-    alert(error?.response?.data?.mensagem || 'Erro ao excluir usuário')
+    try {
+      await api.patch(`/usuarios/${id}/senha`, {
+        novaSenha
+      })
+      alert('Senha redefinida com sucesso')
+    } catch {
+      alert('Erro ao redefinir senha')
+    }
   }
-}
+
+  async function excluirUsuario(id: number) {
+    const confirmar = confirm('Deseja realmente excluir este usuário?')
+
+    if (!confirmar) return
+
+    try {
+      await api.delete(`/usuarios/${id}`)
+
+      // ✅ remove da lista local imediatamente (melhor UX)
+      setUsuarios(prev => prev.filter(u => u.Id !== id))
+
+      alert('Usuário excluído com sucesso')
+
+    } catch (error: any) {
+      alert(error?.response?.data?.mensagem || 'Erro ao excluir usuário')
+    }
+  }
 
   if (loading) return <p>Carregando usuários...</p>
   if (erro) return <p>{erro}</p>
 
+
   return (
-    <div>
-      <h2>Usuários do Sistema</h2>
+    <div className="usuarios-container">
 
-      <button
-        onClick={() => navigate('/usuarios/novo')}
-        style={{ marginBottom: 10 }}
-      >
-        Novo Usuário
-      </button>
+      <div className="usuarios-header">
 
-      <table border={1} cellPadding={6} width="100%">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Perfil</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {usuarios.length === 0 && (
+        <div className="usuarios-title">
+
+          <h1>
+            Usuários do Sistema
+          </h1>
+
+          <p>
+            Gerencie usuários e permissões de acesso.
+          </p>
+
+        </div>
+
+        <button
+          className="usuarios-btn"
+          onClick={() => navigate('/usuarios/novo')}
+        >
+          + Novo Usuário
+        </button>
+
+      </div>
+
+      <div className="usuarios-card">
+
+        <div className="usuarios-counter">
+
+          Total de usuários: {usuarios.length}
+
+        </div>
+
+        <table className="usuarios-table">
+          <thead>
             <tr>
-              <td colSpan={5}>Nenhum usuário encontrado</td>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Perfil</th>
+              <th>Status</th>
+              <th>Ações</th>
             </tr>
-          )}
+          </thead>
+          <tbody>
+            {usuarios.length === 0 && (
+              <tr>
+                <td colSpan={5}>Nenhum usuário encontrado</td>
+              </tr>
+            )}
 
-          {usuarios.map(u => (
-            <tr key={u.Id}>
-              <td>{u.Nome || '-'}</td>
-              <td>{u.Email}</td>
-              <td>{u.Role}</td>
-              <td>{u.Ativo ? 'Ativo' : 'Inativo'}</td>
-              <td>
-                <button
-                  onClick={() => navigate(`/usuarios/editar/${u.Id}`)}
-                >
-                  Editar
-                </button>
+            {usuarios.map(u => (
+              <tr key={u.Id}>
+                <td>{u.Nome || '-'}</td>
+                <td>{u.Email}</td>
+                <td>{u.Role}</td>
+                <td>
 
-                <button
-                  style={{ marginLeft: 6 }}
-                  onClick={() => alternarStatus(u.Id, u.Ativo)}
-                >
-                  {u.Ativo ? 'Desativar' : 'Ativar'}
-                </button>
+                  <span
+                    className={
+                      u.Ativo
+                        ? 'status-ativo'
+                        : 'status-inativo'
+                    }
+                  >
+                    {u.Ativo ? 'Ativo' : 'Inativo'}
+                  </span>
 
-                <button
-                  style={{ marginLeft: 6 }}
-                  onClick={() => redefinirSenha(u.Id)}
-                >
-                Redefinir Senha
-                </button>
-               
-                <button
-                  style={{ marginLeft: 6, color: 'red' }}
-                  onClick={() => excluirUsuario(u.Id)}
-                >
-                Excluir
-                </button>
+                </td>
+                <td>
 
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  <div className="acoes">
+
+                    <button
+                      className="btn-action btn-edit"
+                      onClick={() =>
+                        navigate(`/usuarios/editar/${u.Id}`)
+                      }
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      className="btn-action btn-status"
+                      onClick={() =>
+                        alternarStatus(
+                          u.Id,
+                          u.Ativo
+                        )
+                      }
+                    >
+                      {u.Ativo
+                        ? 'Desativar'
+                        : 'Ativar'}
+                    </button>
+
+                    <button
+                      className="btn-action btn-password"
+                      onClick={() =>
+                        redefinirSenha(u.Id)
+                      }
+                    >
+                      Redefinir Senha
+                    </button>
+
+                    <button
+                      className="btn-action btn-delete"
+                      onClick={() =>
+                        excluirUsuario(u.Id)
+                      }
+                    >
+                      Excluir
+                    </button>
+
+                  </div>
+
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+      </div>
+
     </div>
   )
 }

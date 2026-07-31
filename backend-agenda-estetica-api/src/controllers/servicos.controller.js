@@ -126,6 +126,25 @@ async function criarServico(req, res) {
       });
     }
 
+    const servicoExistente = await sql.connect().then(pool =>
+      pool.request()
+        .input('ClinicaId', sql.Int, clinicaId)
+        .input('Titulo', sql.VarChar(150), titulo)
+        .query(`
+      SELECT Id
+      FROM Servico
+      WHERE ClinicaId = @ClinicaId
+        AND Titulo = @Titulo
+    `)
+    );
+
+    if (servicoExistente.recordset.length > 0) {
+      return res.status(409).json({
+        sucesso: false,
+        mensagem: 'Já existe um serviço com este nome'
+      });
+    }
+
     await sql.connect().then(pool =>
       pool.request()
         .input('ClinicaId', sql.Int, clinicaId)
@@ -193,6 +212,27 @@ async function atualizarServico(req, res) {
     const { id } = req.params;
     const { titulo, descricao, preco, duracaoMinutos, categoriaServicoId } = req.body;
     const clinicaId = req.clinicaId;
+
+    const servicoExistente = await sql.connect().then(pool =>
+      pool.request()
+        .input('Id', sql.Int, Number(id))
+        .input('ClinicaId', sql.Int, clinicaId)
+        .input('Titulo', sql.VarChar(150), titulo)
+        .query(`
+      SELECT Id
+      FROM Servico
+      WHERE ClinicaId = @ClinicaId
+        AND Titulo = @Titulo
+        AND Id <> @Id
+    `)
+    );
+
+    if (servicoExistente.recordset.length > 0) {
+      return res.status(409).json({
+        sucesso: false,
+        mensagem: 'Já existe um serviço com este nome'
+      });
+    }
 
     await sql.connect().then(pool =>
       pool.request()

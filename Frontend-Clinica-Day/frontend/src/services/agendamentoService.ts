@@ -7,8 +7,11 @@ export const agendamentoService = {
   // ==============================
   // Lista agendamentos (ex: agenda do dia)
   // ==============================
-  async listar() {
-    const response = await api.get('/agenda')
+  async listar(data: string) {
+    const response = await api.get('/agendamentos', {
+      params: { data }
+    })
+
     return response.data
   },
 

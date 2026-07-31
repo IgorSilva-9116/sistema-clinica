@@ -1,0 +1,216 @@
+.usuarios-container {
+    padding: 24px;
+}
+
+.usuarios-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.usuarios-title h1 {
+    margin: 0;
+    color: #7a5b45;
+    font-size: 32px;
+}
+
+.usuarios-title p {
+    margin-top: 8px;
+    color: #9c8776;
+}
+
+.usuarios-btn {
+    background: #c57f5f;
+    color: white;
+
+    border: none;
+    border-radius: 14px;
+
+    padding: 12px 20px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.usuarios-btn:hover {
+    background: #b66f4d;
+}
+
+.usuarios-card {
+    background: #fffdfb;
+
+    border-radius: 24px;
+
+    padding: 24px;
+
+    box-shadow: 0 4px 18px rgba(0,0,0,.05);
+
+    max-width: 1300px;
+
+    margin: 0 auto;
+}
+
+.usuarios-counter {
+    color: #7a5b45;
+
+    font-weight: 600;
+
+    margin-bottom: 18px;
+}
+
+/* COLUNA DE AÇÔES */
+.usuarios-table th:last-child,
+.usuarios-table td:last-child {
+    width: 380px;
+}
+
+/* TABELA */
+
+.usuarios-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.usuarios-table {
+    max-width: 1100px;
+
+    width: calc(100% - 30px);
+
+    margin: 0 auto;
+
+    border-collapse: separate;
+
+    border-spacing: 0;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+}
+
+.usuarios-table-wrapper {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    padding-bottom: 10px;
+}
+
+.usuarios-table thead tr {
+    background: #f4ebe3;
+}
+
+.usuarios-table th {
+    padding: 16px;
+
+    text-align: left;
+
+    color: #7a5b45;
+
+    font-weight: 700;
+
+    font-size: 14px;
+}
+
+.usuarios-table td {
+    padding: 18px 14px;
+
+    border-bottom: 1px solid #ece4dc;
+
+    vertical-align: middle;
+}
+
+.usuarios-table tbody tr {
+    transition: .2s ease;
+}
+
+.usuarios-table tbody tr:hover {
+    background: #faf6f2;
+}
+
+
+/* STATUS */
+
+.status-ativo {
+    color: #4f8a5b;
+    font-weight: 700;
+}
+
+.status-inativo {
+    color: #c35c5c;
+    font-weight: 700;
+}
+
+/* AÇÕES */
+
+.acoes {
+    display: flex;
+
+    flex-wrap: nowrap;
+
+    gap: 8px;
+
+    align-items: center;
+}
+
+.btn-action {
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 8px 12px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    transition: .2s ease;
+
+    white-space: nowrap;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+}
+
+/* EDITAR */
+
+.btn-edit {
+    background: #e8ddd3;
+    color: #7a5b45;
+}
+
+/* ATIVAR / DESATIVAR */
+
+.btn-status {
+    background: #ede8e2;
+    color: #7a5b45;
+}
+
+/* SENHA */
+
+.btn-password {
+    background: #f1ece7;
+    color: #7a5b45;
+}
+
+/* EXCLUIR */
+
+.btn-delete {
+    background: #ffe5e5;
+    color: #c35c5c;
+}
+
+/* ESTADO VAZIO */
+
+.usuarios-empty {
+    text-align: center;
+    color: #9c8776;
+    padding: 30px;
+}

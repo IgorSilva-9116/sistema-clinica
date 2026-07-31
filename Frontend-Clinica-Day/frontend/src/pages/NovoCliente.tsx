@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { clienteService } from '../services/clienteService'
 import { useNavigate, useParams } from 'react-router-dom'
+import '../styles/novoCliente.css'
 
 type ClienteForm = {
   nome: string
@@ -150,30 +151,65 @@ export function NovoCliente() {
     }
   }
 
+
   return (
-    <div>
-      <h2>{id ? 'Editar Cliente' : 'Novo Cliente'}</h2>
 
-      {erro && <p>{erro}</p>}
-      {sucesso && <p>Cliente salvo com sucesso!</p>}
+    <div className="novo-cliente-container">
+      <div className="novo-cliente-header">
 
-      <form onSubmit={handleSubmit}>
-        <div>
+        <div className="novo-cliente-title">
+
+          <h1>
+            {id ? 'Editar Cliente' : 'Novo Cliente'}
+          </h1>
+
+          <p>
+            Preencha os dados do cliente.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          className="btn-voltar"
+          onClick={() => navigate('/clientes')}
+        >
+          Voltar
+        </button>
+
+      </div>
+
+      {erro && (
+        <div className="erro-card">
+          {erro}
+        </div>
+      )}
+      {sucesso && (
+        <div className="sucesso-card">
+          Cliente salvo com sucesso!
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSubmit}
+        className="form-card"
+      >
+        <div className="form-group">
           <label>Nome</label><br />
           <input name="nome" value={cliente.nome} onChange={handleChange} required />
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Telefone</label><br />
           <input name="telefone" value={cliente.telefone} onChange={handleChange} required />
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Email</label><br />
           <input name="email" value={cliente.email} onChange={handleChange} />
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Sexo</label><br />
           <select name="sexo" value={cliente.sexo} onChange={handleChange}>
             <option value="">Selecione</option>
@@ -182,7 +218,7 @@ export function NovoCliente() {
           </select>
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Data de nascimento</label><br />
           <input
             type="date"
@@ -192,31 +228,31 @@ export function NovoCliente() {
           />
         </div>
 
-        <div>
-           <label>Observações</label><br />
+        <div className="form-group">
+          <label>Observações</label><br />
 
-           <textarea
-             name="observacao"
-             value={cliente.observacao}
-             onChange={e =>
-             setCliente(prev => ({
-              ...prev,
-              observacao: e.target.value
-            }))
-           }
-           rows={4}
-           cols={50}
-           placeholder="Alergias, preferências, restrições, observações importantes..."
+          <textarea
+            name="observacao"
+            value={cliente.observacao}
+            onChange={e =>
+              setCliente(prev => ({
+                ...prev,
+                observacao: e.target.value
+              }))
+            }
+            rows={4}
+            cols={50}
+            placeholder="Alergias, preferências, restrições, observações importantes..."
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Foto (opcional)</label><br />
           <input type="file" onChange={handleFotoChange} />
 
           {/* ✅ PREVIEW */}
           {preview && (
-            <div style={{ marginTop: 10 }}>
+            <div className="preview-container">
               <img
                 src={preview}
                 alt="Preview"
@@ -231,8 +267,7 @@ export function NovoCliente() {
             </div>
           )}
         </div>
-
-        <div>
+        <div className="checkbox-group">
           <label>
             <input
               type="checkbox"
@@ -244,9 +279,21 @@ export function NovoCliente() {
           </label>
         </div>
 
-        <button type="submit" disabled={loading}>
+        <button
+          type="submit"
+          className="btn-salvar"
+          disabled={loading}
+        >
           {loading ? 'Salvando...' : 'Salvar'}
         </button>
+        <button
+          type="button"
+          className="btn-cancelar"
+          onClick={() => navigate('/clientes')}
+        >
+          Cancelar
+        </button>
+
       </form>
     </div>
   )

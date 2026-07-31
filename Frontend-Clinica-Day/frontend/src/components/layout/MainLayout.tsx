@@ -1,196 +1,217 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useState } from 'react'
+import '../../styles/sidebar.css'
+import logoDay from '../../assets/images/Logo_Day_branca-removebg-preview.png'
+import { FiHome, FiUsers, FiUser, FiCalendar, FiClock, FiDollarSign, FiBarChart2, FiSettings, FiLogOut, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 
 export function MainLayout() {
   const { logout, usuario } = useAuth()
+  const [collapsed, setCollapsed] = useState(false)
   const navigate = useNavigate()
-
-  const [menuAberto, setMenuAberto] = useState<string | null>(null)
 
   function handleLogout() {
     logout()
     navigate('/login')
   }
 
-  function toggleMenu(menu: string) {
-    setMenuAberto(prev => (prev === menu ? null : menu))
-  }
-
-  function fecharMenu() {
-    setMenuAberto(null)
-  }
-
   return (
-    <div>
-      {/* ===== MENU SUPERIOR ===== */}
-      <header style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
-        <nav style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+    <div className="layout-container">
 
-          {/* Home */}
-          <Link to="/" onClick={fecharMenu}>Home</Link>
+      <aside className={
+        collapsed
+          ? 'sidebar collapsed'
+          : 'sidebar'
+      }
+      >
+        <button
+          className="sidebar-toggle"
+          onClick={() =>
+            setCollapsed(!collapsed)
+          }
+        >
+          {collapsed
+            ? <FiChevronRight />
+            : <FiChevronLeft />
+          }
+        </button>
 
-          {/* ===== MENU CLÍNICA ===== */}
-          {usuario?.userTipo === 'clinica' && (
-            <>
-           
-            {/* USUÁRIOS (somente MASTER) */}
-            {usuario?.role === 'MASTER' && (
-              <div style={{ position: 'relative' }}>
-                <button onClick={() => toggleMenu('usuarios')}>
-                Usuários ▾
-                </button>
+        <div className="sidebar-logo">
+          <img
+            src={logoDay}
+            alt="Dayênia Neves Estética"
+            className="sidebar-logo-img"
+          />
+        </div>
 
-              {menuAberto === 'usuarios' && (
-                <div style={dropdownStyle}>
-                  <Link to="/usuarios" onClick={fecharMenu}>
-                  Gerenciar Usuários
-                  </Link>
+        <div className="sidebar-menu">
 
-                  <Link to="/usuarios/novo" onClick={fecharMenu}>
-                  Novo Usuário
-                  </Link>
-                </div>
-                )}
-                 </div>
-               )}
- 
-              {/* CLIENTES */}
-              <div style={{ position: 'relative' }}>
-                <button onClick={() => toggleMenu('clientes')}>
-                  Clientes ▾
-              </button>
-              {menuAberto === 'clientes' && (
-                 <div style={dropdownStyle}>
-                    <Link to="/clientes" onClick={fecharMenu}>
-                     Listar Clientes
-                   </Link>
-                   <Link to="/clientes/novo" onClick={fecharMenu}>
-                    Novo Cliente
-                   </Link>
-                   <Link to="/clientes/aniversariantes" onClick={fecharMenu}>
-                    🎂 Aniversariantes
-                   </Link>
-                  </div>
-                  )}
-                 </div>
+          <NavLink to="/" end className={({ isActive }) => isActive ? 'active-link' : ''} >
+            <span className="menu-icon">
+              <FiHome />
+            </span>
 
-              {/* SERVIÇOS */}
-              <div style={{ position: 'relative' }}>
-                <button onClick={() => toggleMenu('servicos')}>
-                  Serviços ▾
-                </button>
-                {menuAberto === 'servicos' && (
-                  <div style={dropdownStyle}>
-                    <Link to="/servicos" onClick={fecharMenu}>Listar Serviços</Link>
-                    <Link to="/servicos/novo" onClick={fecharMenu}>Novo Serviço</Link>
-                     <Link to="/categorias-servico" onClick={fecharMenu} >Categorias</Link>
-                  </div>
-                )}
-              </div>
-             
-              {/* AGENDA */}
-              <div style={{ position: 'relative' }}>
-                <button onClick={() => toggleMenu('agenda')}>
-                  Agenda ▾
-                </button>
-                {menuAberto === 'agenda' && (
-                  <div style={dropdownStyle}>
-                    <Link to="/agenda" onClick={fecharMenu}>Agenda</Link>
-                    <Link to="/agendamentos/novo" onClick={fecharMenu}>Novo Agendamento</Link>
-                    <Link to="/configurar-agenda" onClick={fecharMenu}>Configurar Agenda</Link>
-                    <Link to="/excecoes/gerenciar" onClick={fecharMenu}>Exceções da Agenda</Link>
-                  </div>
-                )}
-              </div>
+            <span className="menu-text">
+              Dashboard
+            </span>
 
-                {/* LISTA DE ESPERA */}
-              <Link to="/lista-espera" onClick={fecharMenu}> Lista de Espera</Link>
-              
-              {/* FINANCEIRO */}
-             <div style={{ position: 'relative' }}>
-              <button onClick={() => toggleMenu('financeiro')}>
-                Financeiro ▾
-              </button>
-               
-             {menuAberto === 'financeiro' && (
-             <div style={dropdownStyle}>
-              <Link to="/despesas" onClick={fecharMenu}>
-               Despesas
-             </Link>
-             <Link to="/categorias-financeiras">
-               Categorias Financeiras
-             </Link>
+          </NavLink>
 
-             {/* futuro */}
-             {/* <Link to="/financeiro/resumo">Resumo</Link> */}
-             </div>
-               )}
-              </div>
-
-              {/* RELATÓRIOS */}
-              <div style={{ position: 'relative' }}>
-                <button onClick={() => toggleMenu('relatorios')}>
-                  Relatórios ▾
-                </button>
-                {menuAberto === 'relatorios' && (
-                  <div style={dropdownStyle}>
-                    <Link to="/relatorios" onClick={fecharMenu}>Resumo Financeiro</Link>
-                    <Link to="/relatorios/clientes" onClick={fecharMenu}>Relatório de Clientes</Link>
-                  </div>
-                )}
-              </div>
-                            
-              {/* POLÍTICA */}
-              <div style={{ position: 'relative' }}>
-                <button onClick={() => toggleMenu('políticas')}>
-                  Políticas ▾
-                </button>
-                {menuAberto === 'políticas' && (
-                  <div style={dropdownStyle}>
-                    <Link to="/politica-cancelamento" onClick={fecharMenu}>Política de Cancelamento</Link>
-                    <Link to="/politica-agendamento" onClick={fecharMenu}>Poítica de Agendamento</Link>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-
-          {/* Espaçador */}
-          <div style={{ flex: 1 }} />
-
-          {/* Usuário logado */}
-          {usuario && (
-            <>
-              <span>
-                {usuario.email} ({usuario.userTipo})
+          {usuario?.role === 'MASTER' && (
+            <NavLink
+              to="/usuarios"
+              className={({ isActive }) =>
+                isActive ? 'active-link' : ''
+              }
+            >
+              <span className="menu-icon">
+                <FiUsers />
               </span>
-              <button onClick={handleLogout}>
-                Sair
-              </button>
-            </>
-          )}
-        </nav>
-      </header>
 
-      {/* ===== CONTEÚDO ===== */}
-      <main style={{ padding: '20px' }}>
+              <span className="menu-text">
+                Usuários
+              </span>
+
+            </NavLink>
+          )}
+
+          <NavLink
+            to="/clientes"
+            className={({ isActive }) =>
+              isActive ? 'active-link' : ''
+            }
+          >
+            <span className="menu-icon">
+              <FiUser />
+            </span>
+
+            <span className="menu-text">
+              Clientes
+            </span>
+
+          </NavLink>
+
+          <NavLink
+            to="/servicos"
+            className={({ isActive }) =>
+              isActive ? 'active-link' : ''
+            }
+          >
+            <span className="menu-icon">
+              <FiUser />
+
+            </span>
+
+            <span className="menu-text">
+              Serviços
+            </span>
+
+          </NavLink>
+
+          <NavLink
+            to="/agenda"
+            className={({ isActive }) =>
+              isActive ? 'active-link' : ''
+            }
+          >
+            <span className="menu-icon">
+              <FiCalendar />
+            </span>
+
+            <span className="menu-text">
+              Agenda
+            </span>
+          </NavLink>
+
+          <NavLink
+            to="/lista-espera"
+            className={({ isActive }) =>
+              isActive ? 'active-link' : ''
+            }
+          >
+            <span className="menu-icon">
+              <FiClock />
+            </span>
+
+            <span className="menu-text">
+              Lista de Espera
+            </span>
+          </NavLink>
+
+          <NavLink
+            to="/despesas"
+            className={({ isActive }) =>
+              isActive ? 'active-link' : ''
+            }
+          >
+            <span className="menu-icon">
+              <FiDollarSign />
+            </span>
+
+            <span className="menu-text">
+              Financeiro
+            </span>
+          </NavLink>
+
+          <NavLink
+            to="/relatorios"
+            className={({ isActive }) =>
+              isActive ? 'active-link' : ''
+            }
+          >
+            <span className="menu-icon">
+              <FiBarChart2 />
+            </span>
+
+            <span className="menu-text">
+              Relatórios
+            </span>
+          </NavLink>
+
+          <NavLink
+            to="/politica-cancelamento"
+            className={({ isActive }) =>
+              isActive ? 'active-link' : ''
+            }
+          >
+            <span className="menu-icon">
+              <FiSettings />
+            </span>
+
+            <span className="menu-text">
+              Políticas
+            </span>
+
+          </NavLink>
+
+        </div>
+
+        <div className="sidebar-footer">
+
+          <div className="sidebar-user">
+            👤 Clínica Dayênia
+          </div>
+
+          <button
+            className="sidebar-logout"
+            onClick={handleLogout}
+          >
+            {collapsed
+              ? <FiLogOut />
+              : 'Sair'
+            }
+          </button>
+
+        </div>
+
+      </aside>
+
+      <main className="main-content">
         <Outlet />
       </main>
+
     </div>
   )
 }
 
-/* ===== ESTILO DO DROPDOWN ===== */
-const dropdownStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: '100%',
-  left: 0,
-  background: '#fff',
-  border: '1px solid #ccc',
-  padding: '20px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '8px',
-  zIndex: 1000
-}
+

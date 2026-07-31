@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { clienteService } from '../services/clienteService'
 import type { Cliente } from '../types/Cliente'
 import { useNavigate } from 'react-router-dom'
+import '../styles/clientes.css'
 
 export function Clientes() {
   const [clientes, setClientes] = useState<Cliente[]>([])
@@ -48,120 +49,194 @@ export function Clientes() {
   })
 
   return (
-    <div>
-      <h2>Clientes</h2>
+    <div className="clientes-container">
 
-      <input
-        type="text"
-        placeholder="Buscar cliente..."
-        value={busca}
-        onChange={e => setBusca(e.target.value)}
-        style={{ marginBottom: 10, width: 250 }}
-      />
+      <div className="clientes-header">
 
-      <select
-        value={filtroStatus}
-        onChange={e => setFiltroStatus(e.target.value as any)}
-        style={{ marginLeft: 10 }}
-      >
-        <option value="todos">Todos</option>
-        <option value="ativos">Ativos</option>
-        <option value="inativos">Inativos</option>
-      </select>
+        <div className="clientes-title">
 
-      <table border={1} cellPadding={8} style={{ marginTop: 15 }}>
-        <thead>
-          <tr>
-            <th>Foto</th>
-            <th>Nome</th>
-            <th>Telefone</th>
-            <th>Email</th>
-            <th>Sexo</th>
-            <th>Nascimento</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
+          <h1>Clientes</h1>
 
-        <tbody>
-          {clientesFiltrados.map(cliente => (
-            <tr
-              key={cliente.id}
-              style={{
-                transition: '0.2s'
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#f5f5f5')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            >
+          <p>
+            Gerencie os clientes da clínica.
+          </p>
 
-              {/* ✅ FOTO / AVATAR */}
-              <td>
-                <img
-                  src={
-                    cliente.foto
-                      ? `http://localhost:3000/uploads/${cliente.foto}`
-                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(cliente.nome)}&background=0D8ABC&color=fff`
-                  }
-                  alt="Cliente"
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                    border: '2px solid #ddd'
-                  }}
-                />
-              </td>
+        </div>
 
-              <td>{cliente.nome}</td>
-              <td>{cliente.telefone}</td>
-              <td>{cliente.email || '-'}</td>
+        <div className="clientes-header-actions">
 
-              <td>{cliente.sexo || '-'}</td>
+          <button
+            className="clientes-btn-secondary"
+            onClick={() =>
+              navigate('/clientes/aniversariantes')
+            }
+          >
+            🎂 Aniversariantes
+          </button>
 
-              <td>
-                {cliente.dataNascimento
-                  ? new Date(cliente.dataNascimento).toLocaleDateString()
-                  : '-'}
-              </td>
+          <button
+            className="clientes-btn-primary"
+            onClick={() =>
+              navigate('/clientes/novo')
+            }
+          >
+            + Novo Cliente
+          </button>
 
-              <td>
-                {cliente.ativo === 'Ativo' ? (
-                  <span style={{ color: 'green', fontWeight: 'bold' }}>
-                    Ativo
-                  </span>
-                ) : (
-                  <span style={{ color: 'red', fontWeight: 'bold' }}>
-                    Inativo
-                  </span>
-                )}
-              </td>
+        </div>
 
-              <td>
-                <button
-                  onClick={() => navigate(`/clientes/editar/${cliente.id}`)}
-                >
-                  Editar
-                </button>
+      </div>
 
-                <button
-                  style={{ marginLeft: 6 }}
-                  onClick={() =>
-                    navigate(`/relatorios/clientes?clienteId=${cliente.id}`)
-                  }
-                >
-                  Relatórios
-                </button>
-              </td>
+      <div className="clientes-card">
 
+        <div className="clientes-counter">
+          Total de clientes: {clientes.length}
+        </div>
+
+        <div className="clientes-filtros">
+
+          <input
+            type="text"
+            placeholder="Buscar cliente..."
+            value={busca}
+            onChange={e => setBusca(e.target.value)}
+            className="clientes-search"
+          />
+
+          <select
+            value={filtroStatus}
+            onChange={e =>
+              setFiltroStatus(
+                e.target.value as any
+              )
+            }
+            className="clientes-select"
+          >
+            <option value="todos">
+              Todos
+            </option>
+
+            <option value="ativos">
+              Ativos
+            </option>
+
+            <option value="inativos">
+              Inativos
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <table className="clientes-table">
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>Nome</th>
+              <th>Telefone</th>
+              <th>Email</th>
+              <th>Sexo</th>
+              <th>Nascimento</th>
+              <th>Status</th>
+              <th>Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {clientesFiltrados.map(cliente => (
+              <tr
+                key={cliente.id}
+                style={{
+                  transition: '0.2s'
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#f5f5f5')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+              >
+
+                {/* ✅ FOTO / AVATAR */}
+                <td>
+                  <img
+                    src={
+                      cliente.foto
+                        ? `http://localhost:3000/uploads/${cliente.foto}`
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(cliente.nome)}&background=0D8ABC&color=fff`
+                    }
+                    alt="Cliente"
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      border: '2px solid #ddd'
+                    }}
+                  />
+                </td>
+
+                <td>{cliente.nome}</td>
+                <td>{cliente.telefone}</td>
+                <td>{cliente.email || '-'}</td>
+
+                <td>{cliente.sexo || '-'}</td>
+
+                <td>
+                  {cliente.dataNascimento
+                    ? new Date(cliente.dataNascimento).toLocaleDateString()
+                    : '-'}
+                </td>
+
+                <td>
+                  {cliente.ativo === 'Ativo' ? (
+                    <span className="status-ativo">
+                      Ativo
+                    </span>
+                  ) : (
+                    <span className="status-inativo">
+                      Inativo
+                    </span>
+                  )}
+                </td>
+
+                <td>
+
+                  <div className="acoes">
+
+                    <button
+                      className="btn-action btn-edit"
+                      onClick={() =>
+                        navigate(
+                          `/clientes/editar/${cliente.id}`
+                        )
+                      }
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      className="btn-action btn-report"
+                      onClick={() =>
+                        navigate(
+                          `/relatorios/clientes?clienteId=${cliente.id}`
+                        )
+                      }
+                    >
+                      Relatórios
+                    </button>
+
+                  </div>
+
+                </td>
+
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {clientesFiltrados.length === 0 && (
         <p>Nenhum cliente encontrado</p>
       )}
     </div>
+
   )
 }
