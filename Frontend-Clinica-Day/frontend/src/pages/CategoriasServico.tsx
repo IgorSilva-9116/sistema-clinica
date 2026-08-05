@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 import {
   categoriaServicoService,
   type CategoriaServico
 } from '../services/categoriaServicoService'
 
+import '../styles/categoriasServico.css'
+
 export function CategoriasServico() {
+
+  const navigate = useNavigate()
 
   const [categorias, setCategorias] =
     useState<CategoriaServico[]>([])
@@ -20,16 +26,22 @@ export function CategoriasServico() {
   >('todos')
 
   async function carregar() {
+
     try {
+
       const response =
         await categoriaServicoService.listar()
 
       setCategorias(
         response.categorias || []
       )
+
     } finally {
+
       setLoading(false)
+
     }
+
   }
 
   useEffect(() => {
@@ -39,8 +51,13 @@ export function CategoriasServico() {
   async function salvar() {
 
     if (!nome.trim()) {
-      alert('Informe o nome da categoria')
+
+      alert(
+        'Informe o nome da categoria'
+      )
+
       return
+
     }
 
     await categoriaServicoService.criar(nome)
@@ -54,7 +71,9 @@ export function CategoriasServico() {
     categoria: CategoriaServico
   ) {
 
-    if (categoria.status === 'Ativo') {
+    if (
+      categoria.status === 'Ativo'
+    ) {
 
       await categoriaServicoService
         .desativar(categoria.id)
@@ -75,161 +94,215 @@ export function CategoriasServico() {
       const matchBusca =
         c.nome
           .toLowerCase()
-          .includes(busca.toLowerCase())
+          .includes(
+            busca.toLowerCase()
+          )
 
       const matchStatus =
         filtroStatus === 'todos' ||
+
         (
           filtroStatus === 'ativos' &&
           c.status === 'Ativo'
         ) ||
+
         (
           filtroStatus === 'inativos' &&
           c.status !== 'Ativo'
         )
 
-      return matchBusca && matchStatus
+      return (
+        matchBusca &&
+        matchStatus
+      )
+
     })
 
   if (loading) {
-    return <p>Carregando...</p>
+    return (
+      <p>Carregando...</p>
+    )
   }
 
   return (
-    <div>
 
-      <h2>Categorias de Serviço</h2>
+    <div className="categorias-container">
 
-      <div
-        style={{
-          marginBottom: 20
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Nova categoria"
-          value={nome}
-          onChange={e =>
-            setNome(e.target.value)
+      <div className="categorias-header">
+
+        <div className="categorias-title">
+
+          <h1>
+            Categorias de Serviço
+          </h1>
+
+          <p>
+            Gerencie as categorias utilizadas nos serviços.
+          </p>
+
+        </div>
+
+        <button
+          className="btn-voltar"
+          onClick={() =>
+            navigate('/servicos')
           }
-        />
-
-        {' '}
-
-        <button onClick={salvar}>
-          Salvar
+        >
+          Voltar
         </button>
+
       </div>
 
-      <input
-        type="text"
-        placeholder="Buscar categoria..."
-        value={busca}
-        onChange={e =>
-          setBusca(e.target.value)
-        }
-      />
+      <div className="categorias-card">
 
-      <select
-        value={filtroStatus}
-        onChange={e =>
-          setFiltroStatus(
-            e.target.value as
-            'todos' |
-            'ativos' |
-            'inativos'
-          )
-        }
-        style={{
-          marginLeft: 10
-        }}
-      >
-        <option value="todos">
-          Todos
-        </option>
+        <div className="categoria-nova">
 
-        <option value="ativos">
-          Ativos
-        </option>
+          <input
+            type="text"
+            placeholder="Nova categoria"
+            value={nome}
+            onChange={e =>
+              setNome(
+                e.target.value
+              )
+            }
+            className="categoria-input"
+          />
 
-        <option value="inativos">
-          Inativos
-        </option>
-      </select>
+          <button
+            className="btn-salvar-categoria"
+            onClick={salvar}
+          >
+            Salvar
+          </button>
 
-      <table
-        border={1}
-        cellPadding={8}
-        style={{
-          marginTop: 15
-        }}
-      >
-        <thead>
-          <tr>
-            <th>Categoria</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
+        </div>
 
-        <tbody>
+        <div className="categorias-counter">
+          Total de categorias: {categorias.length}
+        </div>
 
-          {categoriasFiltradas.map(c => (
+        <div className="categorias-filtros">
 
-            <tr key={c.id}>
+          <input
+            type="text"
+            placeholder="Buscar categoria..."
+            value={busca}
+            onChange={e =>
+              setBusca(
+                e.target.value
+              )
+            }
+            className="categorias-search"
+          />
 
-              <td>
-                {c.nome}
-              </td>
+          <select
+            value={filtroStatus}
+            onChange={e =>
+              setFiltroStatus(
+                e.target
+                  .value as
+                  | 'todos'
+                  | 'ativos'
+                  | 'inativos'
+              )
+            }
+            className="categorias-select"
+          >
+            <option value="todos">
+              Todos
+            </option>
 
-              <td>
+            <option value="ativos">
+              Ativos
+            </option>
 
-                {c.status === 'Ativo'
-                  ? (
+            <option value="inativos">
+              Inativos
+            </option>
+
+          </select>
+
+        </div>
+
+        {categoriasFiltradas.length === 0 ? (
+
+          <div className="categorias-empty">
+            Nenhuma categoria encontrada.
+          </div>
+
+        ) : (
+
+          <table className="categorias-table">
+
+            <thead>
+
+              <tr>
+                <th>Categoria</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              {categoriasFiltradas.map(c => (
+
+                <tr key={c.id}>
+
+                  <td>
+                    {c.nome}
+                  </td>
+
+                  <td>
+
                     <span
-                      style={{
-                        color: 'green',
-                        fontWeight: 'bold'
-                      }}
+                      className={
+                        c.status === 'Ativo'
+                          ? 'status-ativo'
+                          : 'status-inativo'
+                      }
                     >
-                      Ativo
+                      {c.status}
                     </span>
-                  )
-                  : (
-                    <span
-                      style={{
-                        color: 'red',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      Inativo
-                    </span>
-                  )}
 
-              </td>
+                  </td>
 
-              <td>
+                  <td>
 
-                <button
-                  onClick={() =>
-                    toggleStatus(c)
-                  }
-                >
-                  {c.status === 'Ativo'
-                    ? 'Desativar'
-                    : 'Ativar'}
-                </button>
+                    <div className="acoes">
 
-              </td>
+                      <button
+                        className="btn-action btn-status"
+                        onClick={() =>
+                          toggleStatus(c)
+                        }
+                      >
+                        {
+                          c.status === 'Ativo'
+                            ? 'Desativar'
+                            : 'Ativar'
+                        }
+                      </button>
 
-            </tr>
+                    </div>
 
-          ))}
+                  </td>
 
-        </tbody>
+                </tr>
 
-      </table>
+              ))}
+
+            </tbody>
+
+          </table>
+
+        )}
+
+      </div>
 
     </div>
+
   )
 }

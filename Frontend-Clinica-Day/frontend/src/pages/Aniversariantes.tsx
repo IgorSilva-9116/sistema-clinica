@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { clienteService } from '../services/clienteService'
 import { useNavigate } from 'react-router-dom'
+import '../styles/aniversariantes.css'
 
 type Aniversariante = {
   id: number
@@ -18,8 +19,12 @@ export default function Aniversariantes() {
   useEffect(() => {
     async function carregar() {
       try {
-        const response = await clienteService.listarAniversariantes()
-        setDados(response.aniversariantes || [])
+        const response =
+          await clienteService.listarAniversariantes()
+
+        setDados(
+          response.aniversariantes || []
+        )
       } finally {
         setLoading(false)
       }
@@ -29,46 +34,97 @@ export default function Aniversariantes() {
   }, [])
 
   if (loading) {
-    return <p>Carregando aniversariantes...</p>
+    return (
+      <p>Carregando aniversariantes...</p>
+    )
   }
 
   return (
-    <div>
-      <button onClick={() => navigate('/clientes')}>
-        ← Voltar para Clientes
-      </button>
+    <div className="aniversariantes-container">
 
-      <h2>🎂 Aniversariantes do Mês</h2>
+      <div className="aniversariantes-header">
 
-      {dados.length === 0 ? (
-        <p>Nenhum aniversariante neste mês.</p>
-      ) : (
-        <table border={1} cellPadding={8}>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Telefone</th>
-              <th>Data de Nascimento</th>
-            </tr>
-          </thead>
+        <div className="aniversariantes-title">
 
-          <tbody>
-            {dados.map(cliente => (
-              <tr key={cliente.id}>
-                <td>{cliente.nome}</td>
+          <h1>
+            🎂 Aniversariantes do Mês
+          </h1>
 
-                <td>{cliente.telefone}</td>
+          <p>
+            Visualize os aniversariantes cadastrados.
+          </p>
 
-                <td>
-                  {new Date(
-                    cliente.dataNascimento
-                  ).toLocaleDateString('pt-BR')}
-                </td>
+        </div>
+
+        <button
+          className="btn-voltar"
+          onClick={() =>
+            navigate('/clientes')
+          }
+        >
+          Voltar
+        </button>
+
+      </div>
+
+      <div className="aniversariantes-card">
+
+        <div className="aniversariantes-counter">
+          Total de aniversariantes: {dados.length}
+        </div>
+
+        {dados.length === 0 ? (
+
+          <div className="aniversariantes-empty">
+            Nenhum aniversariante neste mês.
+          </div>
+
+        ) : (
+
+          <table className="aniversariantes-table">
+
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Data de Nascimento</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+
+            <tbody>
+
+              {dados.map(cliente => (
+
+                <tr key={cliente.id}>
+
+                  <td>
+                    {cliente.nome}
+                  </td>
+
+                  <td>
+                    {cliente.telefone}
+                  </td>
+
+                  <td>
+                    {new Date(
+                      cliente.dataNascimento
+                    ).toLocaleDateString(
+                      'pt-BR'
+                    )}
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        )}
+
+      </div>
+
     </div>
   )
 }

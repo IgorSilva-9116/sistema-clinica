@@ -1,0 +1,101 @@
+.aniversariantes-container {
+    padding: 24px;
+}
+
+.aniversariantes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 24px;
+}
+
+.aniversariantes-title h1 {
+    margin: 0;
+
+    color: #7a5b45;
+
+    font-size: 32px;
+}
+
+.aniversariantes-title p {
+    margin-top: 8px;
+
+    color: #9c8776;
+}
+
+.btn-voltar {
+    background: #ebe3db;
+
+    color: #7a5b45;
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 12px 18px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.aniversariantes-card {
+    background: #fffdfb;
+
+    border-radius: 24px;
+
+    padding: 24px;
+
+    max-width: 1000px;
+
+    margin: 0 auto;
+
+    box-shadow: 0 4px 18px rgba(0,0,0,.05);
+}
+
+.aniversariantes-counter {
+    color: #7a5b45;
+
+    font-weight: 600;
+
+    margin-bottom: 18px;
+}
+
+.aniversariantes-table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+.aniversariantes-table thead tr {
+    background: #f4ebe3;
+}
+
+.aniversariantes-table th {
+    text-align: left;
+
+    padding: 16px;
+
+    color: #7a5b45;
+
+    font-weight: 700;
+}
+
+.aniversariantes-table td {
+    padding: 16px;
+
+    border-bottom: 1px solid #ece4dc;
+}
+
+.aniversariantes-table tbody tr:hover {
+    background: #faf6f2;
+}
+
+.aniversariantes-empty {
+    padding: 30px;
+
+    text-align: center;
+
+    color: #9c8776;
+}

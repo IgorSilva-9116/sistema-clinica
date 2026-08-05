@@ -1,30 +1,42 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { servicoService } from '../services/servicoService'
 import type { Servico } from '../types/Servico'
+import '../styles/servicos.css'
 
 export function Servicos() {
   const [servicos, setServicos] = useState<Servico[]>([])
   const [loading, setLoading] = useState(true)
   const [erro, setErro] = useState<string | null>(null)
+
   const [busca, setBusca] = useState('')
-  const [filtroStatus, setFiltroStatus] = useState<'todos' | 'ativos' | 'inativos'>('todos')
+  const [filtroStatus, setFiltroStatus] =
+    useState<'todos' | 'ativos' | 'inativos'>('todos')
+
+  const navigate = useNavigate()
 
   async function carregar() {
     try {
-      const response = await servicoService.listarAdmin()
+      const response =
+        await servicoService.listarAdmin()
 
-      const servicosValidos = (response.servicos || []).filter(s =>
-        s &&
-        s.id &&
-        s.titulo &&
-        s.preco !== undefined &&
-        s.duracaoMinutos !== undefined &&
-        s.status
-      )
+      const servicosValidos =
+        (response.servicos || []).filter(
+          s =>
+            s &&
+            s.id &&
+            s.titulo &&
+            s.preco !== undefined &&
+            s.duracaoMinutos !== undefined &&
+            s.status
+        )
 
       setServicos(servicosValidos)
+
     } catch {
-      setErro('Erro ao carregar serviços')
+      setErro(
+        'Erro ao carregar serviços'
+      )
     } finally {
       setLoading(false)
     }
@@ -34,143 +46,295 @@ export function Servicos() {
     carregar()
   }, [])
 
-  async function toggleStatus(servico: Servico) {
+  async function toggleStatus(
+    servico: Servico
+  ) {
     try {
-      if (servico.status === 'Ativo') {
-        await servicoService.desativar(servico.id)
+
+      if (
+        servico.status === 'Ativo'
+      ) {
+        await servicoService.desativar(
+          servico.id
+        )
       } else {
-        await servicoService.ativar(servico.id)
+        await servicoService.ativar(
+          servico.id
+        )
       }
+
       carregar()
+
     } catch {
-      setErro('Erro ao alterar status do serviço')
+      setErro(
+        'Erro ao alterar status do serviço'
+      )
     }
   }
 
-    const servicosFiltrados = servicos.filter(servico => {
+  const servicosFiltrados =
+    servicos.filter(servico => {
 
-    const matchBusca =
-      servico.titulo.toLowerCase().includes(busca.toLowerCase()) ||
-      (servico.descricao || '')
-         .toLowerCase()
-         .includes(busca.toLowerCase())
+      const matchBusca =
+        servico.titulo
+          .toLowerCase()
+          .includes(
+            busca.toLowerCase()
+          ) ||
 
-    const matchStatus =
-      filtroStatus === 'todos' ||
-      (filtroStatus === 'ativos' &&
-        servico.status === 'Ativo') ||
-      (filtroStatus === 'inativos' &&
-        servico.status !== 'Ativo')
-      return matchBusca && matchStatus
+        (servico.descricao || '')
+          .toLowerCase()
+          .includes(
+            busca.toLowerCase()
+          )
+
+      const matchStatus =
+        filtroStatus === 'todos' ||
+
+        (
+          filtroStatus === 'ativos' &&
+          servico.status === 'Ativo'
+        ) ||
+
+        (
+          filtroStatus === 'inativos' &&
+          servico.status !== 'Ativo'
+        )
+
+      return (
+        matchBusca &&
+        matchStatus
+      )
     })
-    
 
-  if (loading) return <p>Carregando serviços...</p>
-  if (erro) return <p>{erro}</p>
+  if (loading) {
+    return (
+      <p>Carregando serviços...</p>
+    )
+  }
+
+  if (erro) {
+    return (
+      <p>{erro}</p>
+    )
+  }
 
   return (
-    <div>
-      <h2>Serviços</h2>
+    <div className="servicos-container">
 
-      <input
-       type="text"
-       placeholder="Buscar serviço..."
-       value={busca}
-       onChange={e => setBusca(e.target.value)}
-       style={{
-         marginBottom: 15,
-         width: 250
-        }}
-       />
+      <div className="servicos-header">
 
-       <select
-         value={filtroStatus}
-         onChange={e =>
-           setFiltroStatus(e.target.value as any)
-         }
-         style={{ marginLeft: 10 }}
-       >
-         <option value="todos">Todos</option>
-         <option value="ativos">Ativos</option>
-         <option value="inativos">Inativos</option>
-       </select>
+        <div className="servicos-title">
 
-      {servicos.length === 0 && (
-        <p>Nenhum serviço cadastrado.</p>
-      )}
+          <h1>
+            Serviços
+          </h1>
 
-      {servicos.length > 0 && (
-        <table border={1} cellPadding={8} style={{ marginTop: 15 }}>
-          <thead>
-            <tr>
-              <th>Categoria</th>
-              <th>Serviço</th>
-              <th>Preço</th>
-              <th>Duração</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
+          <p>
+            Gerencie os serviços da clínica.
+          </p>
 
-          <tbody>
-            {servicosFiltrados.map(servico => (
-              <tr key={servico.id}>
-                <td> 
-                  {servico.categoria || '-'}
-                </td>
+        </div>
 
-                {/* ✅ TÍTULO + DESCRIÇÃO */}
-                <td>
-                  <strong>{servico.titulo}</strong>
-                  
-                  <br />
+        <div className="servicos-header-actions">
 
-                  <small style={{ color: '#666' }}>
-                    {servico.descricao
-                      ? servico.descricao
-                      : 'Sem descrição'}
-                  </small>
-                </td>
+          <button
+            className="servicos-btn-secondary"
+            onClick={() =>
+              navigate(
+                '/categorias-servico'
+              )
+            }
+          >
+            Categorias
+          </button>
 
-                <td>R$ {servico.preco}</td>
+          <button
+            className="servicos-btn-primary"
+            onClick={() =>
+              navigate(
+                '/servicos/novo'
+              )
+            }
+          >
+            + Novo Serviço
+          </button>
 
-                <td>{servico.duracaoMinutos} min</td>
+        </div>
 
-                <td>
-                  {servico.status === 'Ativo' ? (
-                    <span style={{ color: 'green', fontWeight: 'bold' }}>
-                      Ativo
-                    </span>
-                  ) : (
-                    <span style={{ color: 'red', fontWeight: 'bold' }}>
-                      Inativo
-                    </span>
-                  )}
-                </td>
+      </div>
 
-                <td>
-                  <button onClick={() => toggleStatus(servico)}>
-                    {servico.status === 'Ativo'
-                      ? 'Desativar'
-                      : 'Ativar'}
-                  </button>
+      <div className="servicos-card">
 
-                  {' '}
+        <div className="servicos-counter">
+          Total de serviços: {servicos.length}
+        </div>
 
-                  <button
-                    onClick={() =>
-                      window.location.href = `/servicos/editar/${servico.id}`
-                    }
-                  >
-                    Editar
-                  </button>
-                </td>
+        <div className="servicos-filtros">
 
+          <input
+            type="text"
+            placeholder="Buscar serviço..."
+            value={busca}
+            onChange={e =>
+              setBusca(
+                e.target.value
+              )
+            }
+            className="servicos-search"
+          />
+
+          <select
+            value={filtroStatus}
+            onChange={e =>
+              setFiltroStatus(
+                e.target.value as any
+              )
+            }
+            className="servicos-select"
+          >
+            <option value="todos">
+              Todos
+            </option>
+
+            <option value="ativos">
+              Ativos
+            </option>
+
+            <option value="inativos">
+              Inativos
+            </option>
+
+          </select>
+
+        </div>
+
+        {servicosFiltrados.length === 0 ? (
+
+          <div className="servicos-empty">
+            Nenhum serviço cadastrado.
+          </div>
+
+        ) : (
+
+          <table className="servicos-table">
+
+            <thead>
+
+              <tr>
+                <th>Categoria</th>
+                <th>Serviço</th>
+                <th>Preço</th>
+                <th>Duração</th>
+                <th>Status</th>
+                <th>Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+
+            </thead>
+
+            <tbody>
+
+              {servicosFiltrados.map(
+                servico => (
+
+                  <tr key={servico.id}>
+
+                    <td>
+                      {servico.categoria || '-'}
+                    </td>
+
+                    <td>
+
+                      <strong>
+                        {servico.titulo}
+                      </strong>
+
+                      <br />
+
+                      <small
+                        style={{
+                          color: '#666'
+                        }}
+                      >
+                        {
+                          servico.descricao ||
+                          'Sem descrição'
+                        }
+                      </small>
+
+                    </td>
+
+                    <td>
+                      R$ {servico.preco}
+                    </td>
+
+                    <td>
+                      {
+                        servico.duracaoMinutos
+                      } min
+                    </td>
+
+                    <td>
+
+                      <span
+                        className={
+                          servico.status === 'Ativo'
+                            ? 'status-ativo'
+                            : 'status-inativo'
+                        }
+                      >
+                        {servico.status}
+                      </span>
+
+                    </td>
+
+                    <td>
+
+                      <div className="acoes">
+
+                        <button
+                          className="btn-action btn-status"
+                          onClick={() =>
+                            toggleStatus(
+                              servico
+                            )
+                          }
+                        >
+                          {
+                            servico.status === 'Ativo'
+                              ? 'Desativar'
+                              : 'Ativar'
+                          }
+                        </button>
+
+                        <button
+                          className="btn-action btn-edit"
+                          onClick={() =>
+                            navigate(
+                              `/servicos/editar/${servico.id}`
+                            )
+                          }
+                        >
+                          Editar
+                        </button>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
+                )
+              )}
+
+            </tbody>
+
+          </table>
+
+        )}
+
+      </div>
+
     </div>
   )
 }

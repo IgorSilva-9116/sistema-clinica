@@ -6,6 +6,8 @@ import {
   type CategoriaServico
 } from '../services/categoriaServicoService'
 
+import '../styles/novoServico.css'
+
 export function NovoServico() {
 
   const navigate = useNavigate()
@@ -75,29 +77,62 @@ export function NovoServico() {
   }
 
   return (
-    <div>
 
-      <h2>Novo Serviço</h2>
+    <div className="novo-servico-container">
 
-      {erro && <p>{erro}</p>}
+      <div className="novo-servico-header">
 
-      <form onSubmit={handleSubmit}>
+        <div className="novo-servico-title">
 
-        <div>
+          <h1>
+            Novo Serviço
+          </h1>
+
+          <p>
+            Preencha os dados do serviço.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          className="btn-voltar"
+          onClick={() =>
+            navigate('/servicos')
+          }
+        >
+          Voltar
+        </button>
+
+      </div>
+
+      {erro && (
+        <div className="erro-card">
+          {erro}
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSubmit}
+        className="form-card"
+      >
+
+        <div className="form-group">
+
           <label>Título</label>
 
           <input
             value={titulo}
             onChange={e =>
-              setTitulo(
-                e.target.value
-              )
+              setTitulo(e.target.value)
             }
             required
           />
+
         </div>
 
-        <div>
+        <div className="form-group">
+
           <label>Categoria</label>
 
           <select
@@ -109,6 +144,7 @@ export function NovoServico() {
             }
             required
           >
+
             <option value="">
               Selecione
             </option>
@@ -123,24 +159,34 @@ export function NovoServico() {
               </option>
 
             ))}
+
           </select>
+
         </div>
 
-        <div>
-          <label>Descrição</label>
+        <div className="form-group">
 
-          <input
+          <label>
+            Descrição
+          </label>
+
+          <textarea
             value={descricao}
             onChange={e =>
               setDescricao(
                 e.target.value
               )
             }
+            placeholder="Descrição do serviço..."
           />
+
         </div>
 
-        <div>
-          <label>Preço</label>
+        <div className="form-group">
+
+          <label>
+            Preço
+          </label>
 
           <input
             type="number"
@@ -155,10 +201,14 @@ export function NovoServico() {
             }
             required
           />
+
         </div>
 
-        <div>
-          <label>Duração (min)</label>
+        <div className="form-group">
+
+          <label>
+            Duração (min)
+          </label>
 
           <input
             type="number"
@@ -172,14 +222,33 @@ export function NovoServico() {
             }
             required
           />
+
         </div>
 
-        <button type="submit">
-          Salvar
-        </button>
+        <div className="form-actions">
+
+          <button
+            type="submit"
+            className="btn-salvar"
+          >
+            Salvar
+          </button>
+
+          <button
+            type="button"
+            className="btn-cancelar"
+            onClick={() =>
+              navigate('/servicos')
+            }
+          >
+            Cancelar
+          </button>
+
+        </div>
 
       </form>
 
     </div>
+
   )
 }

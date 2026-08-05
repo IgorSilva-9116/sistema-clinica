@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import { servicoService } from '../services/servicoService'
 
+import '../styles/novoServico.css'
+
 import {
   categoriaServicoService,
   type CategoriaServico
@@ -73,8 +75,8 @@ export function EditarServico() {
         setCategoriaServicoId(
           servico.categoriaServicoId
             ? String(
-                servico.categoriaServicoId
-              )
+              servico.categoriaServicoId
+            )
             : ''
         )
 
@@ -137,30 +139,77 @@ export function EditarServico() {
   }
 
   if (erro) {
-    return <p>{erro}</p>
+    return (
+      <div className="erro-card">
+        {erro}
+      </div>
+    )
   }
 
   return (
-    <div>
 
-      <h2>Editar Serviço</h2>
+    <div className="novo-servico-container">
 
-      <form onSubmit={handleSubmit}>
+      <div className="novo-servico-header">
 
-        <div>
-          <label>Título</label>
+        <div className="novo-servico-title">
+
+          <h1>
+            Editar Serviço
+          </h1>
+
+          <p>
+            Atualize os dados do serviço.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          className="btn-voltar"
+          onClick={() =>
+            navigate('/servicos')
+          }
+        >
+          Voltar
+        </button>
+
+      </div>
+
+      {erro && (
+        <div className="erro-card">
+          {erro}
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSubmit}
+        className="form-card"
+      >
+
+        <div className="form-group">
+
+          <label>
+            Título
+          </label>
 
           <input
             value={titulo}
             onChange={e =>
-              setTitulo(e.target.value)
+              setTitulo(
+                e.target.value
+              )
             }
             required
           />
+
         </div>
 
-        <div>
-          <label>Categoria</label>
+        <div className="form-group">
+
+          <label>
+            Categoria
+          </label>
 
           <select
             value={categoriaServicoId}
@@ -170,6 +219,7 @@ export function EditarServico() {
               )
             }
           >
+
             <option value="">
               Selecione
             </option>
@@ -184,22 +234,34 @@ export function EditarServico() {
               </option>
 
             ))}
+
           </select>
+
         </div>
 
-        <div>
-          <label>Descrição</label>
+        <div className="form-group">
 
-          <input
+          <label>
+            Descrição
+          </label>
+
+          <textarea
             value={descricao}
             onChange={e =>
-              setDescricao(e.target.value)
+              setDescricao(
+                e.target.value
+              )
             }
+            placeholder="Descrição do serviço..."
           />
+
         </div>
 
-        <div>
-          <label>Preço</label>
+        <div className="form-group">
+
+          <label>
+            Preço
+          </label>
 
           <input
             type="number"
@@ -207,45 +269,61 @@ export function EditarServico() {
             value={preco}
             onChange={e =>
               setPreco(
-                Number(e.target.value)
+                Number(
+                  e.target.value
+                )
               )
             }
             required
           />
+
         </div>
 
-        <div>
-          <label>Duração (min)</label>
+        <div className="form-group">
+
+          <label>
+            Duração (min)
+          </label>
 
           <input
             type="number"
             value={duracaoMinutos}
             onChange={e =>
               setDuracaoMinutos(
-                Number(e.target.value)
+                Number(
+                  e.target.value
+                )
               )
             }
             required
           />
+
         </div>
 
-        <button type="submit">
-          Salvar Alterações
-        </button>
+        <div className="form-actions">
 
-        {' '}
+          <button
+            type="submit"
+            className="btn-salvar"
+          >
+            Salvar Alterações
+          </button>
 
-        <button
-          type="button"
-          onClick={() =>
-            navigate('/servicos')
-          }
-        >
-          Voltar
-        </button>
+          <button
+            type="button"
+            className="btn-cancelar"
+            onClick={() =>
+              navigate('/servicos')
+            }
+          >
+            Cancelar
+          </button>
+
+        </div>
 
       </form>
 
     </div>
+
   )
 }
