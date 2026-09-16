@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import { api } from '../services/api'
 import '../styles/agenda.css'
+import { useNavigate } from 'react-router-dom'
+import { FiSettings, FiAlertCircle, FiCalendar } from 'react-icons/fi'
 
 /* =======================
    TIPOS
@@ -142,6 +144,7 @@ let abortController: AbortController | null = null
 ======================= */
 
 export default function AgendaCalendario() {
+  const navigate = useNavigate()
   const hoje = new Date()
 
   const [ano, setAno] = useState(hoje.getFullYear())
@@ -909,6 +912,52 @@ export default function AgendaCalendario() {
           {!loadingAgenda &&
             diaAberto === true && (
               <>
+
+                <div className="agenda-shortcuts">
+
+                  <div
+                    className="shortcut-card shortcut-config"
+                    onClick={() => navigate('/configurar-agenda')}
+                  >
+                    <div className="shortcut-icon config">
+                      <FiSettings />
+                    </div>
+
+                    <div>
+                      <h4>Configurar Agenda</h4>
+                      <span>Defina horários e regras</span>
+                    </div>
+                  </div>
+
+                  <div
+                    className="shortcut-card shortcut-exception"
+                    onClick={() => navigate('/excecoes/gerenciar')}
+                  >
+                    <div className="shortcut-icon exception">
+                      <FiAlertCircle />
+                    </div>
+
+                    <div>
+                      <h4>Exceções da Agenda</h4>
+                      <span>Gerencie dias e períodos</span>
+                    </div>
+                  </div>
+
+                  <div
+                    className="shortcut-card shortcut-new"
+                    onClick={() => navigate('/agendamentos/novo')}
+                  >
+                    <div className="shortcut-icon new">
+                      <FiCalendar />
+                    </div>
+
+                    <div>
+                      <h4>Novo Agendamento</h4>
+                      <span>Agendar um atendimento</span>
+                    </div>
+                  </div>
+
+                </div>
 
                 <div className="agenda-acoes-superiores">
 

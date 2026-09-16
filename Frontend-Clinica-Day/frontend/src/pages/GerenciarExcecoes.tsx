@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../services/api'
 import '../styles/agendaExcecoes.css'
+import { useNavigate } from 'react-router-dom'
 
 type ExcecaoAgenda = {
   Id: number
@@ -32,6 +33,7 @@ export default function GerenciarExcecoes() {
   const [observacao, setObservacao] = useState('')
   const [salvando, setSalvando] = useState(false)
   const [sucesso, setSucesso] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
 
@@ -133,12 +135,24 @@ export default function GerenciarExcecoes() {
 
   return (
     <div className="excecoes-container">
-      <h1>Gerenciar Exceções</h1>
+      <div className="config-header">
 
-      <p className="excecoes-subtitulo">
-        Configure feriados, folgas,
-        plantões e horários especiais.
-      </p>
+        <div>
+          <h1>Exceções da Agenda</h1>
+
+          <p className="config-agenda-subtitulo">
+            Gerencie bloqueios, liberações e ajustes pontuais da agenda.
+          </p>
+        </div>
+
+        <button
+          className="btn-voltar-agenda"
+          onClick={() => navigate('/agenda')}
+        >
+          Voltar
+        </button>
+
+      </div>
 
       {erro && (
         <div className="excecoes-erro">
@@ -230,7 +244,7 @@ export default function GerenciarExcecoes() {
             >
 
               <option value="">
-               Escolha um horário
+                Escolha um horário
               </option>
 
               {horariosExcecao.map(h => (

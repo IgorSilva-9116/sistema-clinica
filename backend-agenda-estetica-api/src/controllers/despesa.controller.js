@@ -430,9 +430,57 @@ async function marcarComoPago(req, res) {
   }
 }
 
+async function obterDespesaPorId(req, res) {
+  try {
+
+    const { id } = req.params
+    const clinicaId = req.clinicaId
+
+    const pool = await sql.connect()
+
+    const result = await pool.request()
+      .input('Id', sql.Int, Number(id))
+      .input('ClinicaId', sql.Int, clinicaId)
+      .query(`
+        SELECT
+          d.*,
+          cf.Id AS CategoriaFinanceiraId,
+          cf.Nome AS CategoriaFinanceira
+        FROM Despesa d
+        LEFT JOIN CategoriaFinanceira cf
+          ON cf.Id = d.CategoriaFinanceiraId
+        WHERE
+          d.Id = @Id
+          AND d.ClinicaId = @ClinicaId
+      `)
+
+    if (result.recordset.length === 0) {
+      return res.status(404).json({
+        sucesso: false,
+        mensagem: 'Despesa não encontrada'
+      })
+    }
+
+    return res.json(
+      result.recordset[0]
+    )
+
+  } catch (err) {
+
+    console.error(err)
+
+    return res.status(500).json({
+      sucesso: false,
+      mensagem: 'Erro ao buscar despesa'
+    })
+
+  }
+}
+
 module.exports = {
   criarDespesa,
   listarDespesas,
+  obterDespesaPorId,
   editarDespesa,
   excluirDespesa,
   marcarComoPago

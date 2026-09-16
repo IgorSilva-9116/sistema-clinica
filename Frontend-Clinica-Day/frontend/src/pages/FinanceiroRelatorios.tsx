@@ -22,6 +22,12 @@ import {
   formatarMoeda
 } from '../utils/relatorios'
 
+import {
+  FaSackDollar,
+  FaArrowTrendDown,
+  FaArrowTrendUp
+} from 'react-icons/fa6'
+
 export default function FinanceiroRelatorios() {
 
   const {
@@ -33,14 +39,14 @@ export default function FinanceiroRelatorios() {
   const lucroLiquido =
     resumo
       ? resumo.faturamento +
-        resumo.totalMultas -
-        despesasResumo.totalDespesasPagas
+      resumo.totalMultas -
+      despesasResumo.totalDespesasPagas
       : 0
 
   const receitaTotal =
     resumo
       ? resumo.faturamento +
-        resumo.totalMultas
+      resumo.totalMultas
       : 0
 
   const totalCategorias =
@@ -53,27 +59,27 @@ export default function FinanceiroRelatorios() {
       0
     )
 
-    function exportarFinanceiro() {
+  function exportarFinanceiro() {
 
-  const csv = gerarCSV(
+    const csv = gerarCSV(
 
-    despesasCategoria.map(
-      (item: any) => ({
-        Categoria:
-          item.Categoria,
+      despesasCategoria.map(
+        (item: any) => ({
+          Categoria:
+            item.Categoria,
 
-        Total:
-          Number(item.Total)
-      })
+          Total:
+            Number(item.Total)
+        })
+      )
+
     )
 
-  )
-
-  baixarCSV(
-    csv,
-    'financeiro-categorias.csv'
-  )
-}
+    baixarCSV(
+      csv,
+      'financeiro-categorias.csv'
+    )
+  }
 
   return (
     <div>
@@ -84,7 +90,7 @@ export default function FinanceiroRelatorios() {
         className="export-button"
         onClick={exportarFinanceiro}
       >
-       📥 Exportar Financeiro
+        📥 Exportar Financeiro
       </button>
 
       <h3>Resultado Financeiro</h3>
@@ -92,23 +98,53 @@ export default function FinanceiroRelatorios() {
       <div className="cards">
 
         <div className="card receita">
-          Receita
-          <br />
-          {formatarMoeda(receitaTotal)}
+
+          <div className="card-icon">
+            <FaSackDollar />
+          </div>
+
+          <div className="card-content">
+            <span>Receita</span>
+
+            <strong>
+              {formatarMoeda(receitaTotal)}
+            </strong>
+          </div>
+
         </div>
 
         <div className="card despesa">
-          Despesas
-          <br />
-          {formatarMoeda(
-            despesasResumo.totalDespesasPagas
-          )}
+
+          <div className="card-icon">
+            <FaArrowTrendDown />
+          </div>
+
+          <div className="card-content">
+            <span>Despesas</span>
+
+            <strong>
+              {formatarMoeda(
+                despesasResumo.totalDespesasPagas
+              )}
+            </strong>
+          </div>
+
         </div>
 
         <div className="card lucro">
-          Lucro
-          <br />
-          {formatarMoeda(lucroLiquido)}
+
+          <div className="card-icon">
+            <FaArrowTrendUp />
+          </div>
+
+          <div className="card-content">
+            <span>Lucro</span>
+
+            <strong>
+              {formatarMoeda(lucroLiquido)}
+            </strong>
+          </div>
+
         </div>
 
       </div>
@@ -117,48 +153,48 @@ export default function FinanceiroRelatorios() {
         🏷️ Despesas por Categoria
       </h3>
 
-       <div className="financeiro-box">
+      <div className="financeiro-box">
 
-  <div className="financeiro-grid">
+        <div className="financeiro-grid">
 
-    <div className="financeiro-total-card">
+          <div className="financeiro-total-card">
 
-      <div>
-        📊 Total das Categorias
-      </div>
+            <div>
+              📊 Total das Categorias
+            </div>
 
-      <div className="financeiro-total-value">
-        {formatarMoeda(totalCategorias)}
-      </div>
+            <div className="financeiro-total-value">
+              {formatarMoeda(totalCategorias)}
+            </div>
 
-    </div>
-
-    {despesasCategoria.map(
-      (item: any) => (
-
-        <div
-          key={item.Categoria}
-          className="financeiro-categoria-card"
-        >
-
-          <div className="financeiro-categoria-titulo">
-            🏷️ {item.Categoria}
           </div>
 
-          <div className="financeiro-categoria-valor">
-            {formatarMoeda(
-              Number(item.Total)
-            )}
-          </div>
+          {despesasCategoria.map(
+            (item: any) => (
+
+              <div
+                key={item.Categoria}
+                className="financeiro-categoria-card"
+              >
+
+                <div className="financeiro-categoria-titulo">
+                  🏷️ {item.Categoria}
+                </div>
+
+                <div className="financeiro-categoria-valor">
+                  {formatarMoeda(
+                    Number(item.Total)
+                  )}
+                </div>
+
+              </div>
+
+            )
+          )}
 
         </div>
 
-      )
-    )}
-
-  </div>
-
-</div>
+      </div>
 
       <h3 className="financeiro-section">
         🥧 Participação por Categoria
@@ -166,60 +202,60 @@ export default function FinanceiroRelatorios() {
 
       <div className="financeiro-pizza">
 
-  {despesasCategoria.length > 1 ? (
+        {despesasCategoria.length > 1 ? (
 
-   <Pie
-  data={{
-    labels:
-      despesasCategoria.map(
-        (item: any) =>
-          item.Categoria
-      ),
+          <Pie
+            data={{
+              labels:
+                despesasCategoria.map(
+                  (item: any) =>
+                    item.Categoria
+                ),
 
-    datasets: [
-      {
-        data:
-          despesasCategoria.map(
-            (item: any) =>
-              Number(item.Total)
-          ),
+              datasets: [
+                {
+                  data:
+                    despesasCategoria.map(
+                      (item: any) =>
+                        Number(item.Total)
+                    ),
 
-        backgroundColor: [
-          '#1976D2',
-          '#43A047',
-          '#FB8C00',
-          '#8E24AA',
-          '#E53935',
-          '#00897B'
-        ],
+                  backgroundColor: [
+                    '#1976D2',
+                    '#43A047',
+                    '#FB8C00',
+                    '#8E24AA',
+                    '#E53935',
+                    '#00897B'
+                  ],
 
-        borderColor: '#fff',
-        borderWidth: 2
-      }
-    ]
-  }}
-  options={{
-    responsive: true,
-    maintainAspectRatio: false,
+                  borderColor: '#fff',
+                  borderWidth: 2
+                }
+              ]
+            }}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
 
-    plugins: {
-      legend: {
-        position: 'bottom'
-      }
-    }
-  }}
-/>
+              plugins: {
+                legend: {
+                  position: 'bottom'
+                }
+              }
+            }}
+          />
 
-  ) : (
+        ) : (
 
-    <p>
-      Cadastre despesas em mais categorias
-      para visualizar o gráfico.
-    </p>
+          <p>
+            Cadastre despesas em mais categorias
+            para visualizar o gráfico.
+          </p>
 
-  )}
+        )}
 
-</div>
+      </div>
 
     </div>
   )

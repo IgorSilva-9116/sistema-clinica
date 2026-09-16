@@ -36,3 +36,12 @@ export async function editarDespesa(
 export async function excluirDespesa(id: number) {
   await api.delete(`/despesas/${id}`)
 }
+
+export async function obterDespesaPorId(
+  id: number
+) {
+  const response =
+    await api.get(`/despesas/${id}`)
+
+  return response.data
+}

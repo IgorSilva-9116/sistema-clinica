@@ -1,6 +1,9 @@
 import { useEffect, useState, useCallback } from 'react'
 import { api } from '../services/api'
 import '../styles/configurarAgenda.css'
+import { useNavigate } from 'react-router-dom'
+import { FiCalendar,FiClock,FiRefreshCw,FiSettings } from 'react-icons/fi'
+
 
 type DiaAgendaBase = {
   id: number
@@ -56,6 +59,7 @@ export default function AgendaBase() {
   const [horaInicioSabado, setHoraInicioSabado] = useState('09:00')
   const [horaFimSabado, setHoraFimSabado] = useState('14:00')
   const [abaAtiva, setAbaAtiva] = useState('liberacao')
+  const navigate = useNavigate()
 
   const horariosDisponiveis = Array.from(
     { length: 96 },
@@ -576,66 +580,94 @@ export default function AgendaBase() {
 
   return (
     <div className="config-agenda-container">
-      <h1>Configurar Agenda</h1>
+      <div className="config-header">
 
-      <p className="config-agenda-subtitulo">
-        Configure os horários de funcionamento
-        e a disponibilidade da agenda.
-      </p>
+        <div className="config-header-info">
+          <h1>Configurações da Agenda</h1>
 
-      <div className="agenda-abas">
-
-        <button
-          className={
-            abaAtiva === 'liberacao'
-              ? 'aba-ativa'
-              : ''
-          }
-          onClick={() =>
-            setAbaAtiva('liberacao')
-          }
-        >
-          Liberação da Agenda
-        </button>
+          <p className="config-agenda-subtitulo">
+           Configure horários de funcionamento, disponibilidade e regras da agenda.
+          </p>
+        </div>
 
         <button
-          className={
-            abaAtiva === 'horarios'
-              ? 'aba-ativa'
-              : ''
-          }
-          onClick={() =>
-            setAbaAtiva('horarios')
-          }
+          className="btn-voltar"
+          onClick={() => navigate('/agenda')}
         >
-          Horários Semanais
+          Voltar
         </button>
 
-        <button
-          className={
-            abaAtiva === 'sabados'
-              ? 'aba-ativa'
-              : ''
-          }
-          onClick={() =>
-            setAbaAtiva('sabados')
-          }
-        >
-          Sábados Alternados
-        </button>
+      </div>
 
-        <button
-          className={
-            abaAtiva === 'intervalos'
-              ? 'aba-ativa'
-              : ''
-          }
-          onClick={() =>
-            setAbaAtiva('intervalos')
-          }
+      <div className="config-shortcuts">
+
+        <div
+          className={`config-shortcut-card ${abaAtiva === 'liberacao' ? 'ativo' : ''
+            }`}
+          onClick={() => setAbaAtiva('liberacao')}
         >
-          Intervalos Recorrentes
-        </button>
+
+          <div className="config-shortcut-icon disponibilidade">
+            <FiSettings />
+          </div>
+
+          <div>
+            <h4>Disponibilidade</h4>
+            <span>Controle da agenda</span>
+          </div>
+
+        </div>
+
+        <div
+          className={`config-shortcut-card ${abaAtiva === 'horarios' ? 'ativo' : ''
+            }`}
+          onClick={() => setAbaAtiva('horarios')}
+        >
+
+          <div className="config-shortcut-icon horarios">
+            <FiClock />
+          </div>
+
+          <div>
+            <h4>Horários</h4>
+            <span>Funcionamento semanal</span>
+          </div>
+
+        </div>
+
+        <div
+          className={`config-shortcut-card ${abaAtiva === 'sabados' ? 'ativo' : ''
+            }`}
+          onClick={() => setAbaAtiva('sabados')}
+        >
+
+          <div className="config-shortcut-icon sabados">
+            <FiCalendar />
+          </div>
+
+          <div>
+            <h4>Sábados</h4>
+            <span>Alternância automática</span>
+          </div>
+
+        </div>
+
+        <div
+          className={`config-shortcut-card ${abaAtiva === 'intervalos' ? 'ativo' : ''
+            }`}
+          onClick={() => setAbaAtiva('intervalos')}
+        >
+
+          <div className="config-shortcut-icon intervalos">
+            <FiRefreshCw />
+          </div>
+
+          <div>
+            <h4>Intervalos</h4>
+            <span>Pausas recorrentes</span>
+          </div>
+
+        </div>
 
       </div>
 
@@ -658,7 +690,7 @@ export default function AgendaBase() {
 
           </div>
 
-          <p>🔒 Fechar agenda até uma data:</p>
+          <p>Bloquear agendamentos até:</p>
 
           <input
             type="date"
@@ -685,7 +717,7 @@ export default function AgendaBase() {
           </button>
           <hr />
 
-          <p>📅 Abrir agenda para os próximos dias:</p>
+          <p>Liberar agenda para os próximos dias:</p>
 
           <select
             value={diasLiberacao}
@@ -702,7 +734,7 @@ export default function AgendaBase() {
 
           <hr />
 
-          <p>📆 Abrir agenda até uma data específica:</p>
+          <p>Liberar agenda até:</p>
 
           <input
             type="date"

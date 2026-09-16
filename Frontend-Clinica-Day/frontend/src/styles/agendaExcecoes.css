@@ -5,48 +5,84 @@
 
   align-items: center;
 }
+
 .excecoes-container {
-  max-width: 900px;
+  max-width: 1150px;
   margin: 0 auto;
+
+  padding-top: 24px;
+  padding-bottom: 50px;
 }
 
 .excecoes-container h1 {
   margin: 0;
 
-  font-size: 44px;
+  color: #7a5b45;
+
+  font-size: 32px;
 
   font-weight: 700;
-
-  color: #111827;
 }
 
 .excecoes-subtitulo {
-  margin-top: 4px;
-  margin-bottom: 24px;
+  margin-top: 8px;
+  margin-bottom: 22px;
 
-  color: #6b7280;
+  color: #9c8776;
 
   font-size: 15px;
 }
 
-.excecao-card {
-  background: #fff;
+.config-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 
-  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+.btn-voltar-agenda {
+  background: #efe6df;
+
+  color: #7a5b45;
+
+  border: none;
+
+  padding: 12px 22px;
+
+  border-radius: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.btn-voltar-agenda:hover {
+  background: #e3d8cf;
+}
+
+.excecao-card {
+  background: #fffdfb;
+
+  border-radius: 18px;
 
   padding: 24px;
 
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
 
   margin-bottom: 24px;
 }
 
 .card-titulo {
-  font-size: 22px;
+  font-size: 28px;
 
   font-weight: 700;
 
-  margin-bottom: 4px;
+  color: #3f3129;
+
+  margin-bottom: 6px;
 }
 
 .card-subtitulo {
@@ -83,6 +119,7 @@
 
 .lista-titulo {
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .form-excecao {
@@ -96,6 +133,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 18px;
 }
+
 .texto-ajuda {
   margin-bottom: 12px;
 }
@@ -109,14 +147,15 @@
 .campo label {
   font-size: 14px;
   font-weight: 600;
-  
-display: block;
+
+  display: block;
   margin-bottom: 4px;
 
   color: #374151;
 
   margin-left: 2px;
 }
+
 .campo input,
 .campo select {
   padding: 12px;
@@ -130,10 +169,9 @@ display: block;
 .campo select:focus {
   outline: none;
 
-  border-color: #2563eb;
+  border-color: #c57f5f;
 
-  box-shadow:
-    0 0 0 3px rgba(37,99,235,.15);
+  box-shadow: 0 0 0 3px rgba(197, 127, 95, .15);
 }
 
 .acoes-formulario {
@@ -144,7 +182,7 @@ display: block;
 }
 
 .btn-criar-excecao {
-  background: #2563eb;
+  background: #c57f5f;
 
   color: white;
 
@@ -152,20 +190,22 @@ display: block;
 
   border-radius: 10px;
 
-  padding: 12px 18px;
+  padding: 12px 20px;
 
   font-weight: 600;
 
   cursor: pointer;
+
+  transition: .2s;
 }
 
 .btn-criar-excecao:hover {
-  background: #1d4ed8;
+  background: #b66f4d;
 }
 
 .tabela-excecoes {
-  
-width: 100%;
+
+  width: 100%;
   min-width: 870px;
 
 
@@ -177,18 +217,18 @@ width: 100%;
 
   overflow: hidden;
 
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
 }
 
 .tabela-excecoes thead {
-  background: #f8fafc;
+  background: #f8f3ef;
 }
 
 .tabela-excecoes th,
 .tabela-excecoes td {
   padding: 14px;
 
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 2px solid #e5e7eb;
 
   text-align: left;
 }
@@ -251,28 +291,39 @@ width: 100%;
 
 .tabela-scroll {
   max-height: 500px;
+
   overflow-y: auto;
   overflow-x: auto;
+
   border-radius: 12px;
+
+  display: flex;
+  justify-content: center;
 }
 
 .lista-excecoes-card {
-  background: #fff;
+  background: #fffdfb;
 
-  border-radius: 16px;
+  border-radius: 18px;
 
   padding: 24px;
-  width: 100%;
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
 
-  margin-bottom: 20px;
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+
+  margin-bottom: 24px;
 }
 
 .coluna-periodo {
   white-space: nowrap;
 }
+
 .coluna-horario {
   white-space: nowrap;
   min-width: 100px;
 }
-

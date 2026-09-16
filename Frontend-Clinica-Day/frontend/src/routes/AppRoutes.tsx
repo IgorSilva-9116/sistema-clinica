@@ -24,8 +24,9 @@ import ResetarSenha from '../pages/ResetarSenha'
 import AlterarSenha from '../pages/AlterarSenha'
 import { ListaEspera } from '../pages/ListaEspera'
 import DespesaPage from '../pages/Despesa'
+import ListaDespesas from '../pages/ListaDespesas'
 import { CategoriasServico } from '../pages/CategoriasServico'
-import { CategoriasFinanceiras} from '../pages/CategoriasFinanceiras'
+import { CategoriasFinanceiras } from '../pages/CategoriasFinanceiras'
 
 
 
@@ -42,20 +43,20 @@ export function AppRoutes() {
     <Routes>
       {/* Rota pública */}
       <Route path="/login" element={<Login />} />
-     
-       
+
+
 
       {/* ✅ RESETAR SENHA */}
       <Route path="/resetar-senha" element={<ResetarSenha />} />
-      <Route path="/alterar-senha" element={<AlterarSenha />} /> 
+      <Route path="/alterar-senha" element={<AlterarSenha />} />
 
       {/* ✅ REDIRECT DE URL ANTIGA */}
       <Route
         path="/agenda/base"
         element={<Navigate to="/configurar-agenda" replace />}
       />
-      
-      
+
+
       {/* Rotas protegidas */}
       <Route
         element={
@@ -69,21 +70,25 @@ export function AppRoutes() {
         {/* 📅 AGENDA */}
         <Route path="/agenda" element={<AgendaCalendario />} />
         <Route path="/agendamentos/novo" element={<NovoAgendamento />} />
-         
 
-          {/* LISTA DE ESPERA */} 
+
+        {/* LISTA DE ESPERA */}
         <Route path="/lista-espera" element={<ListaEspera />} />
-        
-          {/* DESPESAS */} 
+
+        {/* DESPESAS */}
+
         <Route path="/despesas" element={<DespesaPage />} />
+
+        <Route path="/despesas/lista" element={<ListaDespesas />} />
+
         <Route path="/categorias-financeiras" element={<CategoriasFinanceiras />} />
 
 
         {/* ⚙️ CONFIGURAÇÕES */}
         <Route path="/configurar-agenda" element={<AgendaBase />} />
         <Route path="/excecoes/gerenciar" element={<GerenciarExcecoes />} />
-        <Route path="/politica-cancelamento" element={<PoliticaCancelamento />}/>
-        <Route path="/politica-agendamento" element={<PoliticaAgendamento/>}/>
+        <Route path="/politica-cancelamento" element={<PoliticaCancelamento />} />
+        <Route path="/politica-agendamento" element={<PoliticaAgendamento />} />
 
         {/* 👥 CLIENTES */}
         <Route path="/clientes" element={<Clientes />} />
@@ -102,34 +107,34 @@ export function AppRoutes() {
         <Route path="/servicos/editar/:id" element={<EditarServico />} />
         <Route path="/categorias-servico" element={<CategoriasServico />} />
 
-   {/* 📊 RELATÓRIOS */}
+        {/* 📊 RELATÓRIOS */}
 
-<Route
-  path="/relatorios"
-  element={<Relatorios />}
->
+        <Route
+          path="/relatorios"
+          element={<Relatorios />}
+        >
 
-  <Route
-    index
-    element={<DashboardRelatorios />}
-  />
+          <Route
+            index
+            element={<DashboardRelatorios />}
+          />
 
-  <Route
-    path="financeiro"
-    element={<FinanceiroRelatorios />}
-  />
+          <Route
+            path="financeiro"
+            element={<FinanceiroRelatorios />}
+          />
 
-  <Route
-    path="clientes"
-    element={<ClientesRelatorios />}
-  />
+          <Route
+            path="clientes"
+            element={<ClientesRelatorios />}
+          />
 
-  <Route
-    path="servicos"
-    element={<ServicosRelatorios />}
-  />
+          <Route
+            path="servicos"
+            element={<ServicosRelatorios />}
+          />
 
-</Route>
+        </Route>
 
         {/* 🚫 ACESSO NEGADO */}
         <Route path="/acesso-negado" element={<AcessoNegado />} />

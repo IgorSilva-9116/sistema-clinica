@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
+import '../styles/listaEspera.css'
 
 export function ListaEspera() {
   const [lista, setLista] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [dataFiltro, setDataFiltro] = useState('')
+
+  const navigate = useNavigate()
 
   async function carregar() {
     try {
@@ -24,38 +28,80 @@ export function ListaEspera() {
   if (loading) return <p>Carregando...</p>
 
   return (
-    <div>
-      <div style={{ marginBottom: 15 }}>
-        <label>Filtrar por data: </label>
-        <input
-         type="date"
-         value={dataFiltro}
-         onChange={(e) => setDataFiltro(e.target.value)}
-        />
-      </div>
-      <h2>Lista de Espera</h2>
+    <div className="lista-espera-container">
 
-      {lista.length === 0 && <p>Nenhum cliente na fila</p>}
+      <div className="config-header">
+
+        <div>
+          <h1>Lista de Espera</h1>
+
+          <p className="lista-espera-subtitulo">
+            Gerencie clientes aguardando disponibilidade de horários.
+          </p>
+        </div>
+
+        <button
+          className="btn-voltar-agenda"
+          onClick={() => navigate('/agenda')}
+        >
+          Voltar
+        </button>
+
+      </div>
+
+      <div className="lista-espera-card">
+
+        <div className="campo-filtro">
+          <label>Filtrar por data</label>
+
+          <input
+            type="date"
+            value={dataFiltro}
+            onChange={(e) => setDataFiltro(e.target.value)}
+          />
+        </div>
+
+      </div>
+
+      {lista.length === 0 && (
+        <div className="lista-vazia">
+          Nenhum cliente na lista de espera.
+        </div>
+      )}
 
       {lista
         .filter(item => {
           if (!dataFiltro) return true
 
-          const dataItem = item.DataFormatada // ex: 22/05/2026
-          const dataFiltroFormatada = dataFiltro
-            .split('-')
-            .reverse()
-            .join('/')
+          const dataFiltroFormatada =
+            dataFiltro.split('-').reverse().join('/')
 
-          return dataItem === dataFiltroFormatada
+          return item.DataFormatada === dataFiltroFormatada
         })
         .map(item => (
-        <div key={item.Id} style={{ marginBottom: 10 }}>
-          <strong>{item.Cliente}</strong><br />
-          {item.Servico} <br />
-          {item.DataFormatada} - {item.HoraDesejada}
-        </div>
-      ))}
+          <div
+            key={item.Id}
+            className="espera-card"
+          >
+
+            <div className="espera-header">
+              <strong>{item.Cliente}</strong>
+
+              <span>
+                {item.DataFormatada}
+              </span>
+            </div>
+
+            <div className="espera-servico">
+              {item.Servico}
+            </div>
+
+            <div className="espera-horario">
+              Horário desejado: {item.HoraDesejada}
+            </div>
+
+          </div>
+        ))}
     </div>
   )
 }

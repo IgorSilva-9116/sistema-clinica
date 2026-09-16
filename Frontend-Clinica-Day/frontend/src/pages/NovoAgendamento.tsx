@@ -7,6 +7,7 @@ import { servicoService } from '../services/servicoService'
 import { api } from '../services/api'
 import { agendamentoService } from '../services/agendamentoService'
 import '../styles/novoAgendamento.css'
+import { useNavigate } from 'react-router-dom'
 
 // Types
 import type { Cliente } from '../types/Cliente'
@@ -23,6 +24,7 @@ export function NovoAgendamento() {
   const [profissionais, setProfissionais] = useState<Profissional[]>([])
   const [servicos, setServicos] = useState<Servico[]>([])
   const [horarios, setHorarios] = useState<string[]>([])
+  const navigate = useNavigate()
 
   // ==============================
   // ESTADO DO FORMULÁRIO (SEM clinicaId)
@@ -253,11 +255,24 @@ export function NovoAgendamento() {
   return (
     <div className="novo-agendamento-container">
 
-      <h1>Novo Agendamento</h1>
+      <div className="config-header">
 
-      <p className="novo-agendamento-subtitulo">
-        Cadastre um novo atendimento para um cliente.
-      </p>
+        <div>
+          <h1>Novo Agendamento</h1>
+
+          <p className="novo-agendamento-subtitulo">
+            Cadastre um novo atendimento para um cliente.
+          </p>
+        </div>
+
+        <button
+          className="btn-voltar-agenda"
+          onClick={() => navigate('/agenda')}
+        >
+          Voltar
+        </button>
+
+      </div>
 
       {erro && (
         <div className="novo-agendamento-erro">

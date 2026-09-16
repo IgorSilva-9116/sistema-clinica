@@ -7,47 +7,35 @@ import {
   useRelatoriosContext
 } from '../contexts/RelatoriosContext'
 
+
 function RelatoriosContent() {
   const [dataInicio, setDataInicio] = useState('')
   const [dataFim, setDataFim] = useState('')
 
   const {
-  gerarRelatorio,
-  mesFechado,
-  fechamentos,
-  fecharMes,
-  reabrirMes
- } = useRelatoriosContext()
+    gerarRelatorio,
+    mesFechado,
+    fechamentos,
+    fecharMes,
+    reabrirMes
+  } = useRelatoriosContext()
 
   return (
     <div className="container">
 
-      <h1>Relatórios</h1>
+      <div className="relatorios-header">
 
-      <nav className="relatorio-nav">
+        <div>
 
-        <NavLink to="">
-          📊 Dashboard
-        </NavLink>
+          <h1>Relatórios</h1>
 
-        <NavLink to="financeiro">
-          💰 Financeiro
-        </NavLink>
+          <p className="relatorios-subtitulo">
+            Acompanhe indicadores e desempenho da clínica.
+          </p>
 
-        <NavLink to="clientes">
-          👥 Clientes
-        </NavLink>
+        </div>
 
-        <NavLink to="servicos">
-          🧴 Serviços
-        </NavLink>
-
-      </nav>
-
-      <div className="filtros">
-
-        <label>
-          Data início:
+        <div className="filtros">
 
           <input
             type="date"
@@ -57,11 +45,6 @@ function RelatoriosContent() {
             }
           />
 
-        </label>
-
-        <label>
-          Data fim:
-
           <input
             type="date"
             value={dataFim}
@@ -70,173 +53,171 @@ function RelatoriosContent() {
             }
           />
 
-        </label>
+          <button
+            onClick={() => {
 
-        <button
-          onClick={() => {
+              sessionStorage.setItem(
+                'relatorioDataInicio',
+                dataInicio
+              )
 
-           sessionStorage.setItem(
-             'relatorioDataInicio',
-             dataInicio
-           )
+              sessionStorage.setItem(
+                'relatorioDataFim',
+                dataFim
+              )
 
-           sessionStorage.setItem(
-             'relatorioDataFim',
-             dataFim
-           )
+              gerarRelatorio(
+                dataInicio,
+                dataFim
+              )
 
-           gerarRelatorio(
-             dataInicio,
-             dataFim
-           )
-          }}
+            }}
+          >
+            Gerar Relatório
+          </button>
 
-        >
-          Gerar Relatório
-        </button>
+        </div>
 
       </div>
 
-      <div
-         style={{
-         marginBottom: 20
-        }}
-      >
+      <nav className="relatorio-nav">
+
+        <NavLink to="">
+          Dashboard
+        </NavLink>
+
+        <NavLink to="financeiro">
+          Financeiro
+        </NavLink>
+
+        <NavLink to="clientes">
+          Clientes
+        </NavLink>
+
+        <NavLink to="servicos">
+          Serviços
+        </NavLink>
+
+      </nav>
+
+      <div className="periodo-toolbar">
 
         {mesFechado ? (
 
-      <div
-         style={{
-         color: '#d32f2f',
-         fontWeight: 'bold'
-        }}
-      >
-        🔒 PERÍODO FECHADO
-      </div>
+          <div className="periodo-fechado">
+            ● PERÍODO FECHADO
+          </div>
 
-       ) : (
+        ) : (
 
-      <div
-        style={{
-        color: '#2e7d32',
-        fontWeight: 'bold'
-       }}
-      >
-        🟢 PERÍODO ABERTO
-      </div>
+          <div className="periodo-aberto">
+            ● PERÍODO ABERTO
+          </div>
 
-      )}
+        )}
 
-    </div>
+        {
+          !mesFechado &&
+          dataInicio &&
+          dataFim && (
 
-    {
-      !mesFechado &&
-      dataInicio &&
-      dataFim && (
+            <button
+              className="btn-fechar-mes"
+              onClick={() =>
+                fecharMes(
+                  dataInicio,
+                  dataFim
+                )
+              }
+            >
+              Fechar Mês
+            </button>
 
-     <button
-        onClick={() =>
-          fecharMes(
-            dataInicio,
-            dataFim
           )
         }
-        style={{
-          marginBottom: 25
-        }}
-      >
-       🔒 Fechar Mês
-     </button>
 
-     )
-    }
+      </div>
 
-    {
-  fechamentos.length > 0 && (
-
-    <div
-      style={{
-        marginTop: 20,
-        marginBottom: 25
-      }}
-    >
-
-      <h3>
-        🔒 Histórico de Fechamentos
-      </h3>
-
-      {fechamentos.map(
-        (f: any) => (
+      {
+        fechamentos.length > 0 && (
 
           <div
-            key={f.Id}
             style={{
-              border: '1px solid #ddd',
-              borderRadius: 8,
-              padding: 12,
-              marginBottom: 10,
-              background: '#fafafa'
+              marginTop: 20,
+              marginBottom: 25
             }}
           >
 
-            <strong>
-              🔒 Período
-            </strong>
+            <h3 className="historico-titulo">
+              Histórico de Fechamentos
+            </h3>
 
-            <br />
+            {fechamentos.map(
+              (f: any) => (
 
-            {new Date(
-              f.DataInicio
-            ).toLocaleDateString('pt-BR')}
+                <div
+                  key={f.Id}
+                  className="historico-fechamento"
+                >
 
-            {' até '}
+                  <strong>
+                    🔒 Período
+                  </strong>
 
-            {new Date(
-              f.DataFim
-            ).toLocaleDateString('pt-BR')}
+                  <br />
 
-            <br />
+                  {new Date(
+                    f.DataInicio
+                  ).toLocaleDateString('pt-BR')}
 
-            <small>
+                  {' até '}
 
-              Fechado em:
+                  {new Date(
+                    f.DataFim
+                  ).toLocaleDateString('pt-BR')}
 
-              {' '}
+                  <br />
 
-              {new Date(
-                f.CriadoEm
-              ).toLocaleString('pt-BR')}
+                  <small>
 
-            </small>
+                    Fechado em:
 
-            <br />
-            <br />
-            <button
-              onClick={() => {
+                    {' '}
 
-               const confirmar =
-                 window.confirm(
-                   'Deseja realmente reabrir este período?'
-                  )
+                    {new Date(
+                      f.CriadoEm
+                    ).toLocaleString('pt-BR')}
 
-                if (!confirmar) return
+                  </small>
 
-                reabrirMes(f.Id)
+                  <br />
+                  <br />
+                  <button
+                    onClick={() => {
 
-              }}
-            >
-              🔓 Reabrir
-            </button>
+                      const confirmar =
+                        window.confirm(
+                          'Deseja realmente reabrir este período?'
+                        )
+
+                      if (!confirmar) return
+
+                      reabrirMes(f.Id)
+
+                    }}
+                  >
+                    🔓 Reabrir
+                  </button>
+
+                </div>
+
+              )
+            )}
 
           </div>
 
         )
-      )}
-
-    </div>
-
-  )
-}
+      }
 
       <Outlet />
 

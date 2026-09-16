@@ -1,0 +1,182 @@
+/* ===================================
+   CONTAINER
+=================================== */
+
+.lista-espera-container {
+  max-width: 1150px;
+  margin: 0 auto;
+  padding-top: 24px;
+  padding-bottom: 50px;
+}
+
+.lista-espera-container h1 {
+  margin: 0;
+  color: #7a5b45;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.lista-espera-subtitulo {
+  margin-top: 8px;
+  margin-bottom: 24px;
+  color: #9c8776;
+  font-size: 15px;
+}
+
+/* ===================================
+   CABEÇALHO
+=================================== */
+
+.config-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.btn-voltar-agenda {
+  background: #efe6df;
+  color: #7a5b45;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-voltar-agenda:hover {
+  background: #e3d8cf;
+}
+
+/* ===================================
+   FILTRO
+=================================== */
+
+.lista-espera-filtro {
+  background: #fffdfb;
+
+  border-radius: 18px;
+
+  padding: 20px;
+
+  margin-bottom: 32px;
+
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+
+  width: fit-content;
+}
+
+.campo-filtro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 260px;
+  margin-bottom: 12px;
+}
+
+.campo-filtro label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.campo-filtro input {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 12px;
+  background: white;
+}
+
+.campo-filtro input:focus {
+  outline: none;
+  border-color: #c57f5f;
+  box-shadow: 0 0 0 3px rgba(197, 127, 95, 0.15);
+}
+
+/* ===================================
+   CARD DE CLIENTE
+=================================== */
+
+.espera-card {
+  background: #fffdfb;
+  border-left: 6px solid #c57f5f;
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  transition: 0.2s;
+}
+
+.espera-card:hover {
+  transform: translateY(-2px);
+}
+
+.espera-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.espera-cliente {
+  font-size: 20px;
+  font-weight: 700;
+  color: #3f3129;
+}
+
+.espera-data {
+  color: #9c8776;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.espera-servico {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.espera-horario {
+  color: #c57f5f;
+  font-weight: 600;
+}
+
+/* ===================================
+   LISTA VAZIA
+=================================== */
+
+.lista-vazia {
+  background: #fffdfb;
+  border-radius: 18px;
+  padding: 30px;
+  text-align: center;
+  color: #9c8776;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* ===================================
+   RESPONSIVO
+=================================== */
+
+@media (max-width: 768px) {
+
+  .config-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .btn-voltar-agenda {
+    width: 100%;
+  }
+
+  .espera-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .campo-filtro {
+    max-width: 100%;
+  }
+}

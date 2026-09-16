@@ -1,51 +1,121 @@
+/* ===================================
+   CONTAINER
+=================================== */
+
 .novo-agendamento-container {
-  max-width: 750px;
+  max-width: 1150px;
   margin: 0 auto;
+
+  padding-top: 24px;
+  padding-bottom: 50px;
 }
 
 .novo-agendamento-container h1 {
   margin: 0;
 
-  font-size: 44px;
+  color: #7a5b45;
+
+  font-size: 32px;
 
   font-weight: 700;
-
-  color: #111827;
 }
 
 .novo-agendamento-subtitulo {
-  margin-top: 4px;
+  margin-top: 8px;
   margin-bottom: 24px;
 
   font-size: 15px;
 
-  color: #6b7280;
+  color: #9c8776;
 }
 
-.novo-agendamento-card {
-  background: #fff;
+/* ===================================
+   CABEÇALHO
+=================================== */
 
-  border-radius: 16px;
+.config-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 24px;
+}
+
+.btn-voltar-agenda {
+  background: #efe6df;
+
+  color: #7a5b45;
+
+  border: none;
+
+  padding: 12px 22px;
+
+  border-radius: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.btn-voltar-agenda:hover {
+  background: #e3d8cf;
+}
+
+/* ===================================
+   CARD
+=================================== */
+
+.novo-agendamento-card {
+  background: #fffdfb;
+
+  border-radius: 18px;
 
   padding: 24px;
 
   box-shadow: 0 2px 12px rgba(0,0,0,.06);
 }
 
+.card-titulo {
+  font-size: 28px;
+
+  font-weight: 700;
+
+  color: #3f3129;
+
+  margin-bottom: 6px;
+}
+
+.card-subtitulo {
+  color: #8d8d8d;
+
+  font-size: 14px;
+
+  margin-bottom: 24px;
+}
+
+/* ===================================
+   FORMULÁRIO
+=================================== */
+
 .novo-agendamento-form {
   display: flex;
   flex-direction: column;
+
   gap: 18px;
 }
 
 .campo {
   display: flex;
   flex-direction: column;
+
   gap: 8px;
 }
 
 .campo label {
   font-size: 14px;
+
   font-weight: 600;
 
   color: #374151;
@@ -60,37 +130,45 @@
   padding: 12px 14px;
 
   font-size: 14px;
+
+  background: white;
 }
 
 .campo select:focus,
 .campo input:focus {
   outline: none;
 
-  border-color: #2563eb;
+  border-color: #c57f5f;
 
-  box-shadow:
-    0 0 0 3px rgba(37,99,235,.15);
+  box-shadow: 0 0 0 3px rgba(197,127,95,.15);
 }
 
 .linha-campos {
   display: grid;
+
   grid-template-columns: 1fr 1fr;
+
   gap: 16px;
 }
 
+/* ===================================
+   AÇÕES
+=================================== */
+
 .acoes-formulario {
   display: flex;
+
   justify-content: flex-end;
 
   margin-top: 10px;
 
-  padding-top: 10px;
+  padding-top: 12px;
 
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #ece5de;
 }
 
 .btn-salvar-agendamento {
-  background: #2563eb;
+  background: #c57f5f;
 
   color: white;
 
@@ -98,7 +176,7 @@
 
   border-radius: 10px;
 
-  padding: 12px 18px;
+  padding: 12px 20px;
 
   font-weight: 600;
 
@@ -108,8 +186,12 @@
 }
 
 .btn-salvar-agendamento:hover {
-  background: #1d4ed8;
+  background: #b66f4d;
 }
+
+/* ===================================
+   ALERTAS
+=================================== */
 
 .novo-agendamento-erro {
   background: #fef2f2;
@@ -135,20 +217,9 @@
   margin-bottom: 20px;
 }
 
-.card-titulo {
-  font-size: 22px;
-  font-weight: 700;
-
-  margin-bottom: 4px;
-}
-
-.card-subtitulo {
-  color: #6b7280;
-
-  font-size: 14px;
-
-  margin-bottom: 24px;
-}
+/* ===================================
+   MENSAGENS AUXILIARES
+=================================== */
 
 .aviso-horario {
   margin-top: 8px;
@@ -156,4 +227,23 @@
   color: #92400e;
 
   font-size: 13px;
+}
+
+/* ===================================
+   RESPONSIVO
+=================================== */
+
+@media (max-width: 900px) {
+  .linha-campos {
+    grid-template-columns: 1fr;
+  }
+
+  .config-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .btn-voltar-agenda {
+    width: 100%;
+  }
 }

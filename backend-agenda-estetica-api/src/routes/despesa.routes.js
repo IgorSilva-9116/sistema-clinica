@@ -48,5 +48,17 @@ router.patch(
   despesaController.marcarComoPago
 )
 
+router.get(
+  '/despesas',
+  authMiddleware,
+  despesaController.listarDespesas
+);
+
+router.get(
+  '/despesas/:id',
+  authMiddleware,
+  despesaController.obterDespesaPorId
+);
+
 
 module.exports = router;

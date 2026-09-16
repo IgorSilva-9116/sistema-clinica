@@ -13,6 +13,13 @@ import {
   Legend
 } from 'chart.js'
 
+import {
+  FaSackDollar,
+  FaArrowTrendDown,
+  FaArrowTrendUp,
+  FaChartColumn
+} from 'react-icons/fa6'
+
 import { Bar } from 'react-chartjs-2'
 
 import {
@@ -41,163 +48,234 @@ export default function DashboardRelatorios() {
   const receitaTotal =
     resumo
       ? resumo.faturamento +
-        resumo.totalMultas
+      resumo.totalMultas
       : 0
 
   const lucroLiquido =
     resumo
       ? resumo.faturamento +
-        resumo.totalMultas -
-        despesasResumo.totalDespesasPagas
+      resumo.totalMultas -
+      despesasResumo.totalDespesasPagas
       : 0
-   
+
   const percentualMeta =
     metaMensal > 0
       ? (receitaTotal / metaMensal) * 100
-      : 0   
-      
+      : 0
+
   function exportarResumo() {
 
-  const csv = gerarCSV([
-    {
-      Receita: receitaTotal,
+    const csv = gerarCSV([
+      {
+        Receita: receitaTotal,
 
-      Despesas:
-        despesasResumo.totalDespesasPagas,
+        Despesas:
+          despesasResumo.totalDespesasPagas,
 
-      Lucro:
-        lucroLiquido,
+        Lucro:
+          lucroLiquido,
 
-      Crescimento:
-        comparacao.crescimento,
+        Crescimento:
+          comparacao.crescimento,
 
-      Meta:
-        metaMensal
-    }
-  ])
+        Meta:
+          metaMensal
+      }
+    ])
 
-  baixarCSV(
-    csv,
-    'resumo-financeiro.csv'
-  )
-}    
+    baixarCSV(
+      csv,
+      'resumo-financeiro.csv'
+    )
+  }
 
   return (
     <div>
 
-      <h2>📊 Indicadores Principais</h2>
+      <div className="dashboard-header">
+      
+        <button
+          className="export-button"
+          onClick={exportarResumo}
+        >
+          📥 Exportar Resumo
+        </button>
 
-      <button
-        className="export-button"
-        onClick={exportarResumo}
-      >
-       📥 Exportar Resumo
-      </button>
+      </div>
 
       <div className="cards">
 
         <div className="card receita">
-          Receita
-          <br />
-          {formatarMoeda(receitaTotal)}
+
+          <div className="card-icon">
+            <FaSackDollar />
+          </div>
+
+          <div className="card-content">
+
+            <span>
+              Receita
+            </span>
+
+            <strong>
+              {formatarMoeda(receitaTotal)}
+            </strong>
+
+          </div>
+
         </div>
 
         <div className="card despesa">
-          Despesas
-          <br />
-          {formatarMoeda(
-            despesasResumo.totalDespesasPagas
-          )}
+
+          <div className="card-icon">
+            <FaArrowTrendDown />
+          </div>
+
+          <div className="card-content">
+
+            <span>
+              Despesas
+            </span>
+
+            <strong>
+              {formatarMoeda(
+                despesasResumo.totalDespesasPagas
+              )}
+            </strong>
+
+          </div>
+
         </div>
 
         <div className="card lucro">
-          Lucro
-          <br />
-          {formatarMoeda(lucroLiquido)}
+
+          <div className="card-icon">
+            <FaArrowTrendUp />
+          </div>
+
+          <div className="card-content">
+
+            <span>
+              Lucro
+            </span>
+
+            <strong>
+              {formatarMoeda(lucroLiquido)}
+            </strong>
+
+          </div>
+
         </div>
 
         <div className="card crescimento">
-          Crescimento
-          <br />
-          {comparacao.crescimento.toFixed(1)}%
-        </div>
 
-        <div className="card meta">
-          Meta
-          <br />
-          {formatarMoeda(metaMensal)}
+          <div className="card-icon">
+            <FaChartColumn />
+          </div>
+
+          <div className="card-content">
+
+            <span>
+              Crescimento
+            </span>
+
+            <strong>
+              {comparacao.crescimento.toFixed(1)}%
+            </strong>
+
+          </div>
+
         </div>
 
       </div>
-
-      <h2 className="section">
-        📈 Desempenho
-      </h2>
-
+ 
       <div className="dashboard-grid">
 
         <div className="dashboard-box">
 
           <h3>🎯 Meta Mensal</h3>
 
-        <div className="meta-controls">
+          <div className="meta-controls">
 
-          <input
-            className="meta-input"
-            type="number"
-            min={0}
-            step={100}
-            value={metaMensal}
-            onChange={(e) =>
-              atualizarMeta(
-                Number(
-                  e.target.value
+            <input
+              className="meta-input"
+              type="number"
+              min={0}
+              step={100}
+              value={metaMensal}
+              onChange={(e) =>
+                atualizarMeta(
+                  Number(
+                    e.target.value
+                  )
                 )
-              )
-            }
-          />
+              }
+            />
 
-          <button
-            onClick={salvarMetaBackend}
-          >
-           💾 Salvar
-          </button>
+            <button
+              onClick={salvarMetaBackend}
+            >
+              💾 Salvar
+            </button>
 
-      </div>
+          </div>
 
-      <p>
-        Meta:
-        {' '}
-        {formatarMoeda(metaMensal)}
-      </p>
+          <div className="meta-info">
 
-      <p>
-        Receita Atual:
-        {' '}
-        {formatarMoeda(receitaTotal)}
-      </p>
+            <div className="meta-item">
+              <span>Meta</span>
 
-      <p>
-        Progresso:
-        {' '}
-        {percentualMeta.toFixed(1)}%
-      </p>
+              <strong>
+                {formatarMoeda(metaMensal)}
+              </strong>
+            </div>
 
-      <div className="meta-progress">
+            <div className="meta-item">
+              <span>Receita Atual</span>
 
-      <div
-          className="meta-progress-bar"
-          style={{
-            width: `${Math.min(percentualMeta,100)}%`,
-            background:
-              percentualMeta >= 100
-                ? '#2e7d32'
-                : percentualMeta >= 50
-                ? '#f9a825'
-                : '#d32f2f'
-          }}
-        />
-      </div>
+              <strong>
+                {formatarMoeda(receitaTotal)}
+              </strong>
+            </div>
+
+            <div className="meta-item">
+              <span>Faltam</span>
+
+              <strong>
+                {formatarMoeda(
+                  Math.max(
+                    metaMensal - receitaTotal,
+                    0
+                  )
+                )}
+              </strong>
+            </div>
+
+            <div className="meta-item">
+              <span>Progresso</span>
+
+              <strong>
+                {percentualMeta.toFixed(1)}%
+              </strong>
+            </div>
+
+          </div>
+
+          <div className="meta-progress">
+
+            <div
+              className="meta-progress-bar"
+              style={{
+                width: `${Math.min(percentualMeta, 100)}%`,
+                background:
+                  percentualMeta >= 100
+                    ? '#2e7d32'
+                    : percentualMeta >= 50
+                      ? '#f9a825'
+                      : '#d32f2f'
+              }}
+            />
+          </div>
 
         </div>
 
@@ -205,7 +283,7 @@ export default function DashboardRelatorios() {
 
           <h3>📊 Faturamento</h3>
 
-           <div className="dashboard-chart">
+          <div className="dashboard-chart">
 
             <Bar
               data={{
@@ -217,8 +295,7 @@ export default function DashboardRelatorios() {
 
                     data: [receitaTotal],
 
-                    backgroundColor:
-                      '#1976D2',
+                    backgroundColor: '#c57f5f',
 
                     borderRadius: 8
                   }
