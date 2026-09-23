@@ -38,6 +38,7 @@
   color: #5f4a3a;
   font-weight: 600;
   padding-bottom: 10px;
+  transition: color .15s ease;
 }
 
 .relatorio-nav a.active {
@@ -49,7 +50,6 @@
   color: #c57f5f;
 }
 
-
 .relatorios-subtitulo {
   margin-top: 8px;
   margin-bottom: 24px;
@@ -57,6 +57,31 @@
   color: #9c8776;
 
   font-size: 15px;
+}
+
+/* ===================================
+   CABEÇALHO / SEÇÕES
+=================================== */
+
+.section-title,
+.financeiro-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 19px;
+  font-weight: 700;
+  color: #3f3129;
+
+  margin: 28px 0 14px;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin: 4px 0 20px;
 }
 
 /* ===================================
@@ -78,11 +103,23 @@
 .filtros {
   display: flex;
 
-  gap: 10px;
+  gap: 14px;
 
-  align-items: center;
+  align-items: flex-end;
 
   flex-wrap: wrap;
+}
+
+.filtro-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filtro-campo label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8f867d;
 }
 
 .filtros input {
@@ -93,6 +130,41 @@
   border: 1px solid #ddd;
 
   border-radius: 10px;
+}
+
+.export-button-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  height: 42px;
+  padding: 0 16px;
+
+  background: #fff;
+  color: #7a5b45;
+
+  border: 1px solid #e8ddd4;
+
+  white-space: nowrap;
+}
+
+.export-button-header:hover {
+  background: #faf6f2;
+  color: #5f4a3a;
+}
+
+.export-button-header:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.periodo-selecionado {
+  text-align: right;
+
+  font-size: 13px;
+  color: #9c8776;
+
+  margin-top: 6px;
 }
 
 /* ===================================
@@ -120,82 +192,100 @@
   margin: 18px 0 24px;
 }
 
-
-.card-icon {
-  width: 34px;
-  height: 34px;
-
-  border-radius: 9px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin-bottom: 2px;
-}
-
-
-.card-icon svg {
-  font-size: 15px;
-}
-
-.card-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.card-content span {
-  font-size: 11px;
-
-  font-weight: 600;
-
-  color: #6b6b6b;
-}
-
-.card-content strong {
-  font-size: 15px;
-
-  font-weight: 700;
-
-  color: #111;
-}
-.card-content small {
-  font-size: 12px;
-  opacity: .8;
-  margin-top: 6px;
-    color: #8b8b8b;
+.cards-3 {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+
   min-height: 60px;
 
-  padding: 12px;
+  padding: 18px;
 
-  border-radius: 14px;
+  border-radius: 16px;
 
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-  justify-content: center;
-
-  text-align: center;
-
-  gap: 8px;
+  text-align: left;
 
   background: #fff;
 
   border: 1px solid #f1ece7;
 
   box-shadow: 0 2px 6px rgba(0,0,0,.04);
+
+  transition: transform .15s ease, box-shadow .15s ease;
 }
 
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+}
 
-.card div:last-child {
-  font-size: 28px;
+.card-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-icon svg {
+  font-size: 17px;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  flex: 1;
+  min-width: 0;
+}
+
+.card-content span {
+  font-size: 13px;
+
+  font-weight: 600;
+
+  color: #8f867d;
+}
+
+.card-content strong {
+  font-size: 22px;
+
   font-weight: 700;
-  margin-top: 8px;
+
+  color: #2b211a;
+}
+
+.card-content small {
+  font-size: 12px;
+  margin-top: 2px;
+  color: #a89c8d;
+}
+
+.card-progress-mini {
+  margin-top: 10px;
+  height: 6px;
+
+  border-radius: 999px;
+
+  background: #f1ece5;
+
+  overflow: hidden;
+}
+
+.card-progress-mini-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: #c57f5f;
+  transition: width .3s ease;
 }
 
 .card.receita,
@@ -232,8 +322,9 @@
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 24px;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 24px;
 }
 
 .dashboard-box {
@@ -248,13 +339,14 @@
 
 .dashboard-box h3 {
   margin-top: 0;
+  margin-bottom: 16px;
   color: #3f3129;
 }
 
 .dashboard-header {
   display: flex;
 
-  justify-content: space-between;
+  justify-content: flex-start;
 
   align-items: center;
 
@@ -305,10 +397,63 @@
   margin-bottom: 24px;
 }
 
+.periodo-status-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .btn-fechar-mes {
   padding: 8px 14px;
 
   font-size: 13px;
+}
+
+.btn-historico-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 8px 12px;
+
+  font-size: 13px;
+
+  background: #fff;
+  color: #7a5b45;
+
+  border: 1px solid #e8ddd4;
+}
+
+.btn-historico-icon:hover {
+  background: #faf6f2;
+  color: #5f4a3a;
+}
+
+.btn-historico-count {
+  background: #f1ece5;
+  color: #5f4a3a;
+
+  border-radius: 999px;
+
+  padding: 1px 7px;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+@keyframes historicoFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.historico-lista {
+  animation: historicoFade .18s ease;
 }
 
 .historico-fechamento {
@@ -326,8 +471,19 @@
 }
 
 /* ===================================
-   META
+   META / DESEMPENHO
 =================================== */
+
+.meta-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-weight: 700;
+  color: #3f3129;
+
+  margin-bottom: 14px;
+}
 
 .meta-actions {
   display: flex;
@@ -349,6 +505,41 @@
   padding: 0 12px;
 }
 
+.meta-linhas p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #5f4a3a;
+}
+
+.meta-linhas strong {
+  color: #2b211a;
+}
+
+.meta-faltam strong {
+  color: #c57f5f;
+}
+
+.meta-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 14px;
+}
+
+.meta-progress-row .meta-progress {
+  flex: 1;
+}
+
+.meta-progress-percent {
+  font-size: 13px;
+  font-weight: 700;
+  color: #5f4a3a;
+
+  min-width: 38px;
+  text-align: right;
+}
+
 .meta-progress {
   width: 100%;
   height: 12px;
@@ -363,6 +554,7 @@
 .meta-progress-bar {
   height: 100%;
   background: #c57f5f;
+  transition: width .3s ease;
 }
 
 .meta-info {
@@ -401,7 +593,69 @@
   color: #3b3028;
 }
 
+/* ===================================
+   RESUMO DO PERÍODO
+=================================== */
 
+.resumo-periodo {
+  margin-top: 24px;
+}
+
+.resumo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.resumo-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  background: #fff;
+
+  border: 1px solid #f1ece7;
+  border-radius: 16px;
+
+  padding: 16px;
+
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.resumo-card-info span {
+  display: block;
+  font-size: 12px;
+  color: #8f867d;
+}
+
+.resumo-card-info strong {
+  font-size: 20px;
+  color: #2b211a;
+}
+
+.resumo-card-info small {
+  display: block;
+  font-size: 11px;
+  color: #a89c8d;
+  margin-top: 2px;
+}
+
+.resumo-card-icon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #f8f3ef;
+  color: #c57f5f;
+  font-size: 16px;
+}
 
 /* ===================================
    GRÁFICOS
@@ -422,9 +676,131 @@
   margin: 0 auto;
 }
 
+.financeiro-pizza-row {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.financeiro-donut-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  flex-shrink: 0;
+}
+
+.financeiro-donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  text-align: center;
+  pointer-events: none;
+}
+
+.financeiro-donut-center span {
+  display: block;
+  font-size: 11px;
+  color: #9c8776;
+  font-weight: 600;
+}
+
+.financeiro-donut-center strong {
+  display: block;
+  font-size: 17px;
+  color: #3b3028;
+  margin-top: 2px;
+}
+
+.financeiro-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  flex: 1;
+  min-width: 220px;
+}
+
+.financeiro-legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  font-size: 14px;
+  color: #5f4a3a;
+}
+
+.financeiro-legend-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.financeiro-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.financeiro-legend-valores {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.financeiro-legend-valores strong {
+  color: #2b211a;
+}
+
+.financeiro-legend-valores small {
+  color: #a89c8d;
+  font-size: 12px;
+}
+
 .servicos-chart {
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
+}
+
+.servicos-chart-box {
+  background: #fffdfb;
+
+  border-radius: 18px;
+
+  padding: 20px;
+
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+}
+
+/* ===================================
+   ESTADO VAZIO
+=================================== */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 40px 20px;
+
+  color: #a89c8d;
+  text-align: center;
+}
+
+.empty-state .empty-icon {
+  font-size: 30px;
+  margin-bottom: 4px;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
 }
 
 /* ===================================
@@ -450,12 +826,50 @@ table th {
   color: #5f4a3a;
 
   font-weight: 700;
+
+  text-align: left;
 }
 
 table th,
 table td {
   padding: 12px;
   border-bottom: 1px solid #ece5de;
+}
+
+table tbody tr {
+  transition: background .1s ease;
+}
+
+table tbody tr:hover {
+  background: #faf6f2;
+}
+
+.rank-medalha {
+  font-size: 15px;
+}
+
+/* Clientes: rank centralizado, colunas numéricas à direita */
+.tabela-clientes th:first-child,
+.tabela-clientes td:first-child {
+  width: 64px;
+  text-align: center;
+}
+
+.tabela-clientes th:nth-child(3),
+.tabela-clientes td:nth-child(3),
+.tabela-clientes th:nth-child(4),
+.tabela-clientes td:nth-child(4),
+.tabela-clientes th:nth-child(5),
+.tabela-clientes td:nth-child(5) {
+  text-align: right;
+}
+
+/* Serviços: colunas numéricas à direita */
+.tabela-servicos th:nth-child(2),
+.tabela-servicos td:nth-child(2),
+.tabela-servicos th:nth-child(3),
+.tabela-servicos td:nth-child(3) {
+  text-align: right;
 }
 
 /* ===================================
@@ -487,6 +901,13 @@ table td {
   padding: 14px;
 
   border: 1px solid #ece5de;
+
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.financeiro-categoria-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.06);
 }
 
 .financeiro-categoria-titulo {
@@ -537,13 +958,20 @@ button:hover {
   background: #b66f4d;
 }
 
+.export-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 /* ===================================
    RESPONSIVO
 =================================== */
 
 @media (max-width: 1100px) {
 
-  .cards {
+  .cards,
+  .resumo-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -554,7 +982,8 @@ button:hover {
 
 @media (max-width: 768px) {
 
-  .cards {
+  .cards,
+  .resumo-grid {
     grid-template-columns: 1fr;
   }
 
@@ -562,5 +991,11 @@ button:hover {
     flex-wrap: wrap;
   }
 
+  .relatorios-header {
+    flex-direction: column;
+  }
 
+  .filtros {
+    width: 100%;
+  }
 }

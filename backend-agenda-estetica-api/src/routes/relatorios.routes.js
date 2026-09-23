@@ -22,6 +22,9 @@ router.get('/relatorios/fechamentos', auth, controller.listarFechamentos);
 router.get('/relatorios/comparacao', auth, controller.comparacaoPeriodo);
 router.get('/relatorios/despesas-categoria', auth, controller.despesasPorCategoria);
 
+router.get('/relatorios/indicadores-clientes', auth, controller.indicadoresClientes);
+router.get('/relatorios/serie-faturamento', auth, controller.serieFaturamento);
+
 
 
 module.exports = router;

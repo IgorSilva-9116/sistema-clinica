@@ -1,0 +1,170 @@
+/* ===================================
+   CONTAINER
+=================================== */
+
+.politica-container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.politica-container h1 {
+  margin: 0 0 8px;
+  font-size: 34px;
+  font-weight: 700;
+  color: #7a5b45;
+}
+
+.politica-subtitulo {
+  color: #9c8776;
+  font-size: 15px;
+  margin: 0 0 24px;
+}
+
+/* ===================================
+   CARD
+=================================== */
+
+.politica-card {
+  background: #fffdfb;
+
+  border-radius: 18px;
+
+  padding: 28px;
+
+  border: 1px solid #f1ece7;
+
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+}
+
+/* ===================================
+   ALERTAS
+=================================== */
+
+.politica-alert {
+  padding: 10px 14px;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  margin-bottom: 18px;
+}
+
+.politica-alert-erro {
+  background: #fff1ef;
+  color: #c85d49;
+}
+
+.politica-alert-sucesso {
+  background: #eef8ee;
+  color: #2f7241;
+}
+
+/* ===================================
+   FORMULÁRIO
+=================================== */
+
+.politica-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  margin-bottom: 20px;
+}
+
+.politica-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #5f4a3a;
+}
+
+.politica-hint {
+  font-size: 12px;
+  color: #a89c8d;
+}
+
+.politica-input,
+.politica-textarea {
+  border: 1px solid #ddd;
+
+  border-radius: 10px;
+
+  padding: 10px 12px;
+
+  font-size: 14px;
+  font-family: inherit;
+
+  color: #2b211a;
+
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.politica-input:focus,
+.politica-textarea:focus {
+  outline: none;
+
+  border-color: #c57f5f;
+
+  box-shadow: 0 0 0 3px rgba(197, 127, 95, .15);
+}
+
+.politica-textarea {
+  width: 100%;
+  min-height: 170px;
+
+  resize: vertical;
+}
+
+.politica-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.politica-input-group .politica-input {
+  width: 100%;
+  padding-right: 60px;
+}
+
+.politica-input-suffix {
+  position: absolute;
+  right: 12px;
+
+  font-size: 13px;
+  color: #9c8776;
+
+  pointer-events: none;
+}
+
+.politica-charcount {
+  text-align: right;
+
+  font-size: 11px;
+  color: #a89c8d;
+
+  margin-top: 4px;
+}
+
+/* ===================================
+   AÇÕES
+=================================== */
+
+.politica-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: 8px;
+}
+
+/* ===================================
+   LOADING
+=================================== */
+
+.politica-loading {
+  color: #9c8776;
+  font-size: 14px;
+
+  padding: 24px;
+}

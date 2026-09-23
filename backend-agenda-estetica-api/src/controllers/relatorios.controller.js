@@ -662,6 +662,130 @@ async function despesasPorCategoria(req, res) {
 
 /**
  * =========================
+ * INDICADORES DE CLIENTES
+ * (novos clientes + taxa de retorno)
+ * =========================
+ */
+async function indicadoresClientes(req, res) {
+  try {
+    if (req.userTipo !== 'clinica') {
+      return res.status(403).json({ mensagem: 'Acesso negado' });
+    }
+
+    const { dataInicio, dataFim } = req.query;
+    const clinicaId = req.clinicaId;
+
+    if (!dataInicio || !dataFim) {
+      return res.status(400).json({
+        mensagem: 'dataInicio e dataFim são obrigatórios'
+      });
+    }
+
+    const pool = await sql.connect();
+
+    const result = await pool.request()
+      .input('ClinicaId', sql.Int, clinicaId)
+      .input('DataInicio', sql.Date, dataInicio)
+      .input('DataFim', sql.Date, dataFim)
+      .query(`
+        ;WITH ClientesPeriodo AS (
+          SELECT DISTINCT a.ClienteId
+          FROM Agendamento a
+          WHERE a.Status = 'FINALIZADO'
+            AND a.ClinicaId = @ClinicaId
+            AND a.DataAgendamento BETWEEN @DataInicio AND @DataFim
+        ),
+        PrimeiroAtendimento AS (
+          SELECT ClienteId, MIN(DataAgendamento) AS PrimeiraData
+          FROM Agendamento
+          WHERE Status = 'FINALIZADO'
+            AND ClinicaId = @ClinicaId
+          GROUP BY ClienteId
+        )
+        SELECT
+          COUNT(*) AS TotalClientesPeriodo,
+          SUM(CASE WHEN pa.PrimeiraData BETWEEN @DataInicio AND @DataFim THEN 1 ELSE 0 END) AS NovosClientes,
+          SUM(CASE WHEN pa.PrimeiraData < @DataInicio THEN 1 ELSE 0 END) AS ClientesRecorrentes
+        FROM ClientesPeriodo cp
+        JOIN PrimeiroAtendimento pa ON pa.ClienteId = cp.ClienteId
+      `);
+
+    const r = result.recordset[0];
+
+    const totalClientesPeriodo = r.TotalClientesPeriodo ?? 0;
+    const novosClientes = r.NovosClientes ?? 0;
+    const clientesRecorrentes = r.ClientesRecorrentes ?? 0;
+
+    const taxaRetorno =
+      totalClientesPeriodo > 0
+        ? Number(((clientesRecorrentes / totalClientesPeriodo) * 100).toFixed(1))
+        : 0;
+
+    return res.json({
+      novosClientes,
+      clientesRecorrentes,
+      taxaRetorno
+    });
+
+  } catch (err) {
+    console.error('Erro indicadores de clientes:', err);
+    return res.status(500).json({
+      mensagem: 'Erro ao gerar indicadores de clientes'
+    });
+  }
+}
+
+/**
+ * =========================
+ * SÉRIE DE FATURAMENTO (por dia)
+ * =========================
+ */
+async function serieFaturamento(req, res) {
+  try {
+    if (req.userTipo !== 'clinica') {
+      return res.status(403).json({ mensagem: 'Acesso negado' });
+    }
+
+    const { dataInicio, dataFim } = req.query;
+    const clinicaId = req.clinicaId;
+
+    if (!dataInicio || !dataFim) {
+      return res.status(400).json({
+        mensagem: 'dataInicio e dataFim são obrigatórios'
+      });
+    }
+
+    const pool = await sql.connect();
+
+    const result = await pool.request()
+      .input('ClinicaId', sql.Int, clinicaId)
+      .input('DataInicio', sql.Date, dataInicio)
+      .input('DataFim', sql.Date, dataFim)
+      .query(`
+        SELECT
+          CONVERT(varchar(10), DataAgendamento, 23) AS Data,
+          SUM(ISNULL(ValorServico,0)) + SUM(ISNULL(ValorMulta,0)) AS Valor
+        FROM Agendamento
+        WHERE
+          Status = 'FINALIZADO'
+          AND ClinicaId = @ClinicaId
+          AND DataAgendamento BETWEEN @DataInicio AND @DataFim
+        GROUP BY CONVERT(varchar(10), DataAgendamento, 23)
+        ORDER BY Data
+      `);
+
+    return res.json(result.recordset);
+
+  } catch (err) {
+    console.error('Erro série de faturamento:', err);
+    return res.status(500).json({
+      mensagem: 'Erro ao gerar série de faturamento'
+    });
+  }
+}
+
+/**
+ * =========================
  * HISTÓRICO DE FECHAMENTOS
  * =========================
  */
@@ -728,5 +852,7 @@ module.exports = {
   reabrirMes,
   statusMes,
   listarFechamentos,
-  comparacaoPeriodo
+  comparacaoPeriodo,
+  indicadoresClientes,
+  serieFaturamento
 };

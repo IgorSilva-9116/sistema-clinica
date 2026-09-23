@@ -87,6 +87,8 @@ export function AppRoutes() {
         {/* ⚙️ CONFIGURAÇÕES */}
         <Route path="/configurar-agenda" element={<AgendaBase />} />
         <Route path="/excecoes/gerenciar" element={<GerenciarExcecoes />} />
+
+        {/* POLITICAS */}
         <Route path="/politica-cancelamento" element={<PoliticaCancelamento />} />
         <Route path="/politica-agendamento" element={<PoliticaAgendamento />} />
 

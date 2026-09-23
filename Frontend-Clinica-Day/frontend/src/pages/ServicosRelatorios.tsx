@@ -1,3 +1,7 @@
+import { useCallback, useEffect } from 'react'
+import { useOutletContext } from 'react-router-dom'
+import type { RelatoriosOutletContext } from './Relatorios'
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -36,47 +40,57 @@ export default function ServicosRelatorios() {
 
   function exportarServicos() {
 
-  const csv = gerarCSV(
-    faturamentoServico.map(
-      (item: any) => ({
-        Servico: item.Servico,
-        Execucoes: item.TotalExecucoes,
-        TotalFaturado: item.TotalFaturado
-      })
+    const csv = gerarCSV(
+      faturamentoServico.map(
+        (item: any) => ({
+          Servico: item.Servico,
+          Execucoes: item.TotalExecucoes,
+          TotalFaturado: item.TotalFaturado
+        })
+      )
     )
-  )
 
-  baixarCSV(
-    csv,
-    'servicos.csv'
-  )
-}
+    baixarCSV(
+      csv,
+      'servicos.csv'
+    )
+  }
+
+  const { setExportAction } =
+    useOutletContext<RelatoriosOutletContext>()
+
+  const exportarServicosCallback =
+    useCallback(exportarServicos, [faturamentoServico])
+
+  useEffect(() => {
+
+    setExportAction({
+      label: 'Exportar Serviços',
+      onClick: exportarServicosCallback
+    })
+
+    return () => setExportAction(null)
+
+  }, [exportarServicosCallback, setExportAction])
 
   return (
     <div>
 
-      <h2>🧴 Serviços</h2>
+      <h2 className="section-title">🧴 Serviços</h2>
 
-      <button
-        className="export-button"
-        onClick={exportarServicos}
-      >
-       📥 Exportar Serviços
-      </button>
-
-      <h3>Faturamento por Serviço</h3>
+      <h3 className="section-title">Faturamento por Serviço</h3>
 
       {faturamentoServico.length === 0 ? (
 
-        <p>
-          Nenhum serviço encontrado.
-        </p>
+        <div className="empty-state">
+          <span className="empty-icon">🧴</span>
+          <p>Nenhum serviço encontrado neste período.</p>
+        </div>
 
       ) : (
 
         <table
-          border={1}
-          cellPadding={6}
+          className="tabela-servicos"
           style={{ marginTop: 10 }}
         >
           <thead>
@@ -117,62 +131,94 @@ export default function ServicosRelatorios() {
 
       )}
 
-      <h3>
+      <h3 className="section-title">
         📊 Faturamento por Serviço
       </h3>
 
-      <div className="servicos-chart">
+      <div className="servicos-chart-box">
 
         {faturamentoServico.length > 0 ? (
 
-          <Bar
-            data={{
-              labels:
-                faturamentoServico.map(
-                  (f: any) =>
-                    f.Servico
-                ),
-
-              datasets: [
-               {
-                 label: 'Faturamento por Serviço',
-
-                 data:
-                   faturamentoServico.map(
-                    (f: any) =>
-                    f.TotalFaturado
-                  ),
-
-                 backgroundColor: [
-                  '#1976D2',
-                  '#43A047',
-                  '#FB8C00',
-                  '#8E24AA',
-                  '#E53935'
-                 ],
-
-                 borderRadius: 10,
-                 borderWidth: 1
-                }
-              ]
+          <div
+            className="servicos-chart"
+            style={{
+              height: Math.max(
+                faturamentoServico.length * 54,
+                180
+              )
             }}
-            options={{
-              responsive: true,
-              maintainAspectRatio: false,
+          >
 
-              plugins: {
-                legend: {
-                  display: false
+            <Bar
+              data={{
+                labels:
+                  [...faturamentoServico]
+                    .sort(
+                      (a: any, b: any) =>
+                        b.TotalFaturado - a.TotalFaturado
+                    )
+                    .map(
+                      (f: any) => f.Servico
+                    ),
+
+                datasets: [
+                  {
+                    label: 'Faturamento por Serviço',
+
+                    data:
+                      [...faturamentoServico]
+                        .sort(
+                          (a: any, b: any) =>
+                            b.TotalFaturado - a.TotalFaturado
+                        )
+                        .map(
+                          (f: any) => f.TotalFaturado
+                        ),
+
+                    backgroundColor: '#c57f5f',
+                    hoverBackgroundColor: '#b66f4d',
+
+                    borderRadius: 8,
+                    barThickness: 22
+                  }
+                ]
+              }}
+              options={{
+                indexAxis: 'y',
+
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                  legend: {
+                    display: false
+                  }
+                },
+
+                scales: {
+                  x: {
+                    beginAtZero: true,
+                    grid: {
+                      color: '#f1ece5'
+                    }
+                  },
+                  y: {
+                    grid: {
+                      display: false
+                    }
+                  }
                 }
-              }
-            }}
-          />
+              }}
+            />
+
+          </div>
 
         ) : (
 
-          <p>
-            Nenhum dado encontrado
-          </p>
+          <div className="empty-state">
+            <span className="empty-icon">📊</span>
+            <p>Nenhum dado encontrado.</p>
+          </div>
 
         )}
 

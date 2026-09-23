@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useOutletContext } from 'react-router-dom'
+import type { RelatoriosOutletContext } from './Relatorios'
 import { api } from '../services/api'
 
 import {
@@ -21,6 +23,8 @@ function formatarMoeda(valor: number) {
   })
 }
 
+const MEDALHAS = ['🥇', '🥈', '🥉']
+
 export default function ClientesRelatorios() {
 
   const [clientes, setClientes] =
@@ -29,41 +33,46 @@ export default function ClientesRelatorios() {
   const [loading, setLoading] =
     useState(false)
 
+  const [carregou, setCarregou] =
+    useState(false)
+
   async function carregarClientes() {
     try {
 
       setLoading(true)
-     const dataInicio =
-  sessionStorage.getItem(
-    'relatorioDataInicio'
-  )
 
-const dataFim =
-  sessionStorage.getItem(
-    'relatorioDataFim'
-  )
+      const dataInicio =
+        sessionStorage.getItem(
+          'relatorioDataInicio'
+        )
 
-if (!dataInicio || !dataFim) {
+      const dataFim =
+        sessionStorage.getItem(
+          'relatorioDataFim'
+        )
 
-  alert(
-    'Selecione um período e clique em Gerar Relatório.'
-  )
+      if (!dataInicio || !dataFim) {
 
-  return
-}
+        alert(
+          'Selecione um período e clique em Gerar Relatório.'
+        )
 
-const resp =
-  await api.get(
-    '/relatorios/clientes',
-    {
-      params: {
-        dataInicio,
-        dataFim
+        return
       }
-    }
-  )
+
+      const resp =
+        await api.get(
+          '/relatorios/clientes',
+          {
+            params: {
+              dataInicio,
+              dataFim
+            }
+          }
+        )
 
       setClientes(resp.data)
+      setCarregou(true)
 
     } catch (err) {
 
@@ -82,56 +91,88 @@ const resp =
 
   function exportarClientes() {
 
-  const csv = gerarCSV(
-    clientes.map(
-      cliente => ({
-        Cliente: cliente.cliente,
-        Procedimentos:
-          cliente.totalProcedimentos,
-        ValorGasto:
-          cliente.valorGasto,
-        Frequencia:
-          cliente.frequenciaMedia
-      })
+    const csv = gerarCSV(
+      clientes.map(
+        cliente => ({
+          Cliente: cliente.cliente,
+          Procedimentos:
+            cliente.totalProcedimentos,
+          ValorGasto:
+            cliente.valorGasto,
+          Frequencia:
+            cliente.frequenciaMedia
+        })
+      )
     )
-  )
 
-  baixarCSV(
-    csv,
-    'clientes.csv'
-  )
-}
+    baixarCSV(
+      csv,
+      'clientes.csv'
+    )
+  }
+
+  const { setExportAction } =
+    useOutletContext<RelatoriosOutletContext>()
+
+  const exportarClientesCallback =
+    useCallback(exportarClientes, [clientes])
+
+  useEffect(() => {
+
+    setExportAction({
+      label: 'Exportar Clientes',
+      onClick: exportarClientesCallback,
+      disabled: clientes.length === 0
+    })
+
+    return () => setExportAction(null)
+
+  }, [exportarClientesCallback, clientes.length, setExportAction])
 
   return (
     <div>
 
-      <h2>👥 Clientes</h2>
+      <h2 className="section-title">👥 Clientes</h2>
 
-      <button
-        onClick={exportarClientes}
-        style={{
-         marginRight: 10,
-         marginBottom: 20
-        }}
-      >
-       📥 Exportar Clientes
-      </button>
+      <div className="page-actions">
 
-      <button
-        onClick={carregarClientes}
-      >
-        {
-          loading
-            ? 'Carregando...'
-            : 'Carregar Clientes'
-        }
-      </button>
+        <button
+          onClick={carregarClientes}
+        >
+          {
+            loading
+              ? 'Carregando...'
+              : 'Carregar Clientes'
+          }
+        </button>
+
+      </div>
+
+      {!carregou && !loading && (
+
+        <div className="empty-state">
+          <span className="empty-icon">👥</span>
+          <p>
+            Selecione um período em Relatórios e clique em
+            "Carregar Clientes" para ver o ranking.
+          </p>
+        </div>
+
+      )}
+
+      {carregou && clientes.length === 0 && (
+
+        <div className="empty-state">
+          <span className="empty-icon">👥</span>
+          <p>Nenhum cliente encontrado neste período.</p>
+        </div>
+
+      )}
 
       {clientes.length > 0 && (
 
         <table
-          border={1}
-          cellPadding={6}
+          className="tabela-clientes"
           style={{ marginTop: 20 }}
         >
 
@@ -154,7 +195,9 @@ const resp =
                   key={c.clienteId}
                 >
 
-                  <td>{index + 1}</td>
+                  <td className="rank-medalha">
+                    {MEDALHAS[index] ?? index + 1}
+                  </td>
 
                   <td>{c.cliente}</td>
 

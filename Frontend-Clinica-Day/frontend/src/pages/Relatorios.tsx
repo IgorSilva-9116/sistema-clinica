@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import '../styles/relatorios.css'
 
@@ -7,10 +7,24 @@ import {
   useRelatoriosContext
 } from '../contexts/RelatoriosContext'
 
+export type ExportAction = {
+  label: string
+  onClick: () => void
+  disabled?: boolean
+} | null
+
+export type RelatoriosOutletContext = {
+  setExportAction: (action: ExportAction) => void
+}
 
 function RelatoriosContent() {
   const [dataInicio, setDataInicio] = useState('')
   const [dataFim, setDataFim] = useState('')
+  const [periodoGerado, setPeriodoGerado] = useState<
+    { inicio: string; fim: string } | null
+  >(null)
+  const [mostrarHistorico, setMostrarHistorico] = useState(false)
+  const [exportAction, setExportAction] = useState<ExportAction>(null)
 
   const {
     gerarRelatorio,
@@ -19,6 +33,20 @@ function RelatoriosContent() {
     fecharMes,
     reabrirMes
   } = useRelatoriosContext()
+
+  // Objeto estável passado pro Outlet — só o setter, para não
+  // recriar a referência a cada render e evitar loop de efeitos
+  // nos componentes filhos que o consomem.
+  const outletContext = useMemo<RelatoriosOutletContext>(
+    () => ({ setExportAction }),
+    []
+  )
+
+  function formatarData(data: string) {
+    if (!data) return ''
+    return new Date(data + 'T00:00:00')
+      .toLocaleDateString('pt-BR')
+  }
 
   return (
     <div className="container">
@@ -35,46 +63,82 @@ function RelatoriosContent() {
 
         </div>
 
-        <div className="filtros">
+        <div>
 
-          <input
-            type="date"
-            value={dataInicio}
-            onChange={(e) =>
-              setDataInicio(e.target.value)
-            }
-          />
+          <div className="filtros">
 
-          <input
-            type="date"
-            value={dataFim}
-            onChange={(e) =>
-              setDataFim(e.target.value)
-            }
-          />
+            <div className="filtro-campo">
+              <label>Data início</label>
+              <input
+                type="date"
+                value={dataInicio}
+                onChange={(e) =>
+                  setDataInicio(e.target.value)
+                }
+              />
+            </div>
 
-          <button
-            onClick={() => {
+            <div className="filtro-campo">
+              <label>Data fim</label>
+              <input
+                type="date"
+                value={dataFim}
+                onChange={(e) =>
+                  setDataFim(e.target.value)
+                }
+              />
+            </div>
 
-              sessionStorage.setItem(
-                'relatorioDataInicio',
-                dataInicio
-              )
+            <button
+              onClick={() => {
 
-              sessionStorage.setItem(
-                'relatorioDataFim',
-                dataFim
-              )
+                sessionStorage.setItem(
+                  'relatorioDataInicio',
+                  dataInicio
+                )
 
-              gerarRelatorio(
-                dataInicio,
-                dataFim
-              )
+                sessionStorage.setItem(
+                  'relatorioDataFim',
+                  dataFim
+                )
 
-            }}
-          >
-            Gerar Relatório
-          </button>
+                setPeriodoGerado({
+                  inicio: dataInicio,
+                  fim: dataFim
+                })
+
+                gerarRelatorio(
+                  dataInicio,
+                  dataFim
+                )
+
+              }}
+            >
+              Gerar Relatório
+            </button>
+
+            {exportAction && (
+
+              <button
+                className="export-button-header"
+                onClick={exportAction.onClick}
+                disabled={exportAction.disabled}
+              >
+                📥 {exportAction.label}
+              </button>
+
+            )}
+
+          </div>
+
+          {periodoGerado && (
+
+            <p className="periodo-selecionado">
+              Período selecionado: {formatarData(periodoGerado.inicio)}
+              {' '}até {formatarData(periodoGerado.fim)}
+            </p>
+
+          )}
 
         </div>
 
@@ -102,35 +166,58 @@ function RelatoriosContent() {
 
       <div className="periodo-toolbar">
 
-        {mesFechado ? (
+        <div className="periodo-status-group">
 
-          <div className="periodo-fechado">
-            ● PERÍODO FECHADO
-          </div>
+          {mesFechado ? (
 
-        ) : (
+            <div className="periodo-fechado">
+              ● PERÍODO FECHADO
+            </div>
 
-          <div className="periodo-aberto">
-            ● PERÍODO ABERTO
-          </div>
+          ) : (
 
-        )}
+            <div className="periodo-aberto">
+              ● PERÍODO ABERTO
+            </div>
+
+          )}
+
+          {
+            !mesFechado &&
+            dataInicio &&
+            dataFim && (
+
+              <button
+                className="btn-fechar-mes"
+                onClick={() =>
+                  fecharMes(
+                    dataInicio,
+                    dataFim
+                  )
+                }
+              >
+                🔒 Fechar Mês
+              </button>
+
+            )
+          }
+
+        </div>
 
         {
-          !mesFechado &&
-          dataInicio &&
-          dataFim && (
+          fechamentos.length > 0 && (
 
             <button
-              className="btn-fechar-mes"
+              className="btn-historico-icon"
+              title="Ver histórico de fechamentos"
               onClick={() =>
-                fecharMes(
-                  dataInicio,
-                  dataFim
-                )
+                setMostrarHistorico((v) => !v)
               }
             >
-              Fechar Mês
+               Histórico de Fechamento
+              <span className="btn-historico-count">
+                {fechamentos.length}
+              </span>
             </button>
 
           )
@@ -139,9 +226,11 @@ function RelatoriosContent() {
       </div>
 
       {
+        mostrarHistorico &&
         fechamentos.length > 0 && (
 
           <div
+            className="historico-lista"
             style={{
               marginTop: 20,
               marginBottom: 25
@@ -219,7 +308,7 @@ function RelatoriosContent() {
         )
       }
 
-      <Outlet />
+      <Outlet context={outletContext} />
 
     </div>
   )

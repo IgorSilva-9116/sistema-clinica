@@ -15,6 +15,17 @@ export type FaturamentoServico = {
   TotalFaturado: number
 }
 
+export type IndicadoresClientes = {
+  novosClientes: number
+  clientesRecorrentes: number
+  taxaRetorno: number
+}
+
+export type PontoFaturamento = {
+  data: string
+  valor: number
+}
+
 export function useRelatorios() {
   const [loading, setLoading] = useState(false)
 
@@ -64,6 +75,16 @@ export function useRelatorios() {
 
   const [despesasCategoria,
     setDespesasCategoria] = useState<any[]>([])
+
+  const [indicadoresClientes, setIndicadoresClientes] =
+    useState<IndicadoresClientes>({
+      novosClientes: 0,
+      clientesRecorrentes: 0,
+      taxaRetorno: 0
+    })
+
+  const [serieFaturamento, setSerieFaturamento] =
+    useState<PontoFaturamento[]>([])
 
   const [mesFechado, setMesFechado] =
     useState(false)
@@ -132,6 +153,28 @@ export function useRelatorios() {
       const comparacaoResp =
         await api.get(
           '/relatorios/comparacao',
+          {
+            params: {
+              dataInicio,
+              dataFim
+            }
+          }
+        )
+
+      const indicadoresClientesResp =
+        await api.get(
+          '/relatorios/indicadores-clientes',
+          {
+            params: {
+              dataInicio,
+              dataFim
+            }
+          }
+        )
+
+      const serieFaturamentoResp =
+        await api.get(
+          '/relatorios/serie-faturamento',
           {
             params: {
               dataInicio,
@@ -213,6 +256,29 @@ export function useRelatorios() {
               item.TotalExecucoes ?? 0,
             TotalFaturado:
               item.TotalFaturado ?? 0
+          })
+        )
+      )
+
+      const indicadoresData =
+        indicadoresClientesResp.data
+
+      setIndicadoresClientes({
+        novosClientes:
+          indicadoresData?.novosClientes ?? 0,
+
+        clientesRecorrentes:
+          indicadoresData?.clientesRecorrentes ?? 0,
+
+        taxaRetorno:
+          indicadoresData?.taxaRetorno ?? 0
+      })
+
+      setSerieFaturamento(
+        (serieFaturamentoResp.data || []).map(
+          (item: any) => ({
+            data: item.Data,
+            valor: Number(item.Valor) || 0
           })
         )
       )
@@ -326,6 +392,8 @@ async function reabrirMes(
     despesasResumo,
     despesasCategoria,
     faturamentoServico,
+    indicadoresClientes,
+    serieFaturamento,
     mesFechado,
     fechamentos,
     fecharMes,
