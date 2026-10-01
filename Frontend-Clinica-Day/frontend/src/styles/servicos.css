@@ -212,3 +212,111 @@
     background: #ece7e2;
     color: #7a5b45;
 }
+
+/* ===================================
+   RESPONSIVO — tabela vira card
+=================================== */
+
+@media (max-width: 1100px) {
+
+  .servicos-container {
+    padding: 16px;
+  }
+
+  .servicos-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .servicos-header-actions {
+    width: 100%;
+  }
+
+  .servicos-header-actions button {
+    flex: 1;
+  }
+
+  .servicos-card {
+    padding: 16px;
+  }
+
+  .servicos-filtros {
+    flex-direction: column;
+  }
+
+  .servicos-select {
+    width: 100%;
+  }
+
+  .servicos-table {
+    max-width: 100%;
+    table-layout: auto;
+  }
+
+  .servicos-table thead {
+    display: none;
+  }
+
+  .servicos-table,
+  .servicos-table tbody,
+  .servicos-table tr,
+  .servicos-table td {
+    display: block;
+    width: 100% !important;
+  }
+
+  .servicos-table tr {
+    background: #fff;
+    border: 1px solid #f1ece7;
+    border-radius: 14px;
+
+    padding: 14px;
+    margin-bottom: 12px;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+  }
+
+  .servicos-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+
+    padding: 8px 2px;
+    border-bottom: 1px solid #f4efe9;
+
+    text-align: right;
+  }
+
+  .servicos-table td:last-child {
+    border-bottom: none;
+  }
+
+  .servicos-table td::before {
+    content: attr(data-label);
+
+    font-weight: 700;
+    color: #7a5b45;
+
+    text-align: left;
+    flex-shrink: 0;
+  }
+
+  /* Nome + descrição do serviço formam o cabeçalho do card */
+  .servicos-table td.td-servico {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .servicos-table td.td-servico::before {
+    display: none;
+  }
+
+  .acoes {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+}

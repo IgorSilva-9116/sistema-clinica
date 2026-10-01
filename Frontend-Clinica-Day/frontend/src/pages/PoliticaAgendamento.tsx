@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { api } from '../services/api'
-import '../styles/politicas.css'
 
 export function PoliticaAgendamento() {
   const [politica, setPolitica] = useState('')
@@ -48,66 +47,54 @@ export function PoliticaAgendamento() {
 
   if (carregando) {
     return (
-      <div className="politica-container">
-        <p className="politica-loading">
-          Carregando política de agendamento...
-        </p>
-      </div>
+      <p className="politica-loading">
+        Carregando política de agendamento...
+      </p>
     )
   }
 
   return (
-    <div className="politica-container">
+    <div className="politica-card">
 
-      <h1>Política de Agendamento</h1>
+      {erro && (
+        <div className="politica-alert politica-alert-erro">
+          {erro}
+        </div>
+      )}
 
-      <p className="politica-subtitulo">
-        Defina as regras que serão mostradas antes do cliente agendar.
-      </p>
+      {sucesso && (
+        <div className="politica-alert politica-alert-sucesso">
+          Política de agendamento salva com sucesso!
+        </div>
+      )}
 
-      <div className="politica-card">
+      <form onSubmit={handleSubmit}>
 
-        {erro && (
-          <div className="politica-alert politica-alert-erro">
-            {erro}
-          </div>
-        )}
+        <div className="politica-form-group">
 
-        {sucesso && (
-          <div className="politica-alert politica-alert-sucesso">
-            Política de agendamento salva com sucesso!
-          </div>
-        )}
+          <label>Texto da política</label>
 
-        <form onSubmit={handleSubmit}>
+          <textarea
+            className="politica-textarea"
+            value={politica}
+            onChange={(e) => setPolitica(e.target.value)}
+            rows={8}
+            placeholder="Ex: Cancelamento deve ser feito com 24h de antecedência..."
+          />
 
-          <div className="politica-form-group">
+          <span className="politica-charcount">
+            {politica.length} caracteres
+          </span>
 
-            <label>Texto da política</label>
+        </div>
 
-            <textarea
-              className="politica-textarea"
-              value={politica}
-              onChange={(e) => setPolitica(e.target.value)}
-              rows={8}
-              placeholder="Ex: Cancelamento deve ser feito com 24h de antecedência..."
-            />
+        <div className="politica-actions">
+          <button type="submit" disabled={loading}>
+            {loading ? 'Salvando...' : '💾 Salvar'}
+          </button>
+        </div>
 
-            <span className="politica-charcount">
-              {politica.length} caracteres
-            </span>
-
-          </div>
-
-          <div className="politica-actions">
-            <button type="submit" disabled={loading}>
-              {loading ? 'Salvando...' : '💾 Salvar'}
-            </button>
-          </div>
-
-        </form>
-
-      </div>
+      </form>
 
     </div>
   )

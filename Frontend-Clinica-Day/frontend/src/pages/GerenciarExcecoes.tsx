@@ -359,7 +359,7 @@ export default function GerenciarExcecoes() {
                 <tbody>
                   {excecoes.map(ex => (
                     <tr key={ex.Id}>
-                      <td>
+                      <td data-label="Tipo">
 
                         <span
                           className={
@@ -374,20 +374,20 @@ export default function GerenciarExcecoes() {
                         </span>
 
                       </td>
-                      <td className="coluna-periodo">
+                      <td className="coluna-periodo" data-label="Período">
 
                         {ex.DataInicio && ex.DataFim
                           ? `${formatarDataBR(ex.DataInicio)} → ${formatarDataBR(ex.DataFim)}`
                           : formatarDataBR(ex.Data)}
 
                       </td>
-                      <td className="coluna-horario">
+                      <td className="coluna-horario" data-label="Horário">
                         {ex.HoraInicio === '00:00' && ex.HoraFim === '23:59'
                           ? 'Dia inteiro'
                           : `${ex.HoraInicio} – ${ex.HoraFim}`}
                       </td>
-                      <td>{ex.Observacao ?? '-'}</td>
-                      <td>
+                      <td data-label="Observação">{ex.Observacao ?? '-'}</td>
+                      <td data-label="Status">
 
                         <span
                           className={
@@ -402,7 +402,7 @@ export default function GerenciarExcecoes() {
                         </span>
 
                       </td>
-                      <td>
+                      <td data-label="Ações">
                         <div className="acoes-excecao">
                           <button
                             className="btn-acao"

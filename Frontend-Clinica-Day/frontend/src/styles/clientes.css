@@ -14,9 +14,12 @@
 
     align-items: center;
 
-    width: 1550px;
+    width: 100%;
+    max-width: 1500px;
 
     margin: 0 auto 24px auto;
+
+    box-sizing: border-box;
 }
 
 .clientes-title h1 {
@@ -76,9 +79,12 @@
 
     box-shadow: 0 4px 18px rgba(0,0,0,.05);
 
-    width: 1500px;
+    width: 100%;
+    max-width: 1500px;
 
     margin: 0 auto;
+
+    box-sizing: border-box;
 
     display: flex;
     flex-direction: column;
@@ -291,4 +297,131 @@
     color: #9c8776;
 
     padding: 24px;
+}
+
+/* ===================================
+   RESPONSIVO — tabela vira card
+=================================== */
+
+@media (max-width: 1100px) {
+
+  .clientes-container {
+    padding: 16px;
+  }
+
+  .clientes-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .clientes-header-actions {
+    width: 100%;
+  }
+
+  .clientes-header-actions button {
+    flex: 1;
+  }
+
+  .clientes-card {
+    padding: 16px;
+  }
+
+  .clientes-filtros {
+    flex-direction: column;
+  }
+
+  .clientes-select {
+    width: 100%;
+  }
+
+  .clientes-table {
+    max-width: 100%;
+  }
+
+  .clientes-table thead {
+    display: none;
+  }
+
+  .clientes-table,
+  .clientes-table tbody,
+  .clientes-table tr,
+  .clientes-table td {
+    display: block;
+    width: 100% !important;
+  }
+
+  .clientes-table tr {
+    background: #fff;
+    border: 1px solid #f1ece7;
+    border-radius: 14px;
+
+    padding: 14px;
+    margin-bottom: 12px;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+  }
+
+  .clientes-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px 2px;
+    border-bottom: 1px solid #f4efe9;
+
+    text-align: right;
+  }
+
+  .clientes-table td:last-child {
+    border-bottom: none;
+  }
+
+  .clientes-table td::before {
+    content: attr(data-label);
+
+    font-weight: 700;
+    color: #7a5b45;
+
+    text-align: left;
+    flex-shrink: 0;
+  }
+
+  /* Foto + nome formam o "cabeçalho" do card, sem rótulo repetido */
+  .clientes-table td.td-foto {
+    justify-content: flex-start;
+    border-bottom: none;
+    padding-bottom: 4px;
+  }
+
+  .clientes-table td.td-foto::before {
+    display: none;
+  }
+
+  .clientes-table td.td-nome {
+    justify-content: flex-start;
+
+    padding-top: 0;
+    padding-bottom: 10px;
+
+    font-weight: 700;
+    color: #3b3028;
+    font-size: 15px;
+  }
+
+  .clientes-table td.td-nome::before {
+    display: none;
+  }
+
+  .clientes-table img {
+    width: 44px;
+    height: 44px;
+  }
+
+  .acoes {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
 }

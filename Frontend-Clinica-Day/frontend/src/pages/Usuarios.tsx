@@ -143,10 +143,10 @@ export function Usuarios() {
 
             {usuarios.map(u => (
               <tr key={u.Id}>
-                <td>{u.Nome || '-'}</td>
-                <td>{u.Email}</td>
-                <td>{u.Role}</td>
-                <td>
+                <td data-label="Nome">{u.Nome || '-'}</td>
+                <td data-label="Email">{u.Email}</td>
+                <td data-label="Perfil">{u.Role}</td>
+                <td data-label="Status">
 
                   <span
                     className={
@@ -159,7 +159,7 @@ export function Usuarios() {
                   </span>
 
                 </td>
-                <td>
+                <td data-label="Ações">
 
                   <div className="acoes">
 

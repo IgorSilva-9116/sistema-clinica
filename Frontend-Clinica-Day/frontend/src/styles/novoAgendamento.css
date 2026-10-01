@@ -6,8 +6,9 @@
   max-width: 1150px;
   margin: 0 auto;
 
-  padding-top: 24px;
-  padding-bottom: 50px;
+  padding: 24px 24px 50px;
+
+  box-sizing: border-box;
 }
 
 .novo-agendamento-container h1 {
@@ -246,4 +247,16 @@
   .btn-voltar-agenda {
     width: 100%;
   }
+}
+
+@media (max-width: 768px) {
+
+  .novo-agendamento-container {
+    padding-top: 50px;
+  }
+
+  .novo-agendamento-card {
+    padding: 18px;
+  }
+
 }

@@ -1,14 +1,22 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import '../../styles/sidebar.css'
 import logoDay from '../../assets/images/Logo_Day_branca-removebg-preview.png'
-import { FiHome, FiUsers, FiUser, FiCalendar, FiClock, FiDollarSign, FiBarChart2, FiSettings, FiLogOut, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
+import { FiHome, FiUsers, FiUser, FiScissors, FiCalendar, FiClock, FiDollarSign, FiBarChart2, FiSettings, FiLogOut, FiChevronLeft, FiChevronRight, FiMenu } from 'react-icons/fi'
+import { Breadcrumbs } from './Breadcrumbs'
 
 export function MainLayout() {
   const { logout, usuario } = useAuth()
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Fecha o menu mobile automaticamente sempre que a rota muda
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [location.pathname])
 
   function handleLogout() {
     logout()
@@ -18,12 +26,37 @@ export function MainLayout() {
   return (
     <div className="layout-container">
 
+      <button
+        className="mobile-menu-button"
+        onClick={() => setMobileOpen(true)}
+        aria-label="Abrir menu"
+      >
+        <FiMenu />
+      </button>
+
+      {mobileOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
       <aside className={
-        collapsed
-          ? 'sidebar collapsed'
-          : 'sidebar'
+        [
+          'sidebar',
+          collapsed ? 'collapsed' : '',
+          mobileOpen ? 'mobile-open' : ''
+        ].filter(Boolean).join(' ')
       }
       >
+        <button
+          className="sidebar-close-mobile"
+          onClick={() => setMobileOpen(false)}
+          aria-label="Fechar menu"
+        >
+          <FiChevronLeft />
+        </button>
+
         <button
           className="sidebar-toggle"
           onClick={() =>
@@ -98,7 +131,7 @@ export function MainLayout() {
             }
           >
             <span className="menu-icon">
-              <FiUser />
+              <FiScissors />
 
             </span>
 
@@ -207,11 +240,10 @@ export function MainLayout() {
       </aside>
 
       <main className="main-content">
+        <Breadcrumbs />
         <Outlet />
       </main>
 
     </div>
   )
 }
-
-

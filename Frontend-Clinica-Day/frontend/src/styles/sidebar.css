@@ -2,6 +2,8 @@
     display: flex;
     height: 100vh;
     overflow: hidden;
+
+    box-sizing: border-box;
 }
 
 .sidebar {
@@ -21,13 +23,12 @@
     overflow: hidden;
 
     flex-shrink: 0;
+
+    box-sizing: border-box;
 }
 
 .sidebar-toggle {
-    position: absolute;
-
-    top: 10px;
-    right: 10px;
+    align-self: flex-end;
 
     background: transparent;
     border: none;
@@ -35,6 +36,26 @@
     color: white;
 
     cursor: pointer;
+
+    padding: 6px;
+
+    border-radius: 8px;
+
+    margin-bottom: 6px;
+
+    flex-shrink: 0;
+}
+
+.sidebar-toggle:hover {
+    background: rgba(255, 255, 255, .15);
+}
+
+.sidebar.collapsed .sidebar-toggle {
+    align-self: center;
+}
+
+.sidebar-close-mobile {
+    display: none;
 }
 
 .sidebar-logo {
@@ -137,9 +158,185 @@
 .main-content {
     flex: 1;
 
+    min-width: 0;
+
     overflow-y: auto;
 
-    overflow-x: hidden;
+    /* "hidden" cortava conteúdo mais largo que a tela (tabelas,
+       gráficos) sem dar nenhuma forma de alcançá-lo. "auto" só
+       mostra a barra de rolagem quando necessário. */
+    overflow-x: auto;
 
     background: #f2efeb;
+
+    box-sizing: border-box;
+}
+
+/* Qualquer conteúdo de página (Relatórios, Políticas, Agenda, etc.)
+   herda box-sizing: border-box. Sem isso, width: 100% + padding
+   soma além do disponível e pode empurrar a página, quebrando
+   centralização e causando rolagem horizontal indevida. */
+.main-content * {
+    box-sizing: border-box;
+}
+
+/* ===================================
+   RESPONSIVO
+=================================== */
+
+/* Tablet: sidebar vira ícone-only automaticamente,
+   independente do estado do toggle manual */
+@media (max-width: 900px) {
+
+  .sidebar {
+    width: 70px;
+  }
+
+  .sidebar .sidebar-logo,
+  .sidebar .menu-text,
+  .sidebar .sidebar-user {
+    display: none;
+  }
+
+  .sidebar .sidebar-menu a {
+    justify-content: center;
+  }
+}
+
+/* Celular: menu hambúrguer + sidebar como "drawer" deslizante */
+
+.mobile-menu-button {
+  display: none;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  .mobile-menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 1100;
+
+    width: 44px;
+    height: 44px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #c57f5f;
+    color: white;
+
+    font-size: 20px;
+
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
+  }
+
+  .sidebar-backdrop {
+    display: block;
+
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, .45);
+
+    z-index: 1200;
+  }
+
+  .layout-container {
+    display: block;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 250px;
+    height: 100vh;
+
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+
+    z-index: 1300;
+
+    flex-direction: column;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: 6px 0 28px rgba(0, 0, 0, .25);
+  }
+
+  /* No mobile o estado "collapsed" (usado no desktop) não deve
+     encolher a sidebar — o que manda é o drawer aberto/fechado */
+  .sidebar.collapsed {
+    width: 250px;
+  }
+
+  .sidebar.collapsed .sidebar-logo,
+  .sidebar.collapsed .menu-text,
+  .sidebar.collapsed .sidebar-user {
+    display: flex;
+  }
+
+  .sidebar-toggle {
+    display: none;
+  }
+
+  .sidebar-close-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    align-self: flex-end;
+
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #c57f5f;
+    color: #ffffff;
+
+    font-size: 20px;
+
+    margin-bottom: 10px;
+  }
+
+  .sidebar-close-mobile:hover {
+    background: #b66f4d;
+  }
+
+  .sidebar-close-mobile svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* No mobile o drawer é a própria forma de esconder/mostrar o
+     menu — texto e logo sempre visíveis quando ele está aberto,
+     independente do estado "collapsed" (que é coisa do desktop). */
+  .sidebar .sidebar-logo,
+  .sidebar .menu-text,
+  .sidebar .sidebar-user {
+    display: flex;
+  }
+
+  .main-content {
+    width: 100%;
+    height: 100vh;
+
+    padding-top: 60px;
+  }
 }

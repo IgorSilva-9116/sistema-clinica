@@ -214,3 +214,97 @@
     color: #9c8776;
     padding: 30px;
 }
+
+/* ===================================
+   RESPONSIVO — tabela vira card
+=================================== */
+
+@media (max-width: 1100px) {
+
+  .usuarios-container {
+    padding: 16px;
+  }
+
+  .usuarios-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .usuarios-card {
+    padding: 16px;
+    max-width: 100%;
+  }
+
+  .usuarios-table-wrapper {
+    display: block;
+    padding-bottom: 0;
+  }
+
+  .usuarios-table {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .usuarios-table thead {
+    display: none;
+  }
+
+  .usuarios-table,
+  .usuarios-table tbody,
+  .usuarios-table tr,
+  .usuarios-table td {
+    display: block;
+    width: 100% !important;
+  }
+
+  .usuarios-table tr {
+    background: #fff;
+    border: 1px solid #f1ece7;
+    border-radius: 14px;
+
+    padding: 12px 14px;
+    margin-bottom: 12px;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+  }
+
+  .usuarios-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px 2px;
+    border-bottom: 1px solid #f4efe9;
+
+    text-align: right;
+  }
+
+  .usuarios-table td:last-child {
+    border-bottom: none;
+
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .usuarios-table td::before {
+    content: attr(data-label);
+
+    font-weight: 700;
+    color: #7a5b45;
+
+    text-align: left;
+    flex-shrink: 0;
+  }
+
+  .usuarios-table td:last-child::before {
+    margin-bottom: 8px;
+  }
+
+  .acoes {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+}

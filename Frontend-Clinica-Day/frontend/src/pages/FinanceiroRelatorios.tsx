@@ -119,7 +119,7 @@ export default function FinanceiroRelatorios() {
   return (
     <div>
 
-      <h2 className="section-title">💰 Financeiro</h2>
+      {/* <h2 className="section-title">💰 Financeiro</h2> */}
 
       <h3 className="section-title">Resultado Financeiro</h3>
 

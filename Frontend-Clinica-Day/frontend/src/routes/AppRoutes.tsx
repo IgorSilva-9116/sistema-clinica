@@ -16,6 +16,7 @@ import { NovoAgendamento } from '../pages/NovoAgendamento'
 import { AcessoNegado } from '../pages/AcessoNegado'
 import AgendaBase from '../pages/AgendaBase'
 import GerenciarExcecoes from '../pages/GerenciarExcecoes'
+import Politicas from '../pages/Politicas'
 import PoliticaCancelamento from '../pages/PoliticaCancelamento'
 import { PoliticaAgendamento } from '../pages/PoliticaAgendamento'
 import { Usuarios } from '../pages/Usuarios'
@@ -89,8 +90,34 @@ export function AppRoutes() {
         <Route path="/excecoes/gerenciar" element={<GerenciarExcecoes />} />
 
         {/* POLITICAS */}
-        <Route path="/politica-cancelamento" element={<PoliticaCancelamento />} />
-        <Route path="/politica-agendamento" element={<PoliticaAgendamento />} />
+        <Route path="/politicas" element={<Politicas />}>
+
+          <Route
+            index
+            element={<Navigate to="cancelamento" replace />}
+          />
+
+          <Route
+            path="cancelamento"
+            element={<PoliticaCancelamento />}
+          />
+
+          <Route
+            path="agendamento"
+            element={<PoliticaAgendamento />}
+          />
+
+        </Route>
+
+        {/* Redirects de URLs antigas, caso ainda existam links apontando pra elas */}
+        <Route
+          path="/politica-cancelamento"
+          element={<Navigate to="/politicas/cancelamento" replace />}
+        />
+        <Route
+          path="/politica-agendamento"
+          element={<Navigate to="/politicas/agendamento" replace />}
+        />
 
         {/* 👥 CLIENTES */}
         <Route path="/clientes" element={<Clientes />} />

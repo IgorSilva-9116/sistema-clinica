@@ -2,7 +2,9 @@
   max-width: 1300px;
   margin: 0 auto;
 
-  padding-bottom: 60px;
+  padding: 0 24px 60px;
+
+  box-sizing: border-box;
 }
 
 
@@ -420,3 +422,42 @@
   background: #c57f5f !important;
   color: white !important;
 } */
+
+/* ===================================
+   RESPONSIVO
+=================================== */
+
+@media (max-width: 900px) {
+
+  .dias-semana-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .config-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .config-card input,
+  .config-card select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .config-shortcut-card {
+    width: 100%;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  /* Reforço, além do padding-top já aplicado no .main-content,
+     para garantir que o título nunca fique atrás do botão
+     hambúrguer fixo, mesmo que o CSS global ainda não tenha
+     sido atualizado no ambiente de quem estiver testando. */
+  .config-agenda-container {
+    padding-top: 50px;
+  }
+
+}

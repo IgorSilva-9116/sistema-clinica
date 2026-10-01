@@ -10,8 +10,9 @@
   max-width: 1150px;
   margin: 0 auto;
 
-  padding-top: 24px;
-  padding-bottom: 50px;
+  padding: 24px 24px 50px;
+
+  box-sizing: border-box;
 }
 
 .excecoes-container h1 {
@@ -271,6 +272,11 @@
   cursor: pointer;
   font-size: 13px;
   transition: .2s;
+
+  /* Sem isso, o texto herda "color: white" de um estilo global de
+     <button> definido em outra folha de estilo, e fica branco
+     sobre o fundo branco do próprio botão — invisível. */
+  color: #374151;
 }
 
 .btn-acao:hover {
@@ -326,4 +332,114 @@
 .coluna-horario {
   white-space: nowrap;
   min-width: 100px;
+}
+
+/* ===================================
+   RESPONSIVO
+=================================== */
+
+@media (max-width: 900px) {
+
+  .linha-dupla {
+    grid-template-columns: 1fr;
+  }
+
+  .config-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-voltar-agenda {
+    width: 100%;
+  }
+
+  .excecao-card,
+  .lista-excecoes-card {
+    padding: 18px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  /* Reforço contra o botão hambúrguer fixo */
+  .excecoes-container {
+    padding-top: 50px;
+  }
+
+  /* Tabela vira lista de cards */
+  .tabela-scroll {
+    display: block;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .tabela-excecoes {
+    min-width: 0;
+  }
+
+  .tabela-excecoes thead {
+    display: none;
+  }
+
+  .tabela-excecoes,
+  .tabela-excecoes tbody,
+  .tabela-excecoes tr,
+  .tabela-excecoes td {
+    display: block;
+    width: 100%;
+  }
+
+  .tabela-excecoes {
+    box-shadow: none;
+  }
+
+  .tabela-excecoes tr {
+    background: #fff;
+    border: 1px solid #f1ece7;
+    border-radius: 14px;
+
+    padding: 14px;
+    margin-bottom: 12px;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+  }
+
+  .tabela-excecoes td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px 2px;
+    border-bottom: 1px solid #f4efe9;
+
+    text-align: right;
+  }
+
+  .tabela-excecoes td:last-child {
+    border-bottom: none;
+
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tabela-excecoes td::before {
+    content: attr(data-label);
+
+    font-weight: 700;
+    color: #7a5b45;
+
+    text-align: left;
+    flex-shrink: 0;
+  }
+
+  .acoes-excecao {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+
+    margin-top: 8px;
+  }
+
 }

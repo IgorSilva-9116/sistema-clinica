@@ -5,8 +5,8 @@
 .despesas-container {
   max-width: 1150px;
   margin: 0 auto;
-  padding-top: 24px;
-  padding-bottom: 50px;
+  padding: 24px 24px 50px;
+  box-sizing: border-box;
 }
 
 .despesas-container h1 {
@@ -386,6 +386,24 @@
 
   .despesa-acoes {
     flex-direction: column;
+  }
+
+  .despesas-container {
+    padding-top: 50px;
+  }
+
+  .despesas-card {
+    padding: 18px;
+  }
+
+  .header-acoes {
+    width: 100%;
+  }
+
+  .header-acoes button,
+  .header-acoes .btn-voltar-agenda,
+  .header-acoes .btn-secundario {
+    flex: 1;
   }
 }
 

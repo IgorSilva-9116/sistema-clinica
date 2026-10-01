@@ -5,8 +5,8 @@
 .lista-espera-container {
   max-width: 1150px;
   margin: 0 auto;
-  padding-top: 24px;
-  padding-bottom: 50px;
+  padding: 24px 24px 50px;
+  box-sizing: border-box;
 }
 
 .lista-espera-container h1 {
@@ -64,7 +64,8 @@
 
   box-shadow: 0 2px 12px rgba(0,0,0,.06);
 
-  width: fit-content;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .campo-filtro {
@@ -178,5 +179,14 @@
 
   .campo-filtro {
     max-width: 100%;
+  }
+
+  .lista-espera-container {
+    padding-top: 50px;
+  }
+
+  .lista-espera-filtro,
+  .espera-card {
+    padding: 16px;
   }
 }

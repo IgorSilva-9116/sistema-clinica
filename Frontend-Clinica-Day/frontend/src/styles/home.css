@@ -9,6 +9,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
     margin-bottom: 20px;
 }
 
@@ -28,7 +30,122 @@
 .dashboard-date {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 14px;
+
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.notif-bell-wrapper {
+    position: relative;
+}
+
+.notif-bell-button {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: #f1e8e0;
+    border: none;
+
+    color: #7a5a45;
+
+    cursor: pointer;
+
+    font-size: 19px;
+
+    transition: background .15s ease;
+}
+
+.notif-bell-button:hover {
+    background: #e9dccf;
+}
+
+.notif-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    background: #c85d49;
+    color: white;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+.notif-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+
+    width: 300px;
+    max-width: 90vw;
+
+    background: #fffdfb;
+
+    border-radius: 14px;
+    border: 1px solid #f1ece7;
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+
+    padding: 8px;
+
+    z-index: 50;
+}
+
+.notif-dropdown-header {
+    padding: 8px 10px;
+
+    font-size: 13px;
+    font-weight: 700;
+    color: #7a5b45;
+
+    border-bottom: 1px solid #f1ece7;
+
+    margin-bottom: 6px;
+}
+
+.notif-dropdown-empty {
+    padding: 14px 10px;
+
+    color: #9c8776;
+    font-size: 13px;
+
+    margin: 0;
+}
+
+.notif-dropdown-item {
+    padding: 10px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    color: #5f4a3a;
+}
+
+.notif-dropdown-item:hover {
+    background: #faf6f2;
 }
 
 .dashboard-date-box {
@@ -43,6 +160,10 @@
     background: #f1e8e0;
 
     color: #7a5a45;
+
+    flex-shrink: 0;
+
+    white-space: nowrap;
 }
 
 .dashboard-cards {
@@ -230,6 +351,40 @@
     .dashboard-cards {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+.date-short {
+    display: none;
+}
+
+@media (max-width: 768px) {
+
+    .dashboard-date {
+        position: fixed;
+        top: 14px;
+        right: 14px;
+
+        margin-left: 0;
+        gap: 8px;
+
+        z-index: 1050;
+    }
+
+    .dashboard-date-box {
+        padding: 10px 12px;
+        gap: 6px;
+
+        font-size: 13px;
+    }
+
+    .date-full {
+        display: none;
+    }
+
+    .date-short {
+        display: inline;
+    }
+
 }
 
 @media (max-width: 900px) {

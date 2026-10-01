@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { api } from '../services/api'
 import { agendamentoService } from '../services/agendamentoService'
 import { clienteService } from '../services/clienteService'
@@ -13,6 +13,36 @@ export function Home() {
 
   const [totalClientes, setTotalClientes] = useState(0)
   const [totalServicos, setTotalServicos] = useState(0)
+  const [mostrarNotificacoes, setMostrarNotificacoes] = useState(false)
+
+  // Notificações montadas a partir dos dados que a Home já carrega —
+  // sem precisar de endpoint novo. No futuro, dá pra somar aqui
+  // eventos vindos do backend (cancelamentos, confirmações pendentes etc.)
+  const notificacoes = useMemo(() => {
+
+    const lista: { id: string; texto: string }[] = []
+
+    if (agendamentosHoje.length > 0) {
+      lista.push({
+        id: 'agendamentos-hoje',
+        texto: `📅 Você tem ${agendamentosHoje.length} agendamento${
+          agendamentosHoje.length > 1 ? 's' : ''
+        } hoje.`
+      })
+    }
+
+    if (aniversariantes.length > 0) {
+      lista.push({
+        id: 'aniversariantes',
+        texto: `🎂 ${aniversariantes.length} cliente${
+          aniversariantes.length > 1 ? 's fazem' : ' faz'
+        } aniversário este mês.`
+      })
+    }
+
+    return lista
+
+  }, [agendamentosHoje, aniversariantes])
 
   useEffect(() => {
     carregarDashboard()
@@ -85,20 +115,84 @@ export function Home() {
 
         <div className="dashboard-date">
 
-          <FiBell />
+          <div className="notif-bell-wrapper">
+
+            <button
+              className="notif-bell-button"
+              onClick={() =>
+                setMostrarNotificacoes((v) => !v)
+              }
+              aria-label="Notificações"
+            >
+              <FiBell />
+
+              {notificacoes.length > 0 && (
+                <span className="notif-badge">
+                  {notificacoes.length}
+                </span>
+              )}
+            </button>
+
+            {mostrarNotificacoes && (
+
+              <div className="notif-dropdown">
+
+                <div className="notif-dropdown-header">
+                  Notificações
+                </div>
+
+                {notificacoes.length === 0 ? (
+
+                  <p className="notif-dropdown-empty">
+                    Nenhuma notificação no momento.
+                  </p>
+
+                ) : (
+
+                  notificacoes.map((n) => (
+
+                    <div
+                      key={n.id}
+                      className="notif-dropdown-item"
+                    >
+                      {n.texto}
+                    </div>
+
+                  ))
+
+                )}
+
+              </div>
+
+            )}
+
+          </div>
 
           <div className="dashboard-date-box">
 
             <FiCalendar />
 
-            {new Date().toLocaleDateString(
-              'pt-BR',
-              {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-              }
-            )}
+            <span className="date-full">
+              {new Date().toLocaleDateString(
+                'pt-BR',
+                {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric'
+                }
+              )}
+            </span>
+
+            <span className="date-short">
+              {new Date().toLocaleDateString(
+                'pt-BR',
+                {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric'
+                }
+              )}
+            </span>
 
           </div>
 

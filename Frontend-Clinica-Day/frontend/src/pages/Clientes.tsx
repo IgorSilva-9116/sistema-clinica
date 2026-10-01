@@ -155,7 +155,7 @@ export function Clientes() {
               >
 
                 {/* ✅ FOTO / AVATAR */}
-                <td>
+                <td className="td-foto" data-label="Foto">
                   <img
                     src={
                       cliente.foto
@@ -173,19 +173,19 @@ export function Clientes() {
                   />
                 </td>
 
-                <td>{cliente.nome}</td>
-                <td>{cliente.telefone}</td>
-                <td>{cliente.email || '-'}</td>
+                <td className="td-nome" data-label="Nome">{cliente.nome}</td>
+                <td data-label="Telefone">{cliente.telefone}</td>
+                <td data-label="Email">{cliente.email || '-'}</td>
 
-                <td>{cliente.sexo || '-'}</td>
+                <td data-label="Sexo">{cliente.sexo || '-'}</td>
 
-                <td>
+                <td data-label="Nascimento">
                   {cliente.dataNascimento
                     ? new Date(cliente.dataNascimento).toLocaleDateString()
                     : '-'}
                 </td>
 
-                <td>
+                <td data-label="Status">
                   {cliente.ativo === 'Ativo' ? (
                     <span className="status-ativo">
                       Ativo
@@ -197,7 +197,7 @@ export function Clientes() {
                   )}
                 </td>
 
-                <td>
+                <td data-label="Ações">
 
                   <div className="acoes">
 

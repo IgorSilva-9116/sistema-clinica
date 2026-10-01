@@ -1,0 +1,47 @@
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  padding: 16px 24px 0;
+
+  font-size: 13px;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breadcrumbs a {
+  color: #9c8776;
+  text-decoration: none;
+  font-weight: 600;
+
+  background: none;
+  padding: 0;
+  border: none;
+}
+
+.breadcrumbs a:hover {
+  color: #c57f5f;
+  text-decoration: underline;
+}
+
+.breadcrumb-current {
+  color: #7a5b45;
+  font-weight: 700;
+}
+
+.breadcrumb-separator {
+  color: #c9b8a8;
+}
+
+@media (max-width: 768px) {
+  .breadcrumbs {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

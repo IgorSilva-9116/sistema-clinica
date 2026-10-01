@@ -239,11 +239,11 @@ export function Servicos() {
 
                   <tr key={servico.id}>
 
-                    <td>
+                    <td data-label="Categoria">
                       {servico.categoria || '-'}
                     </td>
 
-                    <td>
+                    <td className="td-servico" data-label="Serviço">
 
                       <strong>
                         {servico.titulo}
@@ -264,17 +264,17 @@ export function Servicos() {
 
                     </td>
 
-                    <td>
+                    <td data-label="Preço">
                       R$ {servico.preco}
                     </td>
 
-                    <td>
+                    <td data-label="Duração">
                       {
                         servico.duracaoMinutos
                       } min
                     </td>
 
-                    <td>
+                    <td data-label="Status">
 
                       <span
                         className={
@@ -288,7 +288,7 @@ export function Servicos() {
 
                     </td>
 
-                    <td>
+                    <td data-label="Ações">
 
                       <div className="acoes">
 
