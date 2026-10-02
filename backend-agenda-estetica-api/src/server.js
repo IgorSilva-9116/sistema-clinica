@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('./config/env');
 
 const app = require('./app');
 const { connectDatabase } = require('./config/database');
@@ -14,6 +14,8 @@ const PORT = process.env.PORT || 3000;
     });
 
   } catch (error) {
-    console.error('Erro ao iniciar servidor:', error);
+    // Sem banco a API não serve pra nada: encerra para o host (Render/Azure) reiniciar
+    console.error('❌ Erro ao iniciar servidor:', error.message);
+    process.exit(1);
   }
 })();

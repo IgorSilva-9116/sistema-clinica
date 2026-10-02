@@ -4,6 +4,7 @@ node_modules/
 # Arquivos de ambiente
 .env
 .env.*
+!.env.example
 
 # Logs
 logs
@@ -31,3 +32,5 @@ coverage/
 # Uploads temporários
 temp/
 tmp/
+# Fotos enviadas pelos usuarios (dados pessoais - nunca no Git)
+backend-agenda-estetica-api/uploads/

@@ -1,19 +1,22 @@
-require('dotenv').config();
+const { corsOrigins } = require('./config/env');
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
-const path = require('path'); // ✅ NOVO
 
 const app = express();
 app.disable('etag');
+
+// Atrás do proxy do Render/Azure: necessário para o rate limit enxergar o IP real
+app.set('trust proxy', 1);
 
 /**
  * =========================
  * CORS
  * =========================
+ * CORS_ORIGINS no .env, separado por vírgula
  */
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: corsOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -29,7 +32,8 @@ app.use(cors({
 app.use(express.json());
 
 // ✅ SERVIR ARQUIVOS (IMAGENS DE CLIENTES)
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+const { UPLOAD_DIR } = require('./config/upload');
+app.use('/uploads', express.static(UPLOAD_DIR));
 
 // Segurança HTTP
 app.use(helmet());

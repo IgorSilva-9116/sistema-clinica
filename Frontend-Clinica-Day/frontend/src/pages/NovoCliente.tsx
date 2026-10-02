@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { clienteService } from '../services/clienteService'
+import { API_URL } from '../services/api'
 import { useNavigate, useParams } from 'react-router-dom'
 import '../styles/novoCliente.css'
 
@@ -59,7 +60,7 @@ export function NovoCliente() {
 
         // ✅ MOSTRAR FOTO EXISTENTE
         if (c.foto) {
-          setPreview(`http://localhost:3000/uploads/${c.foto}`)
+          setPreview(`${API_URL}/uploads/${c.foto}`)
         }
 
       } catch {

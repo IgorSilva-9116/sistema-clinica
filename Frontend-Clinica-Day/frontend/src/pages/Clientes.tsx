@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { clienteService } from '../services/clienteService'
+import { API_URL } from '../services/api'
 import type { Cliente } from '../types/Cliente'
 import { useNavigate } from 'react-router-dom'
 import '../styles/clientes.css'
@@ -159,7 +160,7 @@ export function Clientes() {
                   <img
                     src={
                       cliente.foto
-                        ? `http://localhost:3000/uploads/${cliente.foto}`
+                        ? `${API_URL}/uploads/${cliente.foto}`
                         : `https://ui-avatars.com/api/?name=${encodeURIComponent(cliente.nome)}&background=0D8ABC&color=fff`
                     }
                     alt="Cliente"

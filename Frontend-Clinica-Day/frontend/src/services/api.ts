@@ -1,7 +1,10 @@
 import axios from 'axios'
 
+// Endereço do back-end vem do .env do Vite (VITE_API_URL)
+export const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
+
 export const api = axios.create({
-  baseURL: 'http://localhost:3000/api/v1',
+  baseURL: `${API_URL}/api/v1`,
 })
 
 // ==============================
