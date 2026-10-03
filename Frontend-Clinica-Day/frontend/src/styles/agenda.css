@@ -673,3 +673,14 @@
   }
 
 }
+/* Agendamento feito pela própria cliente no app */
+.agenda-origem-app {
+  display: inline-block;
+  margin: 4px 0;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #f3e6dd;
+  color: #a9654a;
+  font-size: 12px;
+  font-weight: 600;
+}

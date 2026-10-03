@@ -29,6 +29,7 @@ type Agendamento = {
   Servico: string
   Cliente: string
   Status: StatusAgendamento
+  Origem?: 'CLINICA' | 'CLIENTE'
 }
 
 type ExcecaoAgenda = {
@@ -1030,6 +1031,12 @@ export default function AgendaCalendario() {
                             <div className="agenda-servico">
                               🧴 {item.agendamento?.Servico}
                             </div>
+
+                            {item.agendamento?.Origem === 'CLIENTE' && (
+                              <div className="agenda-origem-app" title="A própria cliente agendou pelo app">
+                                📱 Pelo app
+                              </div>
+                            )}
 
                             <div
                               className={`agenda-status-badge ${item.agendamento?.Status === 'CONFIRMADO'

@@ -2,29 +2,42 @@ const { sql } = require('../config/database');
 
 /**
  * Verifica se existe conflito de agendamento
+ *
+ * Quando recebe o "request" de uma transação, a consulta roda dentro
+ * dela com UPDLOCK/HOLDLOCK: duas pessoas agendando o mesmo horário
+ * ao mesmo tempo não passam juntas (a segunda espera e vê o conflito).
+ * ignorarIds: agendamentos que não contam (a própria remarcação).
  */
 async function existeConflitoAgendamento(
   clinicaId,
   data,
   horaInicio,
-  horaFim
+  horaFim,
+  request,
+  ignorarIds = []
 ) {
-  const pool = await sql.connect();
+  const req = request || (await sql.connect()).request();
 
-  const result = await pool.request()
-    .input('ClinicaId', sql.Int, clinicaId)
-    .input('DataAgendamento', sql.Date, data)
-    .input('HoraInicio', sql.VarChar(8), horaInicio + ':00')
-    .input('HoraFim', sql.VarChar(8), horaFim + ':00')
+  ignorarIds.forEach((id, i) => req.input(`ConflitoIgnorar${i}`, sql.Int, id));
+  const filtroIgnorar = ignorarIds.length
+    ? `AND Id NOT IN (${ignorarIds.map((_, i) => `@ConflitoIgnorar${i}`).join(', ')})`
+    : '';
+
+  const result = await req
+    .input('ConflitoClinicaId', sql.Int, clinicaId)
+    .input('ConflitoData', sql.Date, data)
+    .input('ConflitoHoraInicio', sql.VarChar(8), horaInicio + ':00')
+    .input('ConflitoHoraFim', sql.VarChar(8), horaFim + ':00')
     .query(`
       SELECT 1
-      FROM Agendamento
-      WHERE ClinicaId = @ClinicaId
-        AND DataAgendamento = @DataAgendamento
+      FROM Agendamento WITH (UPDLOCK, HOLDLOCK)
+      WHERE ClinicaId = @ConflitoClinicaId
+        AND DataAgendamento = @ConflitoData
         AND Status != 'CANCELADO'
+        ${filtroIgnorar}
         AND (
-          CAST(@HoraInicio AS TIME) < HoraFim
-          AND CAST(@HoraFim AS TIME) > HoraInicio
+          CAST(@ConflitoHoraInicio AS TIME) < HoraFim
+          AND CAST(@ConflitoHoraFim AS TIME) > HoraInicio
         )
     `);
 

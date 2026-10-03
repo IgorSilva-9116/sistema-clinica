@@ -3,6 +3,8 @@ const { obterBlocosEfetivosDia } = require('../utils/blocosEfetivosDia');
 const { gerarSlots } = require('../utils/gerarSlots');
 const { existeConflitoAgendamento } = require('../utils/validarConflitoAgendamento');
 const { notificarVagaDisponivel } = require('../services/notificacao.service');
+const { avisarCliente } = require('../services/avisoCliente.service');
+const { minutosAte } = require('../utils/dataHoraBrasil');
 
 
 const {
@@ -298,6 +300,7 @@ async function listarAgendaClinica(req, res) {
           CONVERT(VARCHAR(5), a.HoraInicio, 108) AS HoraInicio,
           CONVERT(VARCHAR(5), a.HoraFim, 108) AS HoraFim,
           a.Status,
+          a.Origem,
           s.Titulo AS Servico,
           c.Nome AS Cliente
         FROM Agendamento a
@@ -341,13 +344,18 @@ async function confirmarAgendamento(req, res) {
     const { id } = req.params;
     const pool = await sql.connect();
 
+    // Confirma também os outros serviços marcados juntos (mesmo atendimento)
     const result = await pool.request()
       .input('Id', sql.Int, Number(id))
       .input('ClinicaId', sql.Int, clinicaId)
       .query(`
-        UPDATE Agendamento
+        UPDATE a
         SET Status = 'CONFIRMADO', ConfirmadoEm = GETDATE()
-        WHERE Id = @Id AND ClinicaId = @ClinicaId AND Status = 'CRIADO'
+        FROM Agendamento a
+        JOIN Agendamento ref ON ref.Id = @Id AND ref.ClinicaId = @ClinicaId AND ref.Status = 'CRIADO'
+        WHERE a.ClinicaId = @ClinicaId
+          AND a.Status = 'CRIADO'
+          AND (a.Id = @Id OR (ref.GrupoAgendamento IS NOT NULL AND a.GrupoAgendamento = ref.GrupoAgendamento))
       `);
 
     if (result.rowsAffected[0] === 0) {
@@ -356,6 +364,13 @@ async function confirmarAgendamento(req, res) {
         mensagem: 'Agendamento não pode ser confirmado'
       });
     }
+
+    await avisarCliente(pool, {
+      agendamentoId: Number(id),
+      tipo: 'AGENDAMENTO_CONFIRMADO',
+      titulo: 'Horário confirmado',
+      mensagem: atendimento => `Seu horário de ${atendimento} está confirmado. Esperamos você!`
+    });
 
     // 🔔 Buscar dados para notificação
     const dados = await pool.request()
@@ -372,11 +387,16 @@ async function confirmarAgendamento(req, res) {
         WHERE a.Id = @Id
       `);
 
-    if (dados.recordset.length > 0) {
-      await notificarAgendamentoConfirmado({
-        cliente: dados.recordset[0],
-        agendamento: dados.recordset[0]
-      });
+    // E-mail é complementar: se falhar, a confirmação continua valendo
+    if (dados.recordset.length > 0 && dados.recordset[0].Email) {
+      try {
+        await notificarAgendamentoConfirmado({
+          cliente: dados.recordset[0],
+          agendamento: dados.recordset[0]
+        });
+      } catch (err) {
+        console.warn('Erro ao enviar e-mail de confirmação:', err.message);
+      }
     }
 
     return res.json({
@@ -456,16 +476,9 @@ async function cancelarAgendamento(req, res) {
             ? ag.HoraInicio.toISOString().substring(11, 16)
             : String(ag.HoraInicio).substring(0, 5);
 
-        const dataHoraAtendimento =
-          new Date(
-            `${dataAgendamento}T${horaAgendamento}:00`
-          );
-
-        const agora = new Date();
-
+        // Horário de Brasília (o servidor no Render roda em UTC)
         const horasAntecedencia =
-          (dataHoraAtendimento.getTime() - agora.getTime()) /
-          (1000 * 60 * 60);
+          minutosAte(dataAgendamento, horaAgendamento) / 60;
 
         if (
           horasAntecedencia <
@@ -499,14 +512,21 @@ async function cancelarAgendamento(req, res) {
       ? ag.HoraInicio.toISOString().substring(11, 16)
       : String(ag.HoraInicio).substring(0, 5);
 
+    const canceladoPor = origem === 'CLIENTE' ? 'CLIENTE' : 'CLINICA';
+
     // ✅ CANCELA
     await pool.request()
       .input('Id', sql.Int, Number(id))
+      .input('Motivo', sql.VarChar(500), motivo || null)
+      .input('MultaPercentual', sql.Decimal(5, 2), multaPercentual)
+      .input('ValorMulta', sql.Decimal(10, 2), valorMulta)
+      .input('CanceladoPor', sql.VarChar(20), canceladoPor)
       .query(`
         UPDATE Agendamento
         SET
           Status = 'CANCELADO',
           CanceladoEm = GETDATE(),
+          CanceladoPor = @CanceladoPor,
           MotivoCancelamento = @Motivo,
           MultaPercentual = @MultaPercentual,
           ValorMulta = @ValorMulta
@@ -520,9 +540,6 @@ async function cancelarAgendamento(req, res) {
         .input('Data', sql.Date, ag.DataAgendamento)
         .input('HoraInicio', sql.Time, ag.HoraInicio)
         .input('HoraFim', sql.Time, ag.HoraFim)
-        .input('Motivo', sql.VarChar(500), motivo || null)
-        .input('MultaPercentual', sql.Decimal(5, 2), multaPercentua)
-        .input('ValorMulta', sql.Decimal(10, 2), valorMult)
         .query(`
           INSERT INTO ExcecaoAgenda
           (ClinicaId, TipoExcecao, Data, HoraInicio, HoraFim, Ativa)
@@ -530,14 +547,29 @@ async function cancelarAgendamento(req, res) {
         `);
     }
 
-    // ✅ NOTIFICA CANCELAMENTO (NÃO QUEBRA MAIS)
-    try {
-      await notificarAgendamentoCancelado({
-        cliente: { Nome: ag.Nome, Email: ag.Email },
-        multa: valorMulta
+    // Aviso no app quando quem cancelou foi a clínica
+    if (canceladoPor === 'CLINICA') {
+      await avisarCliente(pool, {
+        agendamentoId: Number(id),
+        tipo: 'AGENDAMENTO_CANCELADO',
+        titulo: 'Horário cancelado pela clínica',
+        mensagem: atendimento =>
+          `Seu horário de ${atendimento} foi cancelado pela clínica.` +
+          (motivo ? ` Motivo: ${motivo}.` : '') +
+          ' Se quiser, agende um novo horário pelo app ou fale conosco.'
       });
-    } catch (e) {
-      console.warn('Erro email cancelamento');
+    }
+
+    // ✅ NOTIFICA CANCELAMENTO (NÃO QUEBRA MAIS)
+    if (ag.Email) {
+      try {
+        await notificarAgendamentoCancelado({
+          cliente: { Nome: ag.Nome, Email: ag.Email },
+          multa: valorMulta
+        });
+      } catch (e) {
+        console.warn('Erro email cancelamento');
+      }
     }
 
     // ✅ 🔥 BUSCA LISTA (SIMPLIFICADO E GARANTIDO)

@@ -1,27 +1,27 @@
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiCalendar, FiChevronRight, FiList, FiMessageCircle, FiUser } from 'react-icons/fi'
-import { linkWhatsApp } from '../../services/clientePortalService'
+import { FiBell, FiCalendar, FiChevronRight, FiList, FiMessageCircle, FiUser } from 'react-icons/fi'
+import { clientePortalService, linkWhatsApp, type Notificacao } from '../../services/clientePortalService'
 import { useCliente } from './useCliente'
 
 interface ItemMenuProps {
   icone: ReactNode
   titulo: string
   descricao: string
-  emBreve?: boolean
+  contador?: number
   onClick?: () => void
 }
 
-function ItemMenu({ icone, titulo, descricao, emBreve, onClick }: ItemMenuProps) {
+function ItemMenu({ icone, titulo, descricao, contador, onClick }: ItemMenuProps) {
   return (
-    <button type="button" className="cli-menu-item" disabled={emBreve} onClick={onClick}>
+    <button type="button" className="cli-menu-item" onClick={onClick}>
       <span className="cli-menu-icone" aria-hidden="true">{icone}</span>
       <span className="cli-menu-texto">
         {titulo}
         <small>{descricao}</small>
-        {emBreve && <span className="cli-etiqueta">Em breve</span>}
       </span>
-      {!emBreve && <FiChevronRight className="cli-menu-seta" aria-hidden="true" />}
+      {Boolean(contador) && <span className="cli-contador" aria-label={`${contador} novidades`}>{contador}</span>}
+      <FiChevronRight className="cli-menu-seta" aria-hidden="true" />
     </button>
   )
 }
@@ -29,6 +29,19 @@ function ItemMenu({ icone, titulo, descricao, emBreve, onClick }: ItemMenuProps)
 export function ClienteInicio() {
   const navigate = useNavigate()
   const { perfil } = useCliente()
+
+  const [avisos, setAvisos] = useState<Notificacao[]>([])
+
+  useEffect(() => {
+    clientePortalService.listarNotificacoes()
+      .then(dados => setAvisos(dados.notificacoes.filter(n => !n.lida)))
+      .catch(() => setAvisos([]))
+  }, [])
+
+  async function dispensarAvisos() {
+    setAvisos([])
+    await clientePortalService.marcarNotificacoesLidas().catch(() => undefined)
+  }
 
   const primeiroNome = perfil.nome.split(' ')[0]
 
@@ -39,19 +52,40 @@ export function ClienteInicio() {
         <p>O que você gostaria de fazer hoje?</p>
       </div>
 
+      {avisos.length > 0 && (
+        <section className="cli-avisos" aria-label="Avisos da clínica">
+          {avisos.slice(0, 3).map(aviso => (
+            <div
+              key={aviso.id}
+              className={`cli-aviso-item ${aviso.tipo === 'AGENDAMENTO_CANCELADO' ? 'cancelado' : 'confirmado'}`}
+            >
+              <FiBell aria-hidden="true" />
+              <div>
+                <strong>{aviso.titulo}</strong>
+                <p>{aviso.mensagem}</p>
+              </div>
+            </div>
+          ))}
+          <button type="button" className="cli-link" onClick={dispensarAvisos}>
+            Ok, entendi
+          </button>
+        </section>
+      )}
+
       <div className="cli-menu">
         <ItemMenu
           icone={<FiCalendar />}
           titulo="Agendar horário"
-          descricao="Escolha o serviço, o dia e o horário"
-          emBreve
+          descricao="Escolha os serviços, o dia e o horário"
+          onClick={() => navigate('/cliente/agendar')}
         />
 
         <ItemMenu
           icone={<FiList />}
           titulo="Meus agendamentos"
           descricao="Veja, remarque ou cancele"
-          emBreve
+          contador={avisos.length}
+          onClick={() => navigate('/cliente/agendamentos')}
         />
 
         <ItemMenu

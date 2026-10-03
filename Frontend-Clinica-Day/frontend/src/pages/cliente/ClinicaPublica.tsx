@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { FiClock, FiLogIn, FiMessageCircle, FiStar, FiUserPlus } from 'react-icons/fi'
 import {
   clientePortalService,
+  formatarPreco,
   linkWhatsApp,
   salvarSlugClinica,
   type ClinicaPublica as Clinica,
@@ -11,10 +12,6 @@ import {
 import { useAuth } from '../../contexts/AuthContext'
 import { ClienteTopo } from './ClienteTopo'
 import '../../styles/cliente.css'
-
-function formatarPreco(valor: number) {
-  return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-}
 
 export function ClinicaPublica() {
   const { slug = '' } = useParams()

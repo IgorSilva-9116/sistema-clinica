@@ -37,6 +37,8 @@ import { AtivarConvite } from '../pages/cliente/AtivarConvite'
 import { ClienteLayout } from '../pages/cliente/ClienteLayout'
 import { ClienteInicio } from '../pages/cliente/ClienteInicio'
 import { ClientePerfil } from '../pages/cliente/ClientePerfil'
+import { ClienteAgendar } from '../pages/cliente/ClienteAgendar'
+import { ClienteAgendamentos } from '../pages/cliente/ClienteAgendamentos'
 
 
 
@@ -83,6 +85,8 @@ export function AppRoutes() {
       >
         <Route path="/cliente" element={<ClienteInicio />} />
         <Route path="/cliente/perfil" element={<ClientePerfil />} />
+        <Route path="/cliente/agendar" element={<ClienteAgendar />} />
+        <Route path="/cliente/agendamentos" element={<ClienteAgendamentos />} />
       </Route>
 
       {/* Rotas protegidas (somente clínica) */}

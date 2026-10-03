@@ -626,3 +626,567 @@ body:has(.cli-page) #root {
     display: none;
   }
 }
+
+/* =========================================================
+   AGENDAR HORÁRIO
+   ========================================================= */
+
+.cli-alerta-info {
+  background: var(--cli-areia);
+  color: var(--cli-marrom);
+}
+
+/* ---------- Etapas 1-2-3 ---------- */
+
+.cli-etapas {
+  display: flex;
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  gap: 8px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: var(--cli-sombra);
+}
+
+.cli-etapas li {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cli-texto-suave);
+}
+
+.cli-etapa-numero {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--cli-areia);
+  color: var(--cli-marrom);
+  font-size: 13px;
+}
+
+.cli-etapas li.atual {
+  color: var(--cli-texto);
+}
+
+.cli-etapas li.atual .cli-etapa-numero,
+.cli-etapas li.feita .cli-etapa-numero {
+  background: var(--cli-terracota);
+  color: #fff;
+}
+
+@media (max-width: 400px) {
+  .cli-etapas li:not(.atual) .cli-etapa-rotulo {
+    display: none;
+  }
+}
+
+/* ---------- Serviço como opção clicável ---------- */
+
+.cli-servico-opcao {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color .2s, transform .15s;
+}
+
+.cli-servico-opcao:hover {
+  border-color: var(--cli-terracota);
+}
+
+.cli-servico-opcao:active {
+  transform: scale(.99);
+}
+
+/* ---------- Dias ---------- */
+
+.cli-dias {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 2px 12px;
+  margin: 0 -2px 4px;
+  scroll-snap-type: x proximity;
+}
+
+.cli-dia {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 64px;
+  padding: 10px 0;
+  border: 1.5px solid var(--cli-borda);
+  border-radius: 16px;
+  background: var(--cli-creme);
+  color: var(--cli-texto);
+  cursor: pointer;
+  scroll-snap-align: start;
+}
+
+.cli-dia:disabled {
+  opacity: .35;
+  cursor: default;
+}
+
+.cli-dia.selecionado {
+  background: var(--cli-terracota);
+  border-color: var(--cli-terracota);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(197, 127, 95, .35);
+}
+
+.cli-dia-semana,
+.cli-dia-mes {
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.cli-dia-numero {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+/* ---------- Horários ---------- */
+
+.cli-page .cli-subtitulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 4px;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--cli-marrom);
+}
+
+.cli-periodo {
+  margin: 14px 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--cli-texto-suave);
+}
+
+.cli-horarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 10px;
+}
+
+.cli-horario {
+  min-height: 48px;
+  border: 1.5px solid var(--cli-borda);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--cli-texto);
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cli-horario.selecionado {
+  background: var(--cli-terracota);
+  border-color: var(--cli-terracota);
+  color: #fff;
+}
+
+/* Fica sempre à vista no rodapé enquanto a lista de horários rola */
+.cli-btn-continuar {
+  position: sticky;
+  bottom: 12px;
+  margin-top: 22px;
+  z-index: 3;
+}
+
+/* ---------- Resumo e avisos ---------- */
+
+.cli-resumo {
+  border: 1px solid var(--cli-borda);
+  border-radius: 16px;
+  background: var(--cli-creme);
+  margin-bottom: 16px;
+}
+
+.cli-resumo div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--cli-borda);
+}
+
+.cli-resumo div:last-child {
+  border-bottom: none;
+}
+
+.cli-resumo span {
+  color: var(--cli-texto-suave);
+  font-size: 14px;
+}
+
+.cli-resumo strong {
+  text-align: right;
+  font-size: 15px;
+}
+
+.cli-aviso {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border-radius: 16px;
+  background: var(--cli-areia);
+  color: var(--cli-marrom);
+  font-size: 14px;
+}
+
+.cli-aviso svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-size: 18px;
+}
+
+.cli-aviso p {
+  margin: 0 0 6px;
+}
+
+.cli-aviso p:last-child {
+  margin-bottom: 0;
+}
+
+.cli-politica {
+  white-space: pre-line;
+}
+
+/* ---------- Pedido enviado ---------- */
+
+.cli-sucesso {
+  text-align: center;
+}
+
+.cli-sucesso-icone {
+  font-size: 56px;
+  color: var(--cli-sucesso);
+  margin: 4px 0 8px;
+}
+
+.cli-sucesso .cli-resumo {
+  text-align: left;
+}
+
+/* ---------- Vários serviços no mesmo atendimento ---------- */
+
+.cli-servico-opcao.marcado {
+  border-color: var(--cli-terracota);
+  background: #fdf3ee;
+}
+
+.cli-servico-opcao.marcado .cli-servico-icone {
+  background: var(--cli-terracota);
+  color: #fff;
+}
+
+/* No celular pequeno o ícone some na lista pública, mas aqui ele
+   mostra se o serviço está marcado */
+@media (max-width: 400px) {
+  .cli-servico-opcao .cli-servico-icone {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+}
+
+/* Resumo + botão sempre à vista enquanto a lista rola */
+.cli-barra-continuar {
+  position: sticky;
+  bottom: 12px;
+  z-index: 3;
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 -4px 24px rgba(122, 91, 69, .18);
+}
+
+.cli-barra-resumo {
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cli-marrom);
+}
+
+/* =========================================================
+   MEUS AGENDAMENTOS E AVISOS
+   ========================================================= */
+
+.cli-abas {
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  margin-bottom: 16px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: var(--cli-sombra);
+}
+
+.cli-abas button {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--cli-texto-suave);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cli-abas button.ativa {
+  background: var(--cli-terracota);
+  color: #fff;
+}
+
+.cli-aba-contador,
+.cli-contador {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .3);
+  font-size: 12px;
+}
+
+.cli-contador {
+  background: var(--cli-terracota);
+  color: #fff;
+  font-weight: 600;
+}
+
+.cli-vazio {
+  text-align: center;
+  color: var(--cli-texto-suave);
+}
+
+.cli-vazio-icone {
+  font-size: 40px;
+  color: var(--cli-nude);
+}
+
+/* ---------- Cartão do atendimento ---------- */
+
+.cli-atendimento {
+  border-left: 5px solid var(--cli-nude);
+}
+
+.cli-atendimento-confirmado {
+  border-left-color: var(--cli-sucesso);
+}
+
+.cli-atendimento-cancelado {
+  border-left-color: #c9bdb3;
+  opacity: .85;
+}
+
+/* Selo de status vai para baixo da data quando não cabe ao lado */
+.cli-atendimento-topo {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px 12px;
+}
+
+.cli-atendimento-topo > div {
+  flex: 1 1 180px;
+}
+
+.cli-atendimento-data {
+  margin: 0;
+  font-weight: 600;
+  font-size: 17px;
+}
+
+.cli-atendimento-hora {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0 0;
+  color: var(--cli-texto-suave);
+  font-size: 15px;
+}
+
+.cli-status {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.cli-status-criado {
+  background: #fdf1e3;
+  color: #9a5b12;
+}
+
+.cli-status-confirmado {
+  background: #e7f4ec;
+  color: var(--cli-sucesso);
+}
+
+.cli-status-cancelado {
+  background: #f1ece8;
+  color: #7d6e63;
+}
+
+.cli-status-finalizado {
+  background: var(--cli-areia);
+  color: var(--cli-marrom);
+}
+
+.cli-atendimento-servicos {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+}
+
+.cli-atendimento-servicos li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--cli-borda);
+  font-size: 15px;
+}
+
+.cli-atendimento-servicos li.riscado span:first-child {
+  text-decoration: line-through;
+  color: var(--cli-texto-suave);
+}
+
+.cli-atendimento-total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+  font-size: 15px;
+}
+
+.cli-atendimento-obs {
+  margin: 8px 0 0;
+}
+
+.cli-atendimento-acoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.cli-atendimento-acoes .cli-btn + .cli-btn {
+  margin-top: 0;
+}
+
+.cli-atendimento-acoes .cli-btn {
+  min-height: 48px;
+  font-size: 15px;
+}
+
+.cli-btn-contorno-perigo {
+  background: #fff;
+  color: var(--cli-erro);
+  border: 1.5px solid #f2c6c2;
+}
+
+.cli-btn-perigo {
+  background: var(--cli-erro);
+  color: #fff;
+}
+
+.cli-confirmar-cancelamento {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #fdf3f2;
+}
+
+.cli-confirmar-cancelamento p {
+  margin: 0 0 14px;
+  font-size: 15px;
+}
+
+.cli-multa {
+  display: flex;
+  gap: 10px;
+  color: #8a2a1f;
+}
+
+.cli-multa svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* ---------- Avisos na tela inicial ---------- */
+
+.cli-avisos {
+  margin-bottom: 16px;
+  padding: 14px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: var(--cli-sombra);
+  text-align: right;
+}
+
+.cli-aviso-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  text-align: left;
+  font-size: 15px;
+}
+
+.cli-aviso-item svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.cli-aviso-item p {
+  margin: 2px 0 0;
+}
+
+.cli-aviso-item.confirmado {
+  background: #e7f4ec;
+  color: #1f5c39;
+}
+
+.cli-aviso-item.cancelado {
+  background: #fdecea;
+  color: #8a2a1f;
+}
+
+/* Botão fixo desabilitado: fundo sólido (sem transparência sobre a lista) */
+.cli-btn-continuar:disabled {
+  opacity: 1;
+  background: var(--cli-areia);
+  color: var(--cli-texto-suave);
+  box-shadow: 0 -4px 20px rgba(122, 91, 69, .12);
+}

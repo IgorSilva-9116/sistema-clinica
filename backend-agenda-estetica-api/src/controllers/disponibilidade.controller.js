@@ -59,10 +59,11 @@ async function listarDisponibilidade(req, res) {
     const dataAtual = new Date(data + 'T00:00:00');
 
     // 🔒 BLOQUEIO (voltar atrás)
+    // Datas até o fechamento ficam fechadas para novos agendamentos
     if (config?.DataFechamentoAgenda) {
-      const fechamento = new Date(config.DataFechamentoAgenda + 'T00:00:00');
+      const fechamento = new Date(config.DataFechamentoAgenda).toISOString().slice(0, 10);
 
-      if (dataAtual <= fechamento) {
+      if (data <= fechamento) {
 
         return res
           .set('Cache-Control', 'no-store')
@@ -71,11 +72,8 @@ async function listarDisponibilidade(req, res) {
             data,
             servicoId,
             duracaoMinutos,
-            aberto: true,
-            horariosDisponiveis,
-            blocos: resultadoDia.blocos,
-            intervalosRecorrentes:
-              resultadoDia.intervalosRecorrentes
+            aberto: false,
+            horariosDisponiveis: []
           });
       }
     }
