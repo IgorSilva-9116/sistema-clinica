@@ -3,6 +3,7 @@ import { clienteService } from '../services/clienteService'
 import { API_URL } from '../services/api'
 import type { Cliente } from '../types/Cliente'
 import { useNavigate } from 'react-router-dom'
+import { ConviteClienteModal } from '../components/ConviteClienteModal'
 import '../styles/clientes.css'
 
 export function Clientes() {
@@ -13,22 +14,37 @@ export function Clientes() {
   const [busca, setBusca] = useState('')
   const [filtroStatus, setFiltroStatus] = useState<'todos' | 'ativos' | 'inativos'>('todos')
 
+  const [clienteConvite, setClienteConvite] = useState<Cliente | null>(null)
+  const [linkCadastro, setLinkCadastro] = useState<string | null>(null)
+  const [linkCopiado, setLinkCopiado] = useState(false)
+
   const navigate = useNavigate()
 
-  useEffect(() => {
-    async function carregarClientes() {
-      try {
-        const response = await clienteService.listar()
-        setClientes(response.clientes)
-      } catch {
-        setErro('Erro ao carregar clientes')
-      } finally {
-        setLoading(false)
-      }
+  async function carregarClientes() {
+    try {
+      const response = await clienteService.listar()
+      setClientes(response.clientes)
+    } catch {
+      setErro('Erro ao carregar clientes')
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     carregarClientes()
+
+    clienteService.obterLinkPublico()
+      .then(slug => setLinkCadastro(slug ? `${window.location.origin}/c/${slug}` : null))
+      .catch(() => setLinkCadastro(null))
   }, [])
+
+  async function copiarLinkCadastro() {
+    if (!linkCadastro) return
+    await navigator.clipboard.writeText(linkCadastro)
+    setLinkCopiado(true)
+    setTimeout(() => setLinkCopiado(false), 2000)
+  }
 
   if (loading) return <p>Carregando clientes...</p>
   if (erro) return <p>{erro}</p>
@@ -65,6 +81,16 @@ export function Clientes() {
         </div>
 
         <div className="clientes-header-actions">
+
+          {linkCadastro && (
+            <button
+              className="clientes-btn-secondary"
+              onClick={copiarLinkCadastro}
+              title={linkCadastro}
+            >
+              {linkCopiado ? '✅ Link copiado!' : '🔗 Link de cadastro'}
+            </button>
+          )}
 
           <button
             className="clientes-btn-secondary"
@@ -224,6 +250,26 @@ export function Clientes() {
                       Relatórios
                     </button>
 
+                    {cliente.ativo === 'Ativo' && (
+                      <button
+                        className={`btn-action btn-app ${cliente.acessoApp === 'ATIVO' ? 'btn-app-ativo' : ''}`}
+                        title={
+                          cliente.acessoApp === 'ATIVO'
+                            ? 'Já usa o app — gerar novo link (ex.: esqueceu a senha)'
+                            : cliente.acessoApp === 'CONVIDADA'
+                              ? 'Convite enviado, ainda não criou a senha'
+                              : 'Enviar acesso ao app'
+                        }
+                        onClick={() => setClienteConvite(cliente)}
+                      >
+                        {cliente.acessoApp === 'ATIVO'
+                          ? '📱 Usa o app'
+                          : cliente.acessoApp === 'CONVIDADA'
+                            ? '📱 Reenviar'
+                            : '📱 Acesso app'}
+                      </button>
+                    )}
+
                   </div>
 
                 </td>
@@ -236,6 +282,14 @@ export function Clientes() {
 
       {clientesFiltrados.length === 0 && (
         <p>Nenhum cliente encontrado</p>
+      )}
+
+      {clienteConvite && (
+        <ConviteClienteModal
+          cliente={clienteConvite}
+          onFechar={() => setClienteConvite(null)}
+          onConviteGerado={carregarClientes}
+        />
       )}
     </div>
 

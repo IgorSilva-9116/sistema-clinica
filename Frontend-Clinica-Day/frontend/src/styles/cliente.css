@@ -1,0 +1,628 @@
+/* =========================================================
+   ÁREA DA CLIENTE — Dayênia Neves Estética
+   Pensada primeiro para o celular, com letras e botões grandes
+   (clientes de todas as idades). Mesma paleta do painel.
+   ========================================================= */
+
+/* Ocupa a tela toda (sem a margem padrão do navegador) */
+body:has(.cli-page) {
+  margin: 0;
+}
+
+body:has(.cli-page) #root {
+  border: none;
+  padding: 0;
+  width: 100%;
+  max-width: none;
+}
+
+.cli-page {
+  --cli-nude: #d5b79b;
+  --cli-terracota: #c57f5f;
+  --cli-terracota-escuro: #a9654a;
+  --cli-creme: #faf6f2;
+  --cli-areia: #f1e7de;
+  --cli-marrom: #7a5b45;
+  --cli-texto: #3b2f27;
+  --cli-texto-suave: #8a7768;
+  --cli-borda: #ece2d9;
+  --cli-erro: #b42318;
+  --cli-sucesso: #2f7d4f;
+  --cli-sombra: 0 10px 30px rgba(122, 91, 69, .10);
+  --cli-serifa: 'Cormorant Garamond', Georgia, serif;
+
+  width: 100%;
+  min-height: 100svh;
+  background: var(--cli-creme);
+  color: var(--cli-texto);
+  text-align: left;
+  font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.cli-page *,
+.cli-page *::before,
+.cli-page *::after {
+  box-sizing: border-box;
+}
+
+.cli-page button,
+.cli-page input,
+.cli-page select,
+.cli-page textarea {
+  font-family: inherit;
+}
+
+.cli-page h1,
+.cli-page h2,
+.cli-page h3 {
+  font-family: var(--cli-serifa);
+  font-weight: 600;
+  color: var(--cli-texto);
+  letter-spacing: .2px;
+}
+
+/* ---------- Topo com a logo ---------- */
+
+.cli-topo {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(140deg, var(--cli-nude) 0%, var(--cli-terracota) 100%);
+  color: #fff;
+  text-align: center;
+}
+
+/* Círculos suaves de fundo, só decoração */
+.cli-topo::before,
+.cli-topo::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .08);
+  pointer-events: none;
+}
+
+.cli-topo::before {
+  width: 320px;
+  height: 320px;
+  top: -140px;
+  right: -90px;
+}
+
+.cli-topo::after {
+  width: 220px;
+  height: 220px;
+  bottom: -120px;
+  left: -60px;
+}
+
+.cli-topo-conteudo {
+  position: relative;
+  z-index: 1;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 20px 20px 56px;
+}
+
+.cli-topo-acao {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* A imagem da logo tem bastante área transparente: recorta o centro */
+.cli-topo-logo {
+  display: block;
+  margin: 0 auto;
+  object-fit: cover;
+  object-position: center 42%;
+}
+
+.cli-topo-grande .cli-topo-logo {
+  width: 300px;
+  height: 150px;
+}
+
+.cli-topo-compacto .cli-topo-logo {
+  width: 190px;
+  height: 95px;
+}
+
+.cli-page .cli-topo-titulo {
+  margin: 6px 0 0;
+  color: #fff;
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+.cli-topo-sub {
+  margin: 6px auto 0;
+  max-width: 420px;
+  font-size: 15px;
+  opacity: .95;
+}
+
+.cli-topo-botoes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 360px;
+  margin: 24px auto 0;
+}
+
+/* ---------- Conteúdo ---------- */
+
+.cli-conteudo {
+  position: relative;
+  z-index: 2;
+  max-width: 560px;
+  margin: -32px auto 0;
+  padding: 0 16px 48px;
+}
+
+.cli-conteudo-largo {
+  max-width: 1040px;
+}
+
+.cli-grade {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .cli-grade {
+    grid-template-columns: 1.6fr 1fr;
+    align-items: start;
+  }
+
+  .cli-grade-lateral {
+    position: sticky;
+    top: 16px;
+  }
+
+  .cli-topo-grande .cli-topo-logo {
+    width: 360px;
+    height: 180px;
+  }
+
+  .cli-page .cli-topo-titulo {
+    font-size: 36px;
+  }
+
+  .cli-topo-botoes {
+    flex-direction: row;
+    max-width: 460px;
+  }
+}
+
+.cli-card {
+  background: #fff;
+  border: 1px solid var(--cli-borda);
+  border-radius: 20px;
+  padding: 22px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--cli-sombra);
+}
+
+.cli-card h2 {
+  margin: 0 0 4px;
+  font-size: 26px;
+}
+
+.cli-card-sub {
+  margin: 0 0 16px;
+  color: var(--cli-texto-suave);
+  font-size: 15px;
+}
+
+.cli-texto-suave {
+  color: var(--cli-texto-suave);
+  font-size: 14px;
+}
+
+/* ---------- Formulários ---------- */
+
+.cli-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.cli-campo label {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--cli-marrom);
+}
+
+.cli-campo input,
+.cli-campo select {
+  font-size: 17px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--cli-borda);
+  border-radius: 14px;
+  background: var(--cli-creme);
+  color: var(--cli-texto);
+  width: 100%;
+  transition: border-color .2s, background .2s;
+}
+
+.cli-campo input:focus,
+.cli-campo select:focus {
+  outline: none;
+  border-color: var(--cli-terracota);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(197, 127, 95, .15);
+}
+
+.cli-campo input:disabled {
+  color: var(--cli-texto-suave);
+}
+
+.cli-campo-senha {
+  display: flex;
+  gap: 8px;
+}
+
+.cli-dica {
+  font-size: 13px;
+  color: var(--cli-texto-suave);
+}
+
+/* ---------- Botões ---------- */
+
+.cli-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 54px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .15s, box-shadow .2s, background .2s;
+}
+
+.cli-btn:active:not(:disabled) {
+  transform: scale(.98);
+}
+
+.cli-btn + .cli-btn {
+  margin-top: 12px;
+}
+
+.cli-btn:disabled {
+  opacity: .6;
+  cursor: default;
+}
+
+.cli-btn-primario {
+  background: var(--cli-terracota);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(197, 127, 95, .35);
+}
+
+.cli-btn-primario:hover:not(:disabled) {
+  background: var(--cli-terracota-escuro);
+}
+
+.cli-btn-secundario {
+  background: var(--cli-areia);
+  color: var(--cli-marrom);
+}
+
+/* Botões sobre o topo colorido */
+.cli-btn-claro {
+  background: #fff;
+  color: var(--cli-terracota-escuro);
+  box-shadow: 0 8px 20px rgba(80, 45, 30, .18);
+}
+
+.cli-btn-contorno {
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, .8);
+}
+
+.cli-btn-contorno:hover {
+  background: rgba(255, 255, 255, .12);
+}
+
+.cli-topo-botoes .cli-btn + .cli-btn {
+  margin-top: 0;
+}
+
+.cli-btn-whatsapp {
+  background: #25d366;
+  color: #fff;
+}
+
+.cli-btn-mini {
+  width: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0 16px;
+  border-radius: 14px;
+  font-size: 14px;
+}
+
+.cli-btn-sair {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, .18);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cli-link {
+  color: var(--cli-terracota-escuro);
+  font-weight: 600;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.cli-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--cli-sombra);
+}
+
+/* ---------- Mensagens ---------- */
+
+.cli-alerta {
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  font-size: 15px;
+}
+
+.cli-alerta-erro {
+  background: #fdecea;
+  color: var(--cli-erro);
+}
+
+.cli-alerta-sucesso {
+  background: #e7f4ec;
+  color: var(--cli-sucesso);
+}
+
+.cli-carregando {
+  text-align: center;
+  color: var(--cli-texto-suave);
+  padding: 32px 0;
+}
+
+/* ---------- Página da clínica: serviços ---------- */
+
+.cli-categoria {
+  display: inline-block;
+  margin: 18px 0 10px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--cli-areia);
+  color: var(--cli-marrom);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.cli-servico {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border: 1px solid var(--cli-borda);
+  border-radius: 16px;
+  background: var(--cli-creme);
+}
+
+.cli-servico-icone {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--cli-terracota);
+  font-size: 20px;
+}
+
+.cli-servico-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cli-servico-nome {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.cli-servico-detalhe {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--cli-texto-suave);
+}
+
+.cli-servico-preco {
+  flex-shrink: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--cli-terracota-escuro);
+  white-space: nowrap;
+}
+
+/* ---------- Como funciona ---------- */
+
+.cli-passos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cli-passos li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 10px 0;
+}
+
+.cli-passo-numero {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cli-terracota);
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.cli-passos strong {
+  display: block;
+  font-size: 15px;
+}
+
+.cli-passos span {
+  font-size: 14px;
+  color: var(--cli-texto-suave);
+}
+
+/* ---------- Início da cliente ---------- */
+
+.cli-saudacao {
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--cli-sombra);
+}
+
+.cli-saudacao h2 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.cli-saudacao p {
+  margin: 2px 0 0;
+  color: var(--cli-texto-suave);
+  font-size: 15px;
+}
+
+.cli-menu {
+  display: grid;
+  gap: 12px;
+}
+
+.cli-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid var(--cli-borda);
+  border-radius: 20px;
+  box-shadow: var(--cli-sombra);
+  color: var(--cli-texto);
+  text-decoration: none;
+  text-align: left;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .15s;
+}
+
+.cli-menu-item:active:not(:disabled) {
+  transform: scale(.98);
+}
+
+.cli-menu-item:disabled {
+  cursor: default;
+  box-shadow: none;
+  background: rgba(255, 255, 255, .6);
+}
+
+.cli-menu-icone {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--cli-areia);
+  color: var(--cli-terracota-escuro);
+  font-size: 24px;
+}
+
+.cli-menu-icone-whatsapp {
+  background: #e3f8eb;
+  color: #1a9e4f;
+}
+
+.cli-menu-texto {
+  flex: 1;
+}
+
+.cli-menu-texto small {
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--cli-texto-suave);
+}
+
+.cli-menu-seta {
+  color: var(--cli-nude);
+  font-size: 22px;
+}
+
+.cli-etiqueta {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--cli-areia);
+  color: var(--cli-marrom);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cli-rodape {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 15px;
+}
+
+@media (max-width: 400px) {
+  .cli-servico-icone {
+    display: none;
+  }
+}

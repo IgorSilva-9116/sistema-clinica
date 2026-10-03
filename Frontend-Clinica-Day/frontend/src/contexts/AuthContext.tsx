@@ -4,9 +4,10 @@ import { login as loginService } from '../services/authService'
 
 type UserTipo = 'clinica' | 'cliente' | 'profissional'
 
-interface Usuario {
+export interface Usuario {
   id: number
   email: string
+  nome?: string
   userTipo: UserTipo
   role?: string | null
   clinicaId: number
@@ -21,6 +22,7 @@ interface AuthContextData {
   login: (email: string, senha: string) => Promise<void>
   logout: () => void
   setUsuario: (usuario: Usuario | null) => void // ✅ NOVO
+  iniciarSessao: (token: string, usuario: Usuario) => void
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData)
@@ -47,6 +49,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // Sessão vinda do cadastro/convite da cliente (já autenticada pelo back-end)
+  function iniciarSessao(token: string, novoUsuario: Usuario) {
+    sessionStorage.setItem('token', token)
+    sessionStorage.setItem('usuario', JSON.stringify(novoUsuario))
+    setUsuario(novoUsuario)
+  }
+
   function logout() {
     sessionStorage.removeItem('token')
     sessionStorage.removeItem('usuario')
@@ -55,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ usuario, loading, login, logout, setUsuario }}
+      value={{ usuario, loading, login, logout, setUsuario, iniciarSessao }}
     >
       {children}
     </AuthContext.Provider>

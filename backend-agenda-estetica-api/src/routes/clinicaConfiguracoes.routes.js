@@ -5,7 +5,8 @@ const {
   obterConfiguracoes,
   atualizarConfiguracoes,
   obterPolitica,
-  atualizarPolitica
+  atualizarPolitica,
+  obterLinkPublico
 } = require('../controllers/clinicaConfiguracoes.controller');
 
 const authMiddleware = require('../middlewares/auth.middleware');
@@ -16,13 +17,13 @@ const authorize = require('../middlewares/role.middleware');
 // =============================
 router.get(
   '/clinica/configuracoes',
-  authMiddleware,
+  authMiddleware, authorize('clinica'),
   obterConfiguracoes
 );
 
 router.put(
   '/clinica/configuracoes',
-  authMiddleware,
+  authMiddleware, authorize('clinica'),
   atualizarConfiguracoes
 );
 
@@ -31,7 +32,7 @@ router.put(
 // =============================
 router.get(
   '/clinica/politica',
-  authMiddleware,
+  authMiddleware, authorize('clinica'),
   obterPolitica
 );
 
@@ -40,6 +41,14 @@ router.put(
   authMiddleware,
   authorize('clinica'),
   atualizarPolitica
+);
+
+
+router.get(
+  '/clinica/link-publico',
+  authMiddleware,
+  authorize('clinica'),
+  obterLinkPublico
 );
 
 module.exports = router;

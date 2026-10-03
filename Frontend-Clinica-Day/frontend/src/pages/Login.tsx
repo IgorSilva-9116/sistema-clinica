@@ -36,7 +36,7 @@ export function Login() {
       }
 
       await login(email, senha)
-      navigate('/')
+      navigate(response.data.usuario?.userTipo === 'cliente' ? '/cliente' : '/')
 
     } catch {
       setErro('Email ou senha inválidos')

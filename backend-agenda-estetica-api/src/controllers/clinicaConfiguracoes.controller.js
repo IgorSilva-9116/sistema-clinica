@@ -194,10 +194,28 @@ async function atualizarPolitica(req, res) {
   }
 }
 
+/**
+ * Endereço público da clínica (/c/<slug>) para divulgar às clientes
+ */
+async function obterLinkPublico(req, res) {
+  try {
+    const result = await sql.connect().then(pool =>
+      pool.request()
+        .input('ClinicaId', sql.Int, req.clinicaId)
+        .query('SELECT Slug FROM Clinica WHERE Id = @ClinicaId')
+    );
+
+    return res.json({ sucesso: true, slug: result.recordset[0]?.Slug || null });
+  } catch (err) {
+    console.error('Erro ao obter link público:', err);
+    return res.status(500).json({ sucesso: false, mensagem: 'Erro ao obter o link da clínica' });
+  }
+}
+
 module.exports = {
   obterConfiguracoes,
   atualizarConfiguracoes,
   obterPolitica,
-  atualizarPolitica
-
+  atualizarPolitica,
+  obterLinkPublico
 };

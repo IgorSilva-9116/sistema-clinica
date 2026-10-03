@@ -29,6 +29,15 @@ import ListaDespesas from '../pages/ListaDespesas'
 import { CategoriasServico } from '../pages/CategoriasServico'
 import { CategoriasFinanceiras } from '../pages/CategoriasFinanceiras'
 
+// Área da cliente
+import { ClinicaPublica } from '../pages/cliente/ClinicaPublica'
+import { ClienteEntrar } from '../pages/cliente/ClienteEntrar'
+import { ClienteCadastro } from '../pages/cliente/ClienteCadastro'
+import { AtivarConvite } from '../pages/cliente/AtivarConvite'
+import { ClienteLayout } from '../pages/cliente/ClienteLayout'
+import { ClienteInicio } from '../pages/cliente/ClienteInicio'
+import { ClientePerfil } from '../pages/cliente/ClientePerfil'
+
 
 
 
@@ -58,10 +67,28 @@ export function AppRoutes() {
       />
 
 
-      {/* Rotas protegidas */}
+      {/* 💆 ÁREA DA CLIENTE (públicas) */}
+      <Route path="/c/:slug" element={<ClinicaPublica />} />
+      <Route path="/c/:slug/entrar" element={<ClienteEntrar />} />
+      <Route path="/c/:slug/cadastro" element={<ClienteCadastro />} />
+      <Route path="/cliente/ativar" element={<AtivarConvite />} />
+
+      {/* 💆 ÁREA DA CLIENTE (logada) */}
       <Route
         element={
-          <PrivateRoute>
+          <PrivateRoute allow={['cliente']}>
+            <ClienteLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route path="/cliente" element={<ClienteInicio />} />
+        <Route path="/cliente/perfil" element={<ClientePerfil />} />
+      </Route>
+
+      {/* Rotas protegidas (somente clínica) */}
+      <Route
+        element={
+          <PrivateRoute allow={['clinica']}>
             <MainLayout />
           </PrivateRoute>
         }

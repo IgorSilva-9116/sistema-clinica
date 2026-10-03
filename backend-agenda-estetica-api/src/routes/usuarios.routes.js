@@ -69,7 +69,7 @@ router.patch(
 // Redefinir senha
 router.patch(
   '/usuarios/:id/senha',
-  authMiddleware,
+  authMiddleware, authorize('clinica'),
   usuarioController.redefinirSenha
 );
 

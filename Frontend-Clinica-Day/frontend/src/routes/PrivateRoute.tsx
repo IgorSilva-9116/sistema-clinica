@@ -14,6 +14,11 @@ export function PrivateRoute({ children, allow }: PrivateRouteProps) {
   if (loading) return <p>Carregando...</p>
 
   if (!usuario) {
+    // Área da cliente: volta para a tela de entrar da clínica dela
+    const slug = localStorage.getItem('clinicaSlug')
+    if (allow?.includes('cliente') && slug) {
+      return <Navigate to={`/c/${slug}/entrar`} replace />
+    }
     return <Navigate to="/login" replace />
   }
 
@@ -26,6 +31,10 @@ export function PrivateRoute({ children, allow }: PrivateRouteProps) {
   }
 
   if (allow && !allow.includes(usuario.userTipo)) {
+    // Cliente que cai numa tela da clínica volta para a área dela
+    if (usuario.userTipo === 'cliente') {
+      return <Navigate to="/cliente" replace />
+    }
     return <Navigate to="/acesso-negado" replace />
   }
 

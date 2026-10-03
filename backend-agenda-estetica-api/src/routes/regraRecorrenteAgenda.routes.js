@@ -28,7 +28,7 @@ router.patch(
 
 router.put(
   '/agenda/regra-recorrente/:id',
-  authMiddleware,
+  authMiddleware, authorize('clinica'),
   controller.atualizarRegra
 );
 

@@ -8,4 +8,5 @@ export type Cliente = {
   dataNascimento?: string
   foto?: string
   observacao: string
+  acessoApp?: 'ATIVO' | 'CONVIDADA' | null
 }

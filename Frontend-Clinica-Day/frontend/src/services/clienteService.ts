@@ -36,6 +36,18 @@ export const clienteService = {
   async listarAniversariantes() {
     const response = await api.get('/clientes/aniversariantes')
     return response.data
+  },
+
+  // Link de acesso ao app da cliente (enviado pelo WhatsApp)
+  async gerarConvite(id: number): Promise<{ link: string; telefone?: string | null; mensagem: string }> {
+    const response = await api.post(`/clientes/${id}/convite`)
+    return response.data
+  },
+
+  // Endereço público da clínica: /c/<slug>
+  async obterLinkPublico(): Promise<string | null> {
+    const response = await api.get('/clinica/link-publico')
+    return response.data.slug
   }
 
 }

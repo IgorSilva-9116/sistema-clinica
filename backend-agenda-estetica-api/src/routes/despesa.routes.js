@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const authMiddleware = require('../middlewares/auth.middleware');
+const authorize = require('../middlewares/role.middleware');
 
 // ✅ IMPORTA CORRETAMENTE O CONTROLLER DE DESPESA
 const despesaController = require('../controllers/despesa.controller');
@@ -16,17 +17,17 @@ const {
 } = require('../controllers/relatorios.controller');
 
 // ✅ ROTAS EXISTENTES
-router.get('/resumo', authMiddleware, resumo);
-router.get('/faturamento-servico', authMiddleware, faturamentoPorServico);
-router.get('/multas', authMiddleware, multas);
-router.get('/clientes', authMiddleware, relatorioClientes);
+router.get('/resumo', authMiddleware, authorize('clinica'), resumo);
+router.get('/faturamento-servico', authMiddleware, authorize('clinica'), faturamentoPorServico);
+router.get('/multas', authMiddleware, authorize('clinica'), multas);
+router.get('/clientes', authMiddleware, authorize('clinica'), relatorioClientes);
 
 // ✅ ✅ CORREÇÃO AQUI (ESSA É A LINHA QUE RESOLVE TUDO)
-router.get('/despesas', authMiddleware, despesaController.listarDespesas);
+router.get('/despesas', authMiddleware, authorize('clinica'), despesaController.listarDespesas);
 
 router.post(
   '/despesas',
-  authMiddleware,
+  authMiddleware, authorize('clinica'),
   despesaController.criarDespesa
 )
 
@@ -56,7 +57,7 @@ router.get(
 
 router.get(
   '/despesas/:id',
-  authMiddleware,
+  authMiddleware, authorize('clinica'),
   despesaController.obterDespesaPorId
 );
 

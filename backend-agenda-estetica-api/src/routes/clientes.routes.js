@@ -18,7 +18,7 @@ router.get(
 router.post(
   '/clientes',
   authMiddleware,
-  authorize('clinica', 'cliente'),
+  authorize('clinica'),
   upload.single('foto'), // ✅ ISSO AQUI É O SEGREDO
   clientesController.criarCliente
 );
@@ -48,5 +48,12 @@ router.put(
   clientesController.atualizarCliente
 );
 
+// ✅ Gerar link de acesso ao app para a cliente (enviado pelo WhatsApp)
+router.post(
+  '/clientes/:id/convite',
+  authMiddleware,
+  authorize('clinica'),
+  clientesController.gerarConvite
+);
 
 module.exports = router;

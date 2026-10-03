@@ -72,6 +72,8 @@ const despesaRoutes = require('./routes/despesa.routes');
 const categoriaServicoRoutes = require('./routes/categoriaServico.routes');
 const categoriaFinanceiraRoutes = require('./routes/categoriaFinanceira.routes');
 const intervaloregraRecorrenteAgendaRoutes = require('./routes/intervaloRecorrenteAgenda.routes');
+const publicoRoutes = require('./routes/publico.routes');
+const clientePortalRoutes = require('./routes/clientePortal.routes');
 
 
 /**
@@ -97,6 +99,8 @@ app.use('/api/v1', listaEsperaRoutes);
 app.use('/api/v1', despesaRoutes);
 app.use('/api/v1', categoriaFinanceiraRoutes);
 app.use('/api/v1', intervaloregraRecorrenteAgendaRoutes);
+app.use('/api/v1', publicoRoutes);
+app.use('/api/v1', clientePortalRoutes);
 
 
 /**
