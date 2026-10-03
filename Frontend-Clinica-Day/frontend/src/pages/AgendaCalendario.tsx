@@ -3,6 +3,7 @@ import { api } from '../services/api'
 import '../styles/agenda.css'
 import { useNavigate } from 'react-router-dom'
 import { FiSettings, FiAlertCircle, FiCalendar } from 'react-icons/fi'
+import { CancelamentoClinicaModal } from '../components/CancelamentoClinicaModal'
 
 /* =======================
    TIPOS
@@ -166,6 +167,11 @@ export default function AgendaCalendario() {
   const [regraSabado, setRegraSabado] = useState<any>(null)
   const [intervalosRecorrentes, setIntervalosRecorrentes] = useState<any[]>([])
   const [intervalosDia, setIntervalosDia] = useState<any[]>([])
+
+  // Janela de cancelamento (um agendamento ou o dia todo)
+  const [cancelamento, setCancelamento] = useState<
+    { modo: 'um'; agendamento: Agendamento } | { modo: 'dia' } | null
+  >(null)
 
 
   const diasMes = gerarDiasDoMes(ano, mes)
@@ -442,19 +448,10 @@ export default function AgendaCalendario() {
     carregarAgendaDia()
   }
 
-  async function cancelar(id: number) {
-    const fecharHorario = window.confirm(
-      'Deseja FECHAR este horário após o cancelamento?\n\n' +
-      'OK = fechar o horário\nCancelar = manter disponível'
-    )
-
-    await api.patch(`/agendamentos/${id}/cancelar`, {
-      bloquearHorario: fecharHorario,
-      origem: 'CLINICA'
-    })
-
-    // ✅ IMPORTANTE: aguardar atualização real
-    await carregarAgendaDia()
+  // Abre a janela com motivo e opção de bloquear o horário
+  function cancelar(id: number) {
+    const slot = slots.filter(isSlotAgendado).find(s => s.agendamento.Id === id)
+    if (slot) setCancelamento({ modo: 'um', agendamento: slot.agendamento })
   }
 
 
@@ -649,6 +646,15 @@ export default function AgendaCalendario() {
       : timelineFinal.filter(
         item => item.tipo !== 'LIVRE'
       )
+
+  // Atendimentos ainda ativos no dia (para "Cancelar todos do dia")
+  // (cada agendamento ocupa vários slots de 15 min: conta os Ids distintos)
+  const ativosNoDia = new Set(
+    slots
+      .filter(isSlotAgendado)
+      .filter(s => ['CRIADO', 'CONFIRMADO'].includes(s.agendamento.Status))
+      .map(s => s.agendamento.Id)
+  ).size
 
   const totalAgendamentos =
     timelineExibicao.filter(
@@ -969,6 +975,15 @@ export default function AgendaCalendario() {
                     Finalizar Dia
                   </button>
 
+                  {ativosNoDia > 0 && (
+                    <button
+                      className="btn-cancelar-dia"
+                      onClick={() => setCancelamento({ modo: 'dia' })}
+                    >
+                      Cancelar todos do dia
+                    </button>
+                  )}
+
                   <label className="check-livres">
 
                     <input
@@ -1139,6 +1154,18 @@ export default function AgendaCalendario() {
         </div>
 
       </div>
+
+      {cancelamento && (
+        <CancelamentoClinicaModal
+          modo={cancelamento.modo}
+          data={formatarDataLocal(dataSelecionada)}
+          dataTexto={tituloDia}
+          agendamento={cancelamento.modo === 'um' ? cancelamento.agendamento : undefined}
+          quantidadeNoDia={ativosNoDia}
+          onFechar={() => setCancelamento(null)}
+          onConcluido={carregarAgendaDia}
+        />
+      )}
 
     </div>
   )

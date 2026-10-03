@@ -69,4 +69,14 @@ async function avisarCliente(pool, { agendamentoId, tipo, titulo, mensagem }) {
   }
 }
 
-module.exports = { avisarCliente };
+/**
+ * Texto do aviso quando a clínica cancela (um horário ou o dia todo)
+ */
+function mensagemCancelamentoClinica(motivo) {
+  return atendimento =>
+    `Seu horário de ${atendimento} foi cancelado pela clínica.` +
+    (motivo ? ` Motivo: ${motivo}.` : '') +
+    ' Se quiser, agende um novo horário pelo app ou fale conosco.';
+}
+
+module.exports = { avisarCliente, mensagemCancelamentoClinica };

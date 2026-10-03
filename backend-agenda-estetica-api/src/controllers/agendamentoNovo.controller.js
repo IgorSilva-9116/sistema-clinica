@@ -3,7 +3,7 @@ const { obterBlocosEfetivosDia } = require('../utils/blocosEfetivosDia');
 const { gerarSlots } = require('../utils/gerarSlots');
 const { existeConflitoAgendamento } = require('../utils/validarConflitoAgendamento');
 const { notificarVagaDisponivel } = require('../services/notificacao.service');
-const { avisarCliente } = require('../services/avisoCliente.service');
+const { avisarCliente, mensagemCancelamentoClinica } = require('../services/avisoCliente.service');
 const { minutosAte } = require('../utils/dataHoraBrasil');
 
 
@@ -434,7 +434,8 @@ async function cancelarAgendamento(req, res) {
         SELECT
           a.*,
           c.Nome,
-          c.Email
+          c.Email,
+          c.Telefone
         FROM Agendamento a
         JOIN Cliente c ON c.Id = a.ClienteId
         WHERE a.Id = @Id AND a.ClinicaId = @ClinicaId
@@ -553,10 +554,7 @@ async function cancelarAgendamento(req, res) {
         agendamentoId: Number(id),
         tipo: 'AGENDAMENTO_CANCELADO',
         titulo: 'Horário cancelado pela clínica',
-        mensagem: atendimento =>
-          `Seu horário de ${atendimento} foi cancelado pela clínica.` +
-          (motivo ? ` Motivo: ${motivo}.` : '') +
-          ' Se quiser, agende um novo horário pelo app ou fale conosco.'
+        mensagem: mensagemCancelamentoClinica(motivo)
       });
     }
 
@@ -620,8 +618,10 @@ async function cancelarAgendamento(req, res) {
       }
     }
 
+    // Dados para a clínica avisar a cliente pelo WhatsApp na hora
     return res.json({
-      sucesso: true
+      sucesso: true,
+      cliente: { nome: ag.Nome, telefone: ag.Telefone || null }
     });
 
   } catch (err) {

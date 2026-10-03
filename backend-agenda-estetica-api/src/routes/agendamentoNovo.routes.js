@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const controller = require('../controllers/agendamentoNovo.controller');
+const { cancelarDia } = require('../controllers/cancelamentoDia.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const authorize = require('../middlewares/role.middleware');
 
@@ -44,6 +45,14 @@ router.patch(
   '/agendamentos/finalizar',
   authMiddleware, authorize('clinica'),
   controller.finalizarAgendamentos
+);
+
+
+// Cancelar todos os atendimentos do dia (imprevisto da profissional)
+router.post(
+  '/agendamentos/cancelar-dia',
+  authMiddleware, authorize('clinica'),
+  cancelarDia
 );
 
 module.exports = router;
